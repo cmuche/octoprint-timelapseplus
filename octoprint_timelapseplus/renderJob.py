@@ -9,9 +9,9 @@ from threading import Thread
 
 from PIL import Image, ImageFilter, ImageOps, ImageEnhance
 
-from octoprint.plugins.timelapseplus.enhancementPreset import EnhancementPreset
-from octoprint.plugins.timelapseplus.renderJobState import RenderJobState
-from octoprint.plugins.timelapseplus.renderPreset import RenderPreset
+from octoprint.plugins.octoprint_timelapseplus.enhancementPreset import EnhancementPreset
+from octoprint.plugins.octoprint_timelapseplus.renderJobState import RenderJobState
+from octoprint.plugins.octoprint_timelapseplus.renderPreset import RenderPreset
 
 
 class RenderJob:
