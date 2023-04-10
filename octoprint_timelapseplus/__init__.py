@@ -166,7 +166,7 @@ class TimelapsePlusPlugin(
 
         if state == RenderJobState.FINISHED or state == RenderJobState.FAILED:
             Thread(target=(lambda j: (
-                sleep(5),
+                sleep(10),
                 self.RENDERJOBS.remove(j),
                 self.sendClientData()
             )), args=(job,)).start()

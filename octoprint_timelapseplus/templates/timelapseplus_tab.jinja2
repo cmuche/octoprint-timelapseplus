@@ -12,7 +12,8 @@
         </div>
     </div>
 
-    <h1>Render Jobs</h1>
+    <div data-bind="visible: showRenderJobs()">
+        <h1>Render Jobs</h1>
         <div data-bind="foreach: renderJobs">
             <div class="renderjob">
                 <div class="icon">
@@ -28,24 +29,25 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <h1>Videos</h1>
-        <ul data-bind="foreach: videos">
-            <li data-bind="text: $data.file"></li>
-            <img data-bind="attr: {src: $data.thumbnail}" style="width: 3em" />
-            <div class="btn-group action-buttons">
-                <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('video', $data.id) }"><i class="fas fa-trash"></i></div>
-            </div>
-        </ul>
+    <h1>Videos</h1>
+    <ul data-bind="foreach: videos">
+        <li data-bind="text: $data.file"></li>
+        <img data-bind="attr: {src: $data.thumbnail}" style="width: 3em" />
+        <div class="btn-group action-buttons">
+            <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('video', $data.id) }"><i class="fas fa-trash"></i></div>
+        </div>
+    </ul>
 
-        <h1>Frame Collections</h1>
-        <ul data-bind="foreach: frameCollections">
-            <li data-bind="text: $data.file + ' (' + $data.frames + ' Frames)'"></li>
-            <img data-bind="attr: {src: $data.thumbnail}" style="width: 3em" />
-            <div class="btn-group action-buttons">
-                <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: $parent.startRender"><i class="fas fa-file-video"></i></div>
-                <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('frameZip', $data.id) }"><i class="fas fa-trash"></i></div>
-            </div>
-        </ul>
+    <h1>Frame Collections</h1>
+    <ul data-bind="foreach: frameCollections">
+        <li data-bind="text: $data.file + ' (' + $data.frames + ' Frames)'"></li>
+        <img data-bind="attr: {src: $data.thumbnail}" style="width: 3em" />
+        <div class="btn-group action-buttons">
+            <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: $parent.startRender"><i class="fas fa-file-video"></i></div>
+            <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('frameZip', $data.id) }"><i class="fas fa-trash"></i></div>
+        </div>
+    </ul>
 
 </div>
