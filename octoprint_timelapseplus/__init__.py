@@ -96,8 +96,8 @@ class TimelapsePlusPlugin(
     def get_assets(self):
         return {
             'js': ['js/timelapseplus.js'],
-            'less': ['less/timelapseplus.less'],
-            'css': [],
+            'less': [],
+            'css': ['css/timelapseplus.css'],
         }
 
     def get_template_configs(self):

@@ -1,0 +1,27 @@
+#timelapseplus .renderjob {
+    padding: 1em;
+    display: flex;
+}
+
+#timelapseplus .renderjob .icon {
+    font-size: 2em;
+    margin-right: 1em;
+    display: flex;
+    align-items: center;
+}
+
+#timelapseplus .renderjob .info {
+    width: 100%;
+}
+
+#timelapseplus .renderjob .info .state {
+    font-weight: bold;
+}
+
+#timelapseplus .renderjob .info .file {
+    font-style: italic;
+}
+
+#timelapseplus .renderjob .info .progress {
+    margin: 0;
+}
