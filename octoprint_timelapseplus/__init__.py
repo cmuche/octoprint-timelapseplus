@@ -11,11 +11,11 @@ from PIL import Image
 from flask import make_response
 
 import octoprint.plugin
-from octoprint.plugins.octoprint_timelapseplus.frameZip import FrameZip
-from octoprint.plugins.octoprint_timelapseplus.printJob import PrintJob
-from octoprint.plugins.octoprint_timelapseplus.renderJob import RenderJob
-from octoprint.plugins.octoprint_timelapseplus.renderJobState import RenderJobState
-from octoprint.plugins.octoprint_timelapseplus.video import Video
+from .frameZip import FrameZip
+from .printJob import PrintJob
+from .renderJob import RenderJob
+from .renderJobState import RenderJobState
+from .video import Video
 
 
 class TimelapsePlusPlugin(
