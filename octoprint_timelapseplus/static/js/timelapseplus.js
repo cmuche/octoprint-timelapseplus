@@ -25,7 +25,7 @@ $(function() {
             };
 
             $.ajax({
-                url: API_BASEURL + "plugin/timelapseplus",
+                url: API_BASEURL + "plugin/octoprint_timelapseplus",
                 type: "POST",
                 dataType: "json",
                 data: JSON.stringify(payload),
@@ -45,7 +45,7 @@ $(function() {
             };
 
             $.ajax({
-                url: API_BASEURL + "plugin/timelapseplus",
+                url: API_BASEURL + "plugin/octoprint_timelapseplus",
                 type: "POST",
                 dataType: "json",
                 data: JSON.stringify(payload),
@@ -68,7 +68,7 @@ $(function() {
             };
 
             $.ajax({
-                url: API_BASEURL + "plugin/timelapseplus",
+                url: API_BASEURL + "plugin/octoprint_timelapseplus",
                 type: "POST",
                 dataType: "json",
                 data: JSON.stringify(payload),
@@ -83,7 +83,7 @@ $(function() {
         };
 
         self.onDataUpdaterPluginMessage = function(plugin, data) {
-            if (plugin != "timelapseplus")
+            if (plugin != "octoprint_timelapseplus")
                 return;
 
             console.log("DATA", data);

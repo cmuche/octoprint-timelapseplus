@@ -223,6 +223,7 @@ class TimelapsePlusPlugin(
 
 
 __plugin_pythoncompat__ = ">=3.7,<4"
+__plugin_name__ = "Timelapse+"
 
 
 # better-ffmpeg-progress
