@@ -17,11 +17,33 @@ $(function() {
             self.triggerGetData();
         };
 
+        self.formatPercent = function(percent) {
+            return Math.round(percent) + "%";
+        };
+
+        self.getRenderJobVm = function(job) {
+            let stateVms = {
+                "WAITING": {title: "Waiting", showProgress: false, icon: "fas fa-hourglass-half"},
+                "EXTRACTING": {title: "Extracting Frame Collection", showProgress: false, icon: "fas fa-box-open"},
+                "RENDERING": {title: "Rendering Video", showProgress: true, icon: "fas fa-file-export"},
+                "FINISHED": {title: "Finished", showProgress: false, icon: "fas fa-check"},
+                "FAILED": {title: "Failed", showProgress: false, icon: "fas fa-exclamation-triangle"},
+                "ENHANCING": {title: "Enhancing Images", showProgress: true, icon: "fas fa-magic"},
+                "BLURRING": {title: "Blurring Areas", showProgress: true, icon: "fas fa-eraser"},
+                "RESIZING": {title: "Resizing Frames", showProgress: true, icon: "fas fa-arrows-alt"}
+            };
+
+            if (job.state in stateVms)
+                return stateVms[job.state];
+
+            return {title: job.state, showProgress: false};
+        };
+
         self.delete = function(type, id) {
             var payload = {
                 command: "delete",
-                type:type,
-                id:id
+                type: type,
+                id: id
             };
 
             $.ajax({

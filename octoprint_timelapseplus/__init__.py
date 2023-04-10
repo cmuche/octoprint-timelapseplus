@@ -96,7 +96,7 @@ class TimelapsePlusPlugin(
     def get_assets(self):
         return {
             'js': ['js/timelapseplus.js'],
-            'less': [],
+            'less': ['less/timelapseplus.less'],
             'css': [],
         }
 
@@ -164,7 +164,7 @@ class TimelapsePlusPlugin(
     def renderJobStateChanged(self, job, state):
         self.sendClientData()
 
-        if state == RenderJobState.FINISHED:
+        if state == RenderJobState.FINISHED or state == RenderJobState.FAILED:
             Thread(target=(lambda j: (
                 sleep(5),
                 self.RENDERJOBS.remove(j),
