@@ -222,10 +222,6 @@ class TimelapsePlusPlugin(
             self.printFinished()
 
 
-__plugin_name__ = "Timelapse+"
-__plugin_author__ = "Christoph Muche"
-__plugin_version__ = "1.0.0"
-__plugin_description__ = "Better Timelapses"
 __plugin_pythoncompat__ = ">=3.7,<4"
 
 
