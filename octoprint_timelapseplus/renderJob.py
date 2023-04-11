@@ -10,12 +10,12 @@ from threading import Thread
 from PIL import Image, ImageFilter, ImageOps, ImageEnhance
 
 from .enhancementPreset import EnhancementPreset
-from .renderJobState import RenderJobState
 from .renderPreset import RenderPreset
+from .renderJobState import RenderJobState
 
 
 class RenderJob:
-    def __init__(self, frameZip, parent, logger, settings, dataFolder):
+    def __init__(self, frameZip, parent, logger, settings, dataFolder, enhancementPreset=None, renderPreset=None):
         self.ID = parent.getRandomString(8)
         self.PARENT = parent
         self._settings = settings
@@ -29,6 +29,19 @@ class RenderJob:
         self.RUNNING = False
         self.THREAD = None
         self.PROGRESS = 0
+
+        self.ENHANCEMENT_PRESET = enhancementPreset
+        self.RENDER_PRESET = renderPreset
+
+        if self.ENHANCEMENT_PRESET is None:
+            epRaw = self._settings.get(["enhancementPresets"])
+            epList = list(map(lambda x: EnhancementPreset(x), epRaw))
+            self.ENHANCEMENT_PRESET = epList[0]
+
+        if self.RENDER_PRESET is None:
+            rpRaw = self._settings.get(["renderPresets"])
+            rpList = list(map(lambda x: RenderPreset(x), rpRaw))
+            self.RENDER_PRESET = rpList[0]
 
         self.createFolder(dataFolder)
 
@@ -155,14 +168,11 @@ class RenderJob:
     def renderTimelapse(self):
         isSuccess = False
         try:
-            enhancementPreset = EnhancementPreset()
-            renderPreset = RenderPreset()
-
             self.extractZip()
-            self.enhanceImages(enhancementPreset)
-            self.blurImages(enhancementPreset)
-            self.resizeImages(enhancementPreset)
-            self.createVideo(renderPreset)
+            self.enhanceImages(self.ENHANCEMENT_PRESET)
+            self.blurImages(self.ENHANCEMENT_PRESET)
+            self.resizeImages(self.ENHANCEMENT_PRESET)
+            self.createVideo(self.RENDER_PRESET)
             isSuccess = True
         finally:
             shutil.rmtree(self.FOLDER)

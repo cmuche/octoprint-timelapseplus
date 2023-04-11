@@ -131,18 +131,24 @@ class TimelapsePlusPlugin(
         return dict(
             snapshotCommand="SNAPSHOT",
             renderAfterPrint=True,
-            enhancementPresets=[EnhancementPreset().getJSON()]
+            enhancementPresets=[EnhancementPreset().getJSON()],
+            renderPresets=[RenderPreset().getJSON()]
         )
 
     def get_template_vars(self):
         epRaw = self._settings.get(["enhancementPresets"])
-        epList=list(map(lambda x: EnhancementPreset(x), epRaw))
+        epList = list(map(lambda x: EnhancementPreset(x), epRaw))
         epNew = list(map(lambda x: x.getJSON, epList))
+
+        rpRaw = self._settings.get(["renderPresets"])
+        rpList = list(map(lambda x: RenderPreset(x), rpRaw))
+        rpNew = list(map(lambda x: x.getJSON, rpList))
 
         return dict(
             snapshotCommand=self._settings.get(["snapshotCommand"]),
             renderAfterPrint=self._settings.get(["renderAfterPrint"]),
-            enhancementPresets=epNew
+            enhancementPresets=epNew,
+            renderPresets=rpNew
         )
 
     def listFrameZips(self):

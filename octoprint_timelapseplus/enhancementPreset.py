@@ -18,13 +18,13 @@ class EnhancementPreset:
         self.NAME = d['name']
         self.ENHANCE = d['enhance']
         self.EQUALIZE = d['equalize']
-        self.BRIGHTNESS = d['brightness']
-        self.CONTRAST = d['contrast']
+        self.BRIGHTNESS = float(d['brightness'])
+        self.CONTRAST = float(d['contrast'])
         self.BLUR = d['blur']
-        self.BLUR_RADIUS = d['blurRadius']
+        self.BLUR_RADIUS = int(d['blurRadius'])
         self.RESIZE = d['resize']
-        self.RESIZE_W = d['resizeW']
-        self.RESIZE_H = d['resizeH']
+        self.RESIZE_W = int(d['resizeW'])
+        self.RESIZE_H = int(d['resizeH'])
 
     def getJSON(self):
         return dict(
