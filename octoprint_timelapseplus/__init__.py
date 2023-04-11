@@ -178,7 +178,19 @@ class TimelapsePlusPlugin(
         self.sendClientData()
 
     def atCommand(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
-        if command != self.CMD_SNAPSHOT:
+        if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
+            return
+
+        if command != self._settings.get(["snapshotCommand"]):
+            return
+
+        self.PRINTJOB.doSnapshot()
+
+    def atAction(self, comm, line, action, *args, **kwargs):
+        if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
+            return
+
+        if action != self._settings.get(["snapshotCommand"]):
             return
 
         self.PRINTJOB.doSnapshot()
@@ -190,7 +202,7 @@ class TimelapsePlusPlugin(
 
     def printStarted(self):
         if self.PRINTJOB is not None and self.PRINTJOB.RUNNING:
-            pass
+            return
 
         printerFile = self._printer.get_current_job()['file']['path']
         baseName = os.path.splitext(os.path.basename(printerFile))[0]
@@ -201,15 +213,15 @@ class TimelapsePlusPlugin(
 
     def printFinished(self):
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
-            pass
+            return
 
         zipFileName = self.PRINTJOB.finish()
         self.sendClientData()
 
-        # TODO to settings
-        if zipFileName != None:
-            frameZip = FrameZip(zipFileName, self, self._logger)
-            self.render(frameZip)
+        if self._settings.get(["renderAfterPrint"]):
+            if zipFileName != None:
+                frameZip = FrameZip(zipFileName, self, self._logger)
+                self.render(frameZip)
 
     def onScript(self, comm, script_type, script_name, *args, **kwargs):
         if script_name == 'beforePrintStarted':
@@ -235,5 +247,6 @@ def __plugin_load__():
     global __plugin_hooks__
     __plugin_hooks__ = {
         "octoprint.comm.protocol.atcommand.sending": __plugin_implementation__.atCommand,
-        "octoprint.comm.protocol.scripts": __plugin_implementation__.onScript
+        "octoprint.comm.protocol.scripts": __plugin_implementation__.onScript,
+        "octoprint.comm.protocol.action": __plugin_implementation__.atAction
     }
