@@ -11,6 +11,17 @@ $(function() {
         self.videos = ko.observable([]);
         self.renderJobs = ko.observable([]);
 
+        self.openVideo = function(video) {
+            $("div#tlp-modal-video").modal({
+                width: "auto"
+            });
+
+            $("div#tlp-modal-video video source")[0].src = video.url;
+            $("div#tlp-modal-video video")[0].load();
+            $("div#tlp-modal-video video")[0].currentTime = 0;
+            $("div#tlp-modal-video video").trigger("play");
+        };
+
         self.onAllBound = function(allViewModels) {
             self.triggerGetData();
         };
@@ -74,6 +85,8 @@ $(function() {
         self.onDataUpdaterPluginMessage = function(plugin, data) {
             if (plugin != "octoprint_timelapseplus")
                 return;
+
+            console.log(data);
 
             self.isRunning(data.isRunning);
             self.snapshotCount(data.snapshotCount);

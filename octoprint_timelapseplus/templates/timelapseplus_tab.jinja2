@@ -36,6 +36,7 @@
         <li data-bind="text: $data.file"></li>
         <img data-bind="attr: {src: $data.thumbnail}" style="width: 3em" />
         <div class="btn-group action-buttons">
+            <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.openVideo($data) }"><i class="fas fa-play"></i></div>
             <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('video', $data.id) }"><i class="fas fa-trash"></i></div>
         </div>
     </ul>
@@ -50,4 +51,25 @@
         </div>
     </ul>
 
+</div>
+
+<!------------------------------------------------------->
+
+<div id="tlp-modal-video" class="modal hide fade">
+    <div class="modal-header">
+        <a href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+        <h3>Video Preview</h3>
+    </div>
+    <div class="modal-body" data-bind="using: selectedVideo">
+        <div class="row-fluid">
+            <video width="640" height="360" controls>
+                <source />
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+         <a href="#" data-dismiss="modal">Close</a>
+    </div>
 </div>

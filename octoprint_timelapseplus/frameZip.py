@@ -15,6 +15,7 @@ class FrameZip:
         self.FRAMES = self.countFrames()
         self.TIMESTAMP = os.path.getmtime(path)
         self.SIZE = os.path.getsize(path)
+        self.MIMETYPE = 'application/zip'
 
         self.HASH = self.getHash()
         self.ID = self.getId()
@@ -39,7 +40,8 @@ class FrameZip:
             frames=self.FRAMES,
             size=self.SIZE,
             timestamp=self.TIMESTAMP,
-            thumbnail='/api/plugin/octoprint_timelapseplus?command=thumbnail&type=frameZip&id=' + self.ID
+            thumbnail='/api/plugin/octoprint_timelapseplus?command=thumbnail&type=frameZip&id=' + self.ID,
+            url='/api/plugin/octoprint_timelapseplus?command=download&type=frameZip&id=' + self.ID
         )
 
     def getHash(self):

@@ -12,6 +12,7 @@ class Video:
         self.PATH = path
         self.TIMESTAMP = os.path.getmtime(path)
         self.SIZE = os.path.getsize(path)
+        self.MIMETYPE = 'video/mp4'
 
         self.HASH = self.getHash()
         self.ID = self.getId()
@@ -27,7 +28,8 @@ class Video:
             file=self.FILE,
             size=self.SIZE,
             timestamp=self.TIMESTAMP,
-            thumbnail='/api/plugin/octoprint_timelapseplus?command=thumbnail&type=video&id=' + self.ID
+            thumbnail='/api/plugin/octoprint_timelapseplus?command=thumbnail&type=video&id=' + self.ID,
+            url='/api/plugin/octoprint_timelapseplus?command=download&type=video&id=' + self.ID
         )
 
     def getId(self):

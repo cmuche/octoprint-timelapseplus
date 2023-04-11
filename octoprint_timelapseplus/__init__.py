@@ -8,7 +8,7 @@ from threading import Thread
 from time import sleep
 
 from PIL import Image
-from flask import make_response
+from flask import make_response, send_file
 
 import octoprint.plugin
 from .enhancementPreset import EnhancementPreset
@@ -16,6 +16,7 @@ from .frameZip import FrameZip
 from .printJob import PrintJob
 from .renderJob import RenderJob
 from .renderJobState import RenderJobState
+from .renderPreset import RenderPreset
 from .video import Video
 
 
@@ -36,6 +37,7 @@ class TimelapsePlusPlugin(
             getData=[],
             render=['frameZipId'],
             thumbnail=['type', 'id'],
+            download=['type', 'id'],
             delete=['type', 'id']
         )
 
@@ -85,6 +87,16 @@ class TimelapsePlusPlugin(
                 response = make_response(thumb)
                 response.mimetype = 'image/jpeg'
                 return response
+        if command == 'download':
+            id = req.args['id']
+            if req.args['type'] == 'video':
+                allVideos = self.listVideos()
+                video = next(x for x in allVideos if x.ID == id)
+                return send_file(video.PATH, mimetype=video.MIMETYPE)
+            if req.args['type'] == 'frameZip':
+                allFrameZips = self.listFrameZips()
+                frameZip = next(x for x in allFrameZips if x.ID == id)
+                return send_file(frameZip.PATH, mimetype=frameZip.MIMETYPE)
 
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
