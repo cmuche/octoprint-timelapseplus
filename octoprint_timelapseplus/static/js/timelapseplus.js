@@ -2,9 +2,7 @@ $(function() {
     function TimelapsePlusViewModel(parameters) {
         let self = this;
 
-        self.loginState = parameters[0];
-        self.settings = parameters[1];
-        self.someOtherViewModel = parameters[2];
+        self.settings = parameters[0];
 
         self.isRunning = ko.observable(false);
         self.snapshotCount = ko.observable(0);
@@ -88,6 +86,7 @@ $(function() {
 
     OCTOPRINT_VIEWMODELS.push({
         construct: TimelapsePlusViewModel,
+        dependencies: ["settingsViewModel"],
         elements: ["#timelapseplus"]
     });
 });

@@ -1,0 +1,83 @@
+<form class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label">Snapshot Command</label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.octoprint_timelapseplus.snapshotCommand">
+            <span class="help-block">Action Command or @-Command that will trigger a snapshot capture</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Render Video after Print</label>
+        <div class="controls">
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.octoprint_timelapseplus.renderAfterPrint">
+            <span class="help-block">When a print has finished a render job will be started with the default settings</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Enhancement Presets</label>
+        <div class="controls">
+            <div data-bind="foreach: settings.plugins.octoprint_timelapseplus.enhancementPresets">
+                <div>
+                    <label class="sub">Name</label>
+                    <input type="text" class="input-block-level" data-bind="value: $data.name">
+                </div>
+
+                <div>
+                    <label class="sub">
+                        <input type="checkbox" class="input-block-level" data-bind="checked: $data.enhance">
+                        Enable Enhancing
+                    </label>
+                </div>
+
+                <div data-bind="visible: $data.enhance">
+                    <label class="sub">Brightness Factor</label>
+                    <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.brightness">
+                </div>
+
+                <div data-bind="visible: $data.enhance">
+                    <label class="sub">Contrast Factor</label>
+                    <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.contrast">
+                </div>
+
+                <div data-bind="visible: $data.enhance">
+                    <label class="sub">
+                        <input type="checkbox" class="input-block-level" data-bind="checked: $data.equalize">
+                        Equalize Histogram
+                    </label>
+                </div>
+
+                <div>
+                    <label class="sub">
+                        <input type="checkbox" class="input-block-level" data-bind="checked: $data.blur">
+                        Enable Blur
+                    </label>
+                </div>
+
+                <div data-bind="visible: $data.blur">
+                    <label class="sub">Blur Radius</label>
+                    <input type="number" step='1' placeholder='0' min="1" max="500" width="5" data-bind="value: $data.blurRadius">
+                </div>
+
+                <div>
+                    <label class="sub">
+                        <input type="checkbox" class="input-block-level" data-bind="checked: $data.resize">
+                        Enable Resizing
+                    </label>
+                </div>
+
+                <div data-bind="visible: $data.resize">
+                    <label class="sub">Width</label>
+                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeW">
+                </div>
+
+                <div data-bind="visible: $data.resize">
+                    <label class="sub">Height</label>
+                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>

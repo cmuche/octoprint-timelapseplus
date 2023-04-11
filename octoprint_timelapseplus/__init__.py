@@ -11,6 +11,7 @@ from PIL import Image
 from flask import make_response
 
 import octoprint.plugin
+from .enhancementPreset import EnhancementPreset
 from .frameZip import FrameZip
 from .printJob import PrintJob
 from .renderJob import RenderJob
@@ -27,7 +28,6 @@ class TimelapsePlusPlugin(
 ):
     def __init__(self):
         super().__init__()
-        self.CMD_SNAPSHOT = 'SNAPSHOT'
         self.PRINTJOB = None
         self.RENDERJOBS = []
 
@@ -107,16 +107,31 @@ class TimelapsePlusPlugin(
                 "template": "timelapseplus_tab.jinja2",
                 "div": "timelapseplus",
                 "custom_bindings": True,
+            },
+            {
+                "type": "settings",
+                "template": "timelapseplus_settings.jinja2",
+                "custom_bindings": False
             }
         ]
 
     def get_settings_defaults(self):
-        return {
-            "fooBar": 42
-        }
+        return dict(
+            snapshotCommand="SNAPSHOT",
+            renderAfterPrint=True,
+            enhancementPresets=[EnhancementPreset().getJSON()]
+        )
 
     def get_template_vars(self):
-        return dict(foobar='NOTSET')
+        epRaw = self._settings.get(["enhancementPresets"])
+        epList=list(map(lambda x: EnhancementPreset(x), epRaw))
+        epNew = list(map(lambda x: x.getJSON, epList))
+
+        return dict(
+            snapshotCommand=self._settings.get(["snapshotCommand"]),
+            renderAfterPrint=self._settings.get(["renderAfterPrint"]),
+            enhancementPresets=epNew
+        )
 
     def listFrameZips(self):
         files = glob.glob(self._settings.getBaseFolder('timelapse') + '/*.zip')
@@ -237,8 +252,6 @@ class TimelapsePlusPlugin(
 __plugin_pythoncompat__ = ">=3.7,<4"
 __plugin_name__ = "Timelapse+"
 
-
-# better-ffmpeg-progress
 
 def __plugin_load__():
     global __plugin_implementation__
