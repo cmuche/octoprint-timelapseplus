@@ -18,6 +18,11 @@
     <div class="control-group">
         <label class="control-label">Enhancement Presets</label>
         <div class="controls">
+            <button class="btn btn-mini" data-bind="click: function(){parent.addEnhancementPreset(settings.plugins.octoprint_timelapseplus.enhancementPresets)}">
+                <i class="fa fa-plus"></i>
+                Add Preset
+            </button>
+
             <div data-bind="foreach: settings.plugins.octoprint_timelapseplus.enhancementPresets">
                 <div>
                     <label class="sub">Name</label>
@@ -62,7 +67,7 @@
 
                 <div data-bind="visible: $data.blur">
                     <label class="sub">Mask</label>
-                    <img style="width:5em" data-bind="visible: $data.blurMask() != null, attr: {src: '/api/plugin/octoprint_timelapseplus?command=maskPreview&id=' + $data.blurMask()}">
+                    <img style="width:5em" data-bind="visible: $data.blurMask() != null, attr: {src: $data.blurMask() == null ? '' : '/api/plugin/octoprint_timelapseplus?command=maskPreview&id=' + $data.blurMask()}">
                     <button data-bind="click: $parent.parent.openBlurMask">Import Blur Mask</button>
                 </div>
 
@@ -83,6 +88,15 @@
                     <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
                 </div>
 
+                <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.octoprint_timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.octoprint_timelapseplus.enhancementPresets().length > 1">
+                    <i class="fa fa-eye"></i>
+                    Preview
+                </button>
+
+                <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.octoprint_timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.octoprint_timelapseplus.enhancementPresets().length > 1">
+                    <i class="fa fa-trash"></i>
+                    Remove this Preset
+                </button>
             </div>
         </div>
     </div>

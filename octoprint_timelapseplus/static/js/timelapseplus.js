@@ -41,6 +41,12 @@ $(function() {
             $("div#tlp-modal-video video").trigger("play");
         };
 
+        self.addEnhancementPreset = function(listObservable) {
+            self.api("defaultEnhancementPreset", {}, function(res) {
+                listObservable.push(ko.mapping.fromJS(res));
+            });
+        };
+
         self.onAllBound = function(allViewModels) {
             self.triggerGetData();
         };

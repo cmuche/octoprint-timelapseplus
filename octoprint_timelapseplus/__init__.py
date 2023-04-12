@@ -41,7 +41,8 @@ class TimelapsePlusPlugin(
             render=['frameZipId'],
             thumbnail=['type', 'id'],
             download=['type', 'id'],
-            delete=['type', 'id']
+            delete=['type', 'id'],
+            defaultEnhancementPreset=[]
         )
 
     def on_api_command(self, command, data):
@@ -52,6 +53,9 @@ class TimelapsePlusPlugin(
             allFrameZips = self.listFrameZips()
             frameZip = next(x for x in allFrameZips if x.ID == frameZipId)
             self.render(frameZip)
+        if command == 'defaultEnhancementPreset':
+            ep = EnhancementPreset(self)
+            return ep.getJSON()
         if command == 'delete':
             id = data['id']
             if data['type'] == 'video':
@@ -63,13 +67,6 @@ class TimelapsePlusPlugin(
                 frameZip = next(x for x in allFrameZips if x.ID == id)
                 frameZip.delete()
             self.sendClientData()
-        if command == 'createBlurMask':
-            imgBase64 = data['image']
-            imgData = base64.b64decode(re.sub('^data:image/.+;base64,', '', imgBase64))
-            image = Image.open(io.BytesIO(imgData)).convert('L')
-            outIo = io.BytesIO()
-            image.save(outIo, format='PNG')
-            return dict(result=base64.b64encode(outIo.getvalue()))
 
     @octoprint.plugin.BlueprintPlugin.route("/createBlurMask", methods=["POST"])
     def createBlurMask(self):
