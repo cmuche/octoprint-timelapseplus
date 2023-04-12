@@ -3,6 +3,7 @@ import glob
 import io
 import os
 import random
+import re
 import string
 from threading import Thread
 from time import sleep
@@ -13,6 +14,7 @@ from flask import make_response, send_file
 import octoprint.plugin
 from .enhancementPreset import EnhancementPreset
 from .frameZip import FrameZip
+from .mask import Mask
 from .printJob import PrintJob
 from .renderJob import RenderJob
 from .renderJobState import RenderJobState
@@ -25,7 +27,8 @@ class TimelapsePlusPlugin(
     octoprint.plugin.StartupPlugin,
     octoprint.plugin.AssetPlugin,
     octoprint.plugin.TemplatePlugin,
-    octoprint.plugin.SimpleApiPlugin
+    octoprint.plugin.SimpleApiPlugin,
+    octoprint.plugin.BlueprintPlugin
 ):
     def __init__(self):
         super().__init__()
@@ -59,11 +62,36 @@ class TimelapsePlusPlugin(
                 allFrameZips = self.listFrameZips()
                 frameZip = next(x for x in allFrameZips if x.ID == id)
                 frameZip.delete()
-
             self.sendClientData()
+        if command == 'createBlurMask':
+            imgBase64 = data['image']
+            imgData = base64.b64decode(re.sub('^data:image/.+;base64,', '', imgBase64))
+            image = Image.open(io.BytesIO(imgData)).convert('L')
+            outIo = io.BytesIO()
+            image.save(outIo, format='PNG')
+            return dict(result=base64.b64encode(outIo.getvalue()))
+
+    @octoprint.plugin.BlueprintPlugin.route("/createBlurMask", methods=["POST"])
+    def createBlurMask(self):
+        import flask
+        imgBase64 = flask.request.get_json()['image']
+        imgData = base64.b64decode(re.sub('^data:image/.+;base64,', '', imgBase64))
+        image = Image.open(io.BytesIO(imgData)).convert('L')
+
+        mask = Mask(self, self._data_folder, None)
+        image.save(mask.PATH)
+
+        return dict(id=mask.ID)
 
     def on_api_get(self, req):
         command = req.args['command']
+        if command == 'maskPreview':
+            mask = Mask(self, self._data_folder, req.args['id'])
+            img = Image.open(mask.PATH)
+            thumb = self.makeThumbnail(img)
+            response = make_response(thumb)
+            response.mimetype = 'image/jpeg'
+            return response
         if command == 'thumbnail':
             id = req.args['id']
             if req.args['type'] == 'video':
@@ -131,13 +159,13 @@ class TimelapsePlusPlugin(
         return dict(
             snapshotCommand="SNAPSHOT",
             renderAfterPrint=True,
-            enhancementPresets=[EnhancementPreset().getJSON()],
+            enhancementPresets=[EnhancementPreset(self).getJSON()],
             renderPresets=[RenderPreset().getJSON()]
         )
 
     def get_template_vars(self):
         epRaw = self._settings.get(["enhancementPresets"])
-        epList = list(map(lambda x: EnhancementPreset(x), epRaw))
+        epList = list(map(lambda x: EnhancementPreset(self, x), epRaw))
         epNew = list(map(lambda x: x.getJSON, epList))
 
         rpRaw = self._settings.get(["renderPresets"])
@@ -266,6 +294,10 @@ class TimelapsePlusPlugin(
         if script_name == 'beforePrinterDisconnected':
             self.printFinished()
 
+    def increase_upload_bodysize(self, current_max_body_sizes, *args, **kwargs):
+        # set a maximum body size of 50 MB for plugin archive uploads
+        return [("POST", '/createBlurMask', 50 * 1024 * 1024)]
+
 
 __plugin_pythoncompat__ = ">=3.7,<4"
 __plugin_name__ = "Timelapse+"
@@ -277,6 +309,7 @@ def __plugin_load__():
 
     global __plugin_hooks__
     __plugin_hooks__ = {
+        "octoprint.server.http.bodysize": __plugin_implementation__.increase_upload_bodysize,
         "octoprint.comm.protocol.atcommand.sending": __plugin_implementation__.atCommand,
         "octoprint.comm.protocol.scripts": __plugin_implementation__.onScript,
         "octoprint.comm.protocol.action": __plugin_implementation__.atAction

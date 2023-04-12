@@ -3,6 +3,7 @@ $(function() {
         let self = this;
 
         self.settings = parameters[0];
+        self.settings.parent = self;
 
         self.isRunning = ko.observable(false);
         self.snapshotCount = ko.observable(0);
@@ -10,6 +11,24 @@ $(function() {
         self.frameCollections = ko.observable([]);
         self.videos = ko.observable([]);
         self.renderJobs = ko.observable([]);
+
+        self.openBlurMask = function(preset) {
+            console.log("openBlurMask");
+            $("<input type=\"file\">").on("change", function() {
+                let f = this.files[0];
+
+                let reader = new FileReader();
+                reader.readAsDataURL(f);
+                reader.onload = function() {
+                    self.apiBlueprint("createBlurMask", {image: reader.result}, function(res) {
+                        preset.blurMask(res.id);
+                    });
+                };
+                reader.onerror = function(error) {
+                    console.log("Error", error);
+                };
+            }).click();
+        };
 
         self.openVideo = function(video) {
             $("div#tlp-modal-video").modal({
@@ -52,7 +71,7 @@ $(function() {
             return {title: job.state, showProgress: false};
         };
 
-        self.api = function(command, payload = {}) {
+        self.api = function(command, payload = {}, successFn = null) {
             payload["command"] = command;
 
             $.ajax({
@@ -62,10 +81,32 @@ $(function() {
                 data: JSON.stringify(payload),
                 contentType: "application/json; charset=UTF-8",
                 success: function(response) {
-
+                    if (successFn !== null)
+                        successFn(response);
                 },
                 complete: function() {
+                },
+                error: function(err) {
+                    console.log("Error", err);
+                }
+            });
+        };
 
+        self.apiBlueprint = function(command, payload = {}, successFn = null) {
+            $.ajax({
+                url: "./plugin/octoprint_timelapseplus/" + command,
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify(payload),
+                contentType: "application/json; charset=UTF-8",
+                success: function(response) {
+                    if (successFn !== null)
+                        successFn(response);
+                },
+                complete: function() {
+                },
+                error: function(err) {
+                    console.log("Error", err);
                 }
             });
         };

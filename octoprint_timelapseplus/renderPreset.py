@@ -12,13 +12,13 @@ class RenderPreset:
             self.setJSON(d)
 
     def setJSON(self, d):
-        self.NAME = d['name']
-        self.FRAMERATE = int(d['framerate'])
-        self.INTERPOLATE = d['interpolate']
-        self.INTERPOLATE_FRAMERATE = int(d['interpolateFramerate'])
-        self.INTERPOLATE_MODE = d['interpolateMode']
-        self.INTERPOLATE_ESTIMATION = d['interpolateEstimation']
-        self.INTERPOLATE_COMPENSATION = d['interpolateCompensation']
+        if 'name' in d: self.NAME = d['name']
+        if 'framerate' in d: self.FRAMERATE = int(d['framerate'])
+        if 'interpolate' in d: self.INTERPOLATE = d['interpolate']
+        if 'interpolateFramerate' in d: self.INTERPOLATE_FRAMERATE = int(d['interpolateFramerate'])
+        if 'interpolateMode' in d:  self.INTERPOLATE_MODE = d['interpolateMode']
+        if 'interpolateEstimation' in d:  self.INTERPOLATE_ESTIMATION = d['interpolateEstimation']
+        if 'interpolateCompensation' in d: self.INTERPOLATE_COMPENSATION = d['interpolateCompensation']
 
     def getJSON(self):
         return dict(

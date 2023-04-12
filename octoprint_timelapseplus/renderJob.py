@@ -1,4 +1,6 @@
+import base64
 import glob
+import io
 import os
 import re
 import shutil
@@ -35,7 +37,7 @@ class RenderJob:
 
         if self.ENHANCEMENT_PRESET is None:
             epRaw = self._settings.get(["enhancementPresets"])
-            epList = list(map(lambda x: EnhancementPreset(x), epRaw))
+            epList = list(map(lambda x: EnhancementPreset(parent, x), epRaw))
             self.ENHANCEMENT_PRESET = epList[0]
 
         if self.RENDER_PRESET is None:
@@ -86,10 +88,15 @@ class RenderJob:
             return
 
         self.setState(RenderJobState.BLURRING)
-        imgMask = Image.open(self.FOLDER + '/../../mask.png').convert("L")
+
+        imgMask = Image.open(preset.BLUR_MASK.PATH).convert('L')
         frameFiles = glob.glob(self.FOLDER + '/*.jpg')
         for i, frame in enumerate(frameFiles):
             img = Image.open(frame)
+
+            if img.width != imgMask.width or img.height != imgMask.height:
+                imgMask = imgMask.resize((img.width, img.height), resample=Image.LANCZOS)
+
             imgBlurred = img.filter(ImageFilter.GaussianBlur(preset.BLUR_RADIUS))
             imgOut = Image.composite(imgBlurred, img, imgMask)
             imgOut.save(frame, quality=100, subsampling=0)
