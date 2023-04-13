@@ -152,7 +152,7 @@ class RenderJob:
         else:
             cmd += ['-r', str(preset.FRAMERATE)]
 
-        cmd += ['-c:v', 'libx264', '-movflags', 'faststart', 'out.mp4']
+        cmd += ['-c:v', 'libx264', '-movflags', '+faststart', 'out.mp4']
         cmd += ["-hide_banner", "-loglevel", 'verbose', "-progress", "pipe:1", "-nostats"]
         process = subprocess.Popen(cmd, cwd=self.FOLDER, stdout=subprocess.PIPE)
 
