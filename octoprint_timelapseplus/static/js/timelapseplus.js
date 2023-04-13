@@ -119,8 +119,8 @@ $(function() {
 
         self.getCaptureModeName = function(mode) {
             let modeMap = {
-                'COMMAND': 'Command',
-                'TIMED': 'Timer',
+                "COMMAND": "Command",
+                "TIMED": "Timer"
             };
 
             if (mode in modeMap)
