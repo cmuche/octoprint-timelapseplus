@@ -23,7 +23,7 @@
 
             <button class="btn btn-mini" data-bind="click: function(){parent.addEnhancementPreset(settings.plugins.octoprint_timelapseplus.enhancementPresets)}">
                 <i class="fa fa-plus"></i>
-                Add Preset
+                Add Enhancement Preset
             </button>
 
             <div data-bind="foreach: settings.plugins.octoprint_timelapseplus.enhancementPresets">
@@ -34,8 +34,8 @@
                     </div>
 
                     <div>
-                        <label class="sub">
-                            <input type="checkbox" class="input-block-level" data-bind="checked: $data.enhance">
+                        <label class="sub checkbox">
+                            <input type="checkbox" data-bind="checked: $data.enhance">
                             Enable Enhancing
                         </label>
                     </div>
@@ -51,15 +51,15 @@
                     </div>
 
                     <div data-bind="visible: $data.enhance">
-                        <label class="sub">
-                            <input type="checkbox" class="input-block-level" data-bind="checked: $data.equalize">
+                        <label class="sub checkbox">
+                            <input type="checkbox" data-bind="checked: $data.equalize">
                             Equalize Histogram
                         </label>
                     </div>
 
                     <div>
-                        <label class="sub">
-                            <input type="checkbox" class="input-block-level" data-bind="checked: $data.blur">
+                        <label class="sub checkbox">
+                            <input type="checkbox" data-bind="checked: $data.blur">
                             Enable Blur
                         </label>
                     </div>
@@ -76,8 +76,8 @@
                     </div>
 
                     <div>
-                        <label class="sub">
-                            <input type="checkbox" class="input-block-level" data-bind="checked: $data.resize">
+                        <label class="sub checkbox">
+                            <input type="checkbox" data-bind="checked: $data.resize">
                             Enable Resizing
                         </label>
                     </div>
@@ -130,8 +130,8 @@
                     </div>
 
                     <div>
-                        <label class="sub">
-                            <input type="checkbox" class="input-block-level" data-bind="checked: $data.interpolate">
+                        <label class="sub checkbox">
+                            <input type="checkbox" data-bind="checked: $data.interpolate">
                             Enable Frame Interpolation
                         </label>
                     </div>
@@ -143,17 +143,47 @@
 
                     <div data-bind="visible: $data.interpolate">
                         <label class="sub">Mode</label>
-                        <input type="text" data-bind="value: $data.interpolateMode">
+                        <select data-bind="value: $data.interpolateMode">
+                            <option value="blend">Blending Frames</option>
+                            <option value="mci">Motion Compensated</option>
+                        </select>
                     </div>
 
-                    <div data-bind="visible: $data.interpolate">
-                        <label class="sub">Estimation</label>
-                        <input type="text" data-bind="value: $data.interpolateEstimation">
+                    <div class="alert alert-block" style="margin-top: 1em" data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
+                        <strong>Note: </strong>
+                        <a href="http://underpop.online.fr/f/ffmpeg/help/minterpolate.htm.gz" target="_blank">Click here</a>
+                        for more information about the interpolation parameters. If you are not sure, you can just keep the default settings.
                     </div>
 
-                    <div data-bind="visible: $data.interpolate">
-                        <label class="sub">Compensation</label>
-                        <input type="text" data-bind="value: $data.interpolateCompensation">
+                    <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
+                        <label class="sub">Motion Estimation</label>
+                        <select data-bind="value: $data.interpolateEstimation">
+                            <option value="bidir">Bidirectional</option>
+                            <option value="bilar">Bilateral</option>
+                        </select>
+                    </div>
+
+                    <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
+                        <label class="sub">Motion Search Algorithm</label>
+                        <select data-bind="value: $data.interpolateAlgorithm">
+                            <option value="esa">Exhaustive</option>
+                            <option value="tss">Three step</option>
+                            <option value="tdls">Two dimensional logarithmic</option>
+                            <option value="ntss">New three step</option>
+                            <option value="fss">Four step</option>
+                            <option value="ds">Diamond</option>
+                            <option value="hexbs">Hexagon-based</option>
+                            <option value="epzs">Enhanced predictive zonal</option>
+                            <option value="umh">Uneven multi-hexagon</option>
+                        </select>
+                    </div>
+
+                    <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
+                        <label class="sub">Motion Compensation</label>
+                        <select data-bind="value: $data.interpolateCompensation">
+                            <option value="obmc">Normal</option>
+                            <option value="aobmc">Adaptive</option>
+                        </select>
                     </div>
 
                     <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.octoprint_timelapseplus.renderPresets.remove($data)}, enable: $parent.settings.plugins.octoprint_timelapseplus.renderPresets().length > 1">

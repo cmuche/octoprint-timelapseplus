@@ -145,7 +145,8 @@ class RenderJob:
             miStr = 'minterpolate=fps=' + str(preset.INTERPOLATE_FRAMERATE) + \
                     ':mi_mode=' + preset.INTERPOLATE_MODE + \
                     ':me_mode=' + preset.INTERPOLATE_ESTIMATION + \
-                    ':mc_mode=' + preset.INTERPOLATE_COMPENSATION
+                    ':mc_mode=' + preset.INTERPOLATE_COMPENSATION + \
+                    ':me=' + preset.INTERPOLATE_ALGORITHM
             cmd += ['-vf', miStr]
             totalFrames *= (preset.INTERPOLATE_FRAMERATE / preset.FRAMERATE)
         else:

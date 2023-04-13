@@ -33,6 +33,15 @@
     margin-right: 1em;
 }
 
+
+#timelapseplus-settings .preset > div {
+    margin-top: 1em;
+}
+
+#timelapseplus-settings .preset > div:first-child {
+    margin-top: 0;
+}
+
 #timelapseplus-settings .preset .btn-mini {
     margin-top: 1em;
 }

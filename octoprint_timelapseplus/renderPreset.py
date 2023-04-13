@@ -4,9 +4,10 @@ class RenderPreset:
         self.FRAMERATE = 30
         self.INTERPOLATE = False
         self.INTERPOLATE_FRAMERATE = 60
-        self.INTERPOLATE_MODE = 'mci'  # 'blend'
+        self.INTERPOLATE_MODE = 'blend'
         self.INTERPOLATE_ESTIMATION = 'bidir'
         self.INTERPOLATE_COMPENSATION = 'aobmc'
+        self.INTERPOLATE_ALGORITHM = 'epzs'
 
         if d is not None:
             self.setJSON(d)
@@ -19,6 +20,7 @@ class RenderPreset:
         if 'interpolateMode' in d:  self.INTERPOLATE_MODE = d['interpolateMode']
         if 'interpolateEstimation' in d:  self.INTERPOLATE_ESTIMATION = d['interpolateEstimation']
         if 'interpolateCompensation' in d: self.INTERPOLATE_COMPENSATION = d['interpolateCompensation']
+        if 'interpolateAlgorithm' in d: self.INTERPOLATE_ALGORITHM = d['interpolateAlgorithm']
 
     def getJSON(self):
         return dict(
@@ -28,5 +30,6 @@ class RenderPreset:
             interpolateFramerate=self.INTERPOLATE_FRAMERATE,
             interpolateMode=self.INTERPOLATE_MODE,
             interpolateEstimation=self.INTERPOLATE_ESTIMATION,
-            interpolateCompensation=self.INTERPOLATE_COMPENSATION
+            interpolateCompensation=self.INTERPOLATE_COMPENSATION,
+            interpolateAlgorithm=self.INTERPOLATE_ALGORITHM
         )
