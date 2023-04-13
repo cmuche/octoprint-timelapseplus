@@ -133,7 +133,7 @@ class RenderJob:
     def createVideo(self, preset):
         self.setState(RenderJobState.RENDERING)
 
-        timePart = datetime.now().strftime("%d%m%Y%H%M%S")
+        timePart = datetime.now().strftime("%Y%d%m%H%M%S")
         videoFile = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.mp4'
         totalFrames = self.FRAMEZIP.FRAMES
 
