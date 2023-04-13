@@ -47,6 +47,12 @@ $(function() {
             });
         };
 
+        self.addRenderPreset = function(listObservable) {
+            self.api("defaultRenderPreset", {}, function(res) {
+                listObservable.push(ko.mapping.fromJS(res));
+            });
+        };
+
         self.onAllBound = function(allViewModels) {
             self.triggerGetData();
         };

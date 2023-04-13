@@ -1,4 +1,4 @@
-<form class="form-horizontal">
+<form class="form-horizontal" id="timelapseplus-settings">
     <div class="control-group">
         <label class="control-label">Snapshot Command</label>
         <div class="controls">
@@ -18,85 +18,149 @@
     <div class="control-group">
         <label class="control-label">Enhancement Presets</label>
         <div class="controls">
+
+            <div class="help-block">Enhancement presets define how the frames should be otimizied and filtered before the final video is rendered</div>
+
             <button class="btn btn-mini" data-bind="click: function(){parent.addEnhancementPreset(settings.plugins.octoprint_timelapseplus.enhancementPresets)}">
                 <i class="fa fa-plus"></i>
                 Add Preset
             </button>
 
             <div data-bind="foreach: settings.plugins.octoprint_timelapseplus.enhancementPresets">
-                <div>
-                    <label class="sub">Name</label>
-                    <input type="text" class="input-block-level" data-bind="value: $data.name">
+                <div class="preset">
+                    <div>
+                        <label class="sub">Name</label>
+                        <input type="text" class="input-block-level" data-bind="value: $data.name">
+                    </div>
+
+                    <div>
+                        <label class="sub">
+                            <input type="checkbox" class="input-block-level" data-bind="checked: $data.enhance">
+                            Enable Enhancing
+                        </label>
+                    </div>
+
+                    <div data-bind="visible: $data.enhance">
+                        <label class="sub">Brightness Factor</label>
+                        <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.brightness">
+                    </div>
+
+                    <div data-bind="visible: $data.enhance">
+                        <label class="sub">Contrast Factor</label>
+                        <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.contrast">
+                    </div>
+
+                    <div data-bind="visible: $data.enhance">
+                        <label class="sub">
+                            <input type="checkbox" class="input-block-level" data-bind="checked: $data.equalize">
+                            Equalize Histogram
+                        </label>
+                    </div>
+
+                    <div>
+                        <label class="sub">
+                            <input type="checkbox" class="input-block-level" data-bind="checked: $data.blur">
+                            Enable Blur
+                        </label>
+                    </div>
+
+                    <div data-bind="visible: $data.blur">
+                        <label class="sub">Blur Radius</label>
+                        <input type="number" step='1' placeholder='0' min="1" max="500" width="5" data-bind="value: $data.blurRadius">
+                    </div>
+
+                    <div data-bind="visible: $data.blur">
+                        <label class="sub">Mask</label>
+                        <img style="width:5em" data-bind="visible: $data.blurMask() != null, attr: {src: $data.blurMask() == null ? '' : '/api/plugin/octoprint_timelapseplus?command=maskPreview&id=' + $data.blurMask()}">
+                        <button data-bind="click: $parent.parent.openBlurMask">Import Blur Mask</button>
+                    </div>
+
+                    <div>
+                        <label class="sub">
+                            <input type="checkbox" class="input-block-level" data-bind="checked: $data.resize">
+                            Enable Resizing
+                        </label>
+                    </div>
+
+                    <div data-bind="visible: $data.resize">
+                        <label class="sub">Width</label>
+                        <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeW">
+                    </div>
+
+                    <div data-bind="visible: $data.resize">
+                        <label class="sub">Height</label>
+                        <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
+                    </div>
+
+                    <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.octoprint_timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.octoprint_timelapseplus.enhancementPresets().length > 1">
+                        <i class="fa fa-eye"></i>
+                        Preview
+                    </button>
+
+                    <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.octoprint_timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.octoprint_timelapseplus.enhancementPresets().length > 1">
+                        <i class="fa fa-trash"></i>
+                        Remove this Preset
+                    </button>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <div>
-                    <label class="sub">
-                        <input type="checkbox" class="input-block-level" data-bind="checked: $data.enhance">
-                        Enable Enhancing
-                    </label>
+    <div class="control-group">
+        <label class="control-label">Render Presets</label>
+        <div class="controls">
+
+            <div class="help-block">Render presets define how the actual video should be rendered</div>
+
+            <button class="btn btn-mini" data-bind="click: function(){parent.addRenderPreset(settings.plugins.octoprint_timelapseplus.renderPresets)}">
+                <i class="fa fa-plus"></i>
+                Add Render Preset
+            </button>
+
+            <div data-bind="foreach: settings.plugins.octoprint_timelapseplus.renderPresets">
+                <div class="preset">
+                    <div>
+                        <label class="sub">Name</label>
+                        <input type="text" class="input-block-level" data-bind="value: $data.name">
+                    </div>
+
+                    <div>
+                        <label class="sub">Framerate</label>
+                        <input type="number" step='1' min="1" max="120" width="5" data-bind="value: $data.framerate">
+                    </div>
+
+                    <div>
+                        <label class="sub">
+                            <input type="checkbox" class="input-block-level" data-bind="checked: $data.interpolate">
+                            Enable Frame Interpolation
+                        </label>
+                    </div>
+
+                    <div data-bind="visible: $data.interpolate">
+                        <label class="sub">Interpolated Framerate</label>
+                        <input type="number" step='1' min="1" max="120" width="5" data-bind="value: $data.interpolateFramerate">
+                    </div>
+
+                    <div data-bind="visible: $data.interpolate">
+                        <label class="sub">Mode</label>
+                        <input type="text" data-bind="value: $data.interpolateMode">
+                    </div>
+
+                    <div data-bind="visible: $data.interpolate">
+                        <label class="sub">Estimation</label>
+                        <input type="text" data-bind="value: $data.interpolateEstimation">
+                    </div>
+
+                    <div data-bind="visible: $data.interpolate">
+                        <label class="sub">Compensation</label>
+                        <input type="text" data-bind="value: $data.interpolateCompensation">
+                    </div>
+
+                    <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.octoprint_timelapseplus.renderPresets.remove($data)}, enable: $parent.settings.plugins.octoprint_timelapseplus.renderPresets().length > 1">
+                        <i class="fa fa-trash"></i>
+                        Remove this Preset
+                    </button>
                 </div>
-
-                <div data-bind="visible: $data.enhance">
-                    <label class="sub">Brightness Factor</label>
-                    <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.brightness">
-                </div>
-
-                <div data-bind="visible: $data.enhance">
-                    <label class="sub">Contrast Factor</label>
-                    <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.contrast">
-                </div>
-
-                <div data-bind="visible: $data.enhance">
-                    <label class="sub">
-                        <input type="checkbox" class="input-block-level" data-bind="checked: $data.equalize">
-                        Equalize Histogram
-                    </label>
-                </div>
-
-                <div>
-                    <label class="sub">
-                        <input type="checkbox" class="input-block-level" data-bind="checked: $data.blur">
-                        Enable Blur
-                    </label>
-                </div>
-
-                <div data-bind="visible: $data.blur">
-                    <label class="sub">Blur Radius</label>
-                    <input type="number" step='1' placeholder='0' min="1" max="500" width="5" data-bind="value: $data.blurRadius">
-                </div>
-
-                <div data-bind="visible: $data.blur">
-                    <label class="sub">Mask</label>
-                    <img style="width:5em" data-bind="visible: $data.blurMask() != null, attr: {src: $data.blurMask() == null ? '' : '/api/plugin/octoprint_timelapseplus?command=maskPreview&id=' + $data.blurMask()}">
-                    <button data-bind="click: $parent.parent.openBlurMask">Import Blur Mask</button>
-                </div>
-
-                <div>
-                    <label class="sub">
-                        <input type="checkbox" class="input-block-level" data-bind="checked: $data.resize">
-                        Enable Resizing
-                    </label>
-                </div>
-
-                <div data-bind="visible: $data.resize">
-                    <label class="sub">Width</label>
-                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeW">
-                </div>
-
-                <div data-bind="visible: $data.resize">
-                    <label class="sub">Height</label>
-                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
-                </div>
-
-                <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.octoprint_timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.octoprint_timelapseplus.enhancementPresets().length > 1">
-                    <i class="fa fa-eye"></i>
-                    Preview
-                </button>
-
-                <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.octoprint_timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.octoprint_timelapseplus.enhancementPresets().length > 1">
-                    <i class="fa fa-trash"></i>
-                    Remove this Preset
-                </button>
             </div>
         </div>
     </div>

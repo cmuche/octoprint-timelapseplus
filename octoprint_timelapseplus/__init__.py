@@ -42,7 +42,8 @@ class TimelapsePlusPlugin(
             thumbnail=['type', 'id'],
             download=['type', 'id'],
             delete=['type', 'id'],
-            defaultEnhancementPreset=[]
+            defaultEnhancementPreset=[],
+            defaultRenderPreset=[]
         )
 
     def on_api_command(self, command, data):
@@ -55,6 +56,9 @@ class TimelapsePlusPlugin(
             self.render(frameZip)
         if command == 'defaultEnhancementPreset':
             ep = EnhancementPreset(self)
+            return ep.getJSON()
+        if command == 'defaultRenderPreset':
+            ep = RenderPreset()
             return ep.getJSON()
         if command == 'delete':
             id = data['id']
