@@ -26,6 +26,58 @@
     margin: 0;
 }
 
+#timelapseplus .file {
+    margin-top: 1em;
+    display: flex;
+    align-items: start;
+}
+
+#timelapseplus .file:first-child {
+    margin-top: 0;
+}
+
+#timelapseplus .file .preview {
+    margin-right: 1em;
+}
+
+#timelapseplus .file .preview img {
+    max-width: 8em;
+    min-width: 8em;
+    margin-top: 0.3em;
+    box-shadow: 0.1em 0.1em 0.25em rgba(0, 0, 0, 0.4);
+}
+
+#timelapseplus .file .info {
+    flex-grow: 1;
+    margin-right: 1em;
+}
+
+#timelapseplus .file .info .name {
+    font-style: italic;
+}
+
+#timelapseplus .file .info .properties {
+    display: flex;
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+}
+
+#timelapseplus .file .info .properties > div {
+    margin-left: 0.5em;
+}
+
+#timelapseplus .file .info .properties > div:first-child {
+    margin-left: 0;
+}
+
+#timelapseplus .file .info .properties > div > span:first-child {
+    font-weight: bold;
+}
+
+#timelapseplus .file .buttons {
+
+}
+
 #timelapseplus-settings .preset {
     border: 1px dashed;
     padding: 1em;
