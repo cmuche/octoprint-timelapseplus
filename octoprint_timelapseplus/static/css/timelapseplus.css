@@ -25,3 +25,14 @@
 #timelapseplus .renderjob .info .progress {
     margin: 0;
 }
+
+#timelapseplus-settings .preset {
+    border: 1px dashed;
+    padding: 1em;
+    margin-top: 1em;
+    margin-right: 1em;
+}
+
+#timelapseplus-settings .preset .btn-mini {
+    margin-top: 1em;
+}
