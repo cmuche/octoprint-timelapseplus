@@ -197,6 +197,7 @@ class TimelapsePlusPlugin(
     def sendClientData(self):
         data = dict(
             isRunning=False,
+            currentFileSize = 0,
             snapshotCommand=self._settings.get(["snapshotCommand"]),
             snapshotCount=0,
             previewImage=None,
@@ -207,6 +208,7 @@ class TimelapsePlusPlugin(
 
         if self.PRINTJOB is not None:
             if len(self.PRINTJOB.FRAMES) > 0:
+                data['currentFileSize'] = self.PRINTJOB.getTotalFileSize()
                 with open(self.PRINTJOB.FRAMES[-1], 'rb') as image_file:
                     imgBytes = image_file.read()
                     img = Image.open(io.BytesIO(imgBytes))

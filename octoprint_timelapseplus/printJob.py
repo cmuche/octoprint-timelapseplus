@@ -34,6 +34,12 @@ class PrintJob:
         self.CAPTURE_THREADS = []
         self.RUNNING = True
 
+    def getTotalFileSize(self):
+        t = 0
+        for file in self.FRAMES:
+            t += os.path.getsize(file)
+        return t
+
     def finish(self):
         self._logger.info('Finished Print!')
         self.RUNNING = False

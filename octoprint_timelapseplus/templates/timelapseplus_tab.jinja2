@@ -9,6 +9,10 @@
                         <span data-bind="text: snapshotCount"></span>
                     </div>
                     <div>
+                        <span>Total File Size:</span>
+                        <span data-bind="text: humanFileSize(currentFileSize())"></span>
+                    </div>
+                    <div>
                         <span>Snapshot Command:</span>
                         <span data-bind="text: snapshotCommand"></span>
                     </div>
