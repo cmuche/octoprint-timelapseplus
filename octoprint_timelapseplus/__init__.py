@@ -170,11 +170,11 @@ class TimelapsePlusPlugin(
     def get_template_vars(self):
         epRaw = self._settings.get(["enhancementPresets"])
         epList = list(map(lambda x: EnhancementPreset(self, x), epRaw))
-        epNew = list(map(lambda x: x.getJSON, epList))
+        epNew = list(map(lambda x: x.getJSON(), epList))
 
         rpRaw = self._settings.get(["renderPresets"])
         rpList = list(map(lambda x: RenderPreset(x), rpRaw))
-        rpNew = list(map(lambda x: x.getJSON, rpList))
+        rpNew = list(map(lambda x: x.getJSON(), rpList))
 
         return dict(
             captureMode=self._settings.get(["captureMode"]),
