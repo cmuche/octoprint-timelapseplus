@@ -64,7 +64,7 @@ class PrintJob:
         with zipfile.ZipFile(zipFileName, 'w') as zipMe:
             for file in finishedFiles:
                 baseName = os.path.basename(file)
-                zipMe.write(file, baseName, compress_type=zipfile.ZIP_DEFLATED)
+                zipMe.write(file, baseName, compress_type=zipfile.ZIP_STORED)
 
         shutil.rmtree(self.FOLDER)
         return zipFileName
