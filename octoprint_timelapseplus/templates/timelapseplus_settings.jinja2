@@ -1,9 +1,28 @@
 <form class="form-horizontal" id="timelapseplus-settings">
+
     <div class="control-group">
+        <label class="control-label">Capture Mode</label>
+        <div class="controls">
+            <select data-bind="value: settings.plugins.octoprint_timelapseplus.captureMode">
+                <option value="COMMAND">Command</option>
+                <option value="TIMED">Timer</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="control-group" data-bind="visible: settings.plugins.octoprint_timelapseplus.captureMode() == 'COMMAND'">
         <label class="control-label">Snapshot Command</label>
         <div class="controls">
-            <input type="text" class="input-block-level" data-bind="value: settings.plugins.octoprint_timelapseplus.snapshotCommand">
+            <input type="text" data-bind="value: settings.plugins.octoprint_timelapseplus.snapshotCommand">
             <span class="help-block">Action Command or @-Command that will trigger a snapshot capture</span>
+        </div>
+    </div>
+
+    <div class="control-group" data-bind="visible: settings.plugins.octoprint_timelapseplus.captureMode() == 'TIMED'">
+        <label class="control-label">Timer Interval</label>
+        <div class="controls">
+            <input type="number" step='1' min="1" max="600" width="5" data-bind="value: settings.plugins.octoprint_timelapseplus.captureTimerInterval">
+            <span class="help-block">Capture Timer Interval in seconds</span>
         </div>
     </div>
 

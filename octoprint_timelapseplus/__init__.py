@@ -12,6 +12,7 @@ from PIL import Image
 from flask import make_response, send_file
 
 import octoprint.plugin
+from .captureMode import CaptureMode
 from .enhancementPreset import EnhancementPreset
 from .frameZip import FrameZip
 from .mask import Mask
@@ -158,6 +159,8 @@ class TimelapsePlusPlugin(
 
     def get_settings_defaults(self):
         return dict(
+            captureMode=CaptureMode.COMMAND.name,
+            captureTimerInterval=10,
             snapshotCommand="SNAPSHOT",
             renderAfterPrint=True,
             enhancementPresets=[EnhancementPreset(self).getJSON()],
@@ -174,6 +177,8 @@ class TimelapsePlusPlugin(
         rpNew = list(map(lambda x: x.getJSON, rpList))
 
         return dict(
+            captureMode=self._settings.get(["captureMode"]),
+            captureTimerInterval=self._settings.get(["captureTimerInterval"]),
             snapshotCommand=self._settings.get(["snapshotCommand"]),
             renderAfterPrint=self._settings.get(["renderAfterPrint"]),
             enhancementPresets=epNew,
@@ -197,7 +202,9 @@ class TimelapsePlusPlugin(
     def sendClientData(self):
         data = dict(
             isRunning=False,
-            currentFileSize = 0,
+            currentFileSize=0,
+            captureMode=None,
+            captureTimerInterval=0,
             snapshotCommand=self._settings.get(["snapshotCommand"]),
             snapshotCount=0,
             previewImage=None,
@@ -207,8 +214,11 @@ class TimelapsePlusPlugin(
         )
 
         if self.PRINTJOB is not None:
+            data['currentFileSize'] = self.PRINTJOB.getTotalFileSize()
+            data['captureMode'] = self.PRINTJOB.CAPTURE_MODE.name
+            data['captureTimerInterval'] = self.PRINTJOB.CAPTURE_TIMER_INTERVAL
+
             if len(self.PRINTJOB.FRAMES) > 0:
-                data['currentFileSize'] = self.PRINTJOB.getTotalFileSize()
                 with open(self.PRINTJOB.FRAMES[-1], 'rb') as image_file:
                     imgBytes = image_file.read()
                     img = Image.open(io.BytesIO(imgBytes))
@@ -249,6 +259,9 @@ class TimelapsePlusPlugin(
         if command != self._settings.get(["snapshotCommand"]):
             return
 
+        if self.PRINTJOB.CAPTURE_MODE != CaptureMode.COMMAND:
+            return
+
         self.PRINTJOB.doSnapshot()
 
     def atAction(self, comm, line, action, *args, **kwargs):
@@ -256,6 +269,9 @@ class TimelapsePlusPlugin(
             return
 
         if action != self._settings.get(["snapshotCommand"]):
+            return
+
+        if self.PRINTJOB.CAPTURE_MODE != CaptureMode.COMMAND:
             return
 
         self.PRINTJOB.doSnapshot()

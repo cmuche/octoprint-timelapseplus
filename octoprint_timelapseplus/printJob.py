@@ -6,6 +6,9 @@ from threading import Thread
 
 import requests
 
+from .captureMode import CaptureMode
+from octoprint.util import ResettableTimer
+
 
 class PrintJob:
     def __init__(self, baseName, parent, logger, settings, dataFolder):
@@ -20,6 +23,9 @@ class PrintJob:
         self.FRAMES = []
         self.CAPTURE_THREADS = []
         self.RUNNING = False
+        self.CAPTURE_MODE = CaptureMode[self._settings.get(["captureMode"])]
+        self.CAPTURE_TIMER_INTERVAL = int(self._settings.get(["captureTimerInterval"]))
+        self.CAPTURE_TIMER = ResettableTimer(self.CAPTURE_TIMER_INTERVAL, self.captureTimerTriggered)
 
         self.createFolder(dataFolder)
 
@@ -28,11 +34,27 @@ class PrintJob:
         self.FOLDER = dataFolder + '/capture/' + self.FOLDER_NAME
         os.makedirs(self.FOLDER, exist_ok=True)
 
+    def captureTimerTriggered(self):
+        self._logger.info('TIMER TRIGGERED')
+
+        if not self.RUNNING:
+            self.CAPTURE_TIMER.cancel()
+            return
+
+        self.doSnapshot()
+
+        self.CAPTURE_TIMER.cancel()
+        self.CAPTURE_TIMER = ResettableTimer(self.CAPTURE_TIMER_INTERVAL, self.captureTimerTriggered)
+        self.CAPTURE_TIMER.start()
+
     def start(self):
         self.CURRENT_INDEX = 1
         self.FRAMES = []
         self.CAPTURE_THREADS = []
         self.RUNNING = True
+
+        if self.CAPTURE_MODE == CaptureMode.TIMED:
+            self.CAPTURE_TIMER.start()
 
     def getTotalFileSize(self):
         t = 0
@@ -42,6 +64,11 @@ class PrintJob:
 
     def finish(self):
         self._logger.info('Finished Print!')
+
+        if self.CAPTURE_MODE == CaptureMode.TIMED:
+            self.CAPTURE_TIMER.cancel()
+            self.doSnapshot()
+
         self.RUNNING = False
 
         # Wait for all Capture Threads to finish

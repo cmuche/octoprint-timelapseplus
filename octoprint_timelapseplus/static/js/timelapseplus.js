@@ -6,6 +6,8 @@ $(function() {
         self.settings.parent = self;
 
         self.snapshotCommand = ko.observable();
+        self.captureMode = ko.observable();
+        self.captureTimerInterval = ko.observable();
         self.isRunning = ko.observable(false);
         self.currentFileSize = ko.observable(0);
         self.snapshotCount = ko.observable(0);
@@ -115,6 +117,18 @@ $(function() {
             return {title: job.state, showProgress: false};
         };
 
+        self.getCaptureModeName = function(mode) {
+            let modeMap = {
+                'COMMAND': 'Command',
+                'TIMED': 'Timer',
+            };
+
+            if (mode in modeMap)
+                return modeMap[mode];
+
+            return mode;
+        };
+
         self.api = function(command, payload = {}, successFn = null) {
             payload["command"] = command;
 
@@ -174,6 +188,8 @@ $(function() {
             console.log(data);
 
             self.snapshotCommand(data.snapshotCommand);
+            self.captureMode(data.captureMode);
+            self.captureTimerInterval(data.captureTimerInterval);
             self.isRunning(data.isRunning);
             self.currentFileSize(data.currentFileSize);
             self.snapshotCount(data.snapshotCount);

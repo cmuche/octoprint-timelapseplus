@@ -1,6 +1,4 @@
-import base64
 import glob
-import io
 import os
 import re
 import shutil
@@ -12,8 +10,8 @@ from threading import Thread
 from PIL import Image, ImageFilter, ImageOps, ImageEnhance
 
 from .enhancementPreset import EnhancementPreset
-from .renderPreset import RenderPreset
 from .renderJobState import RenderJobState
+from .renderPreset import RenderPreset
 
 
 class RenderJob:

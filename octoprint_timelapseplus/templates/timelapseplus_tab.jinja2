@@ -13,7 +13,18 @@
                         <span data-bind="text: humanFileSize(currentFileSize())"></span>
                     </div>
                     <div>
-                        <span>Snapshot Command:</span>
+                        <span>Capture Mode:</span>
+                        <span data-bind="text: getCaptureModeName(captureMode())"></span>
+                    </div>
+                    <div data-bind="visible: captureMode() == 'TIMED'">
+                        <span>Timer Interval:</span>
+                        <span>
+                            <span data-bind="text: captureTimerInterval"></span>
+                            <span>seconds</span>
+                        </span>
+                    </div>
+                    <div data-bind="visible: captureMode() == 'COMMAND'">
+                        <span>SnapshotCommand:</span>
                         <span data-bind="text: snapshotCommand"></span>
                     </div>
                 </div>
