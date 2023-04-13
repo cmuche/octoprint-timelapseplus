@@ -110,12 +110,11 @@
 }
 
 #timelapseplus-settings .preset {
-    border: 1px dashed rgba(127, 127, 127, 0.5);
+    border: 1px dashed rgba(127, 127, 127, 0.75);
     padding: 1em;
     margin-top: 1em;
     margin-right: 1em;
 }
-
 
 #timelapseplus-settings .preset > div {
     margin-top: 1em;
