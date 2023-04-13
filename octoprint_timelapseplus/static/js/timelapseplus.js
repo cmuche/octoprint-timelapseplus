@@ -5,6 +5,7 @@ $(function() {
         self.settings = parameters[0];
         self.settings.parent = self;
 
+        self.snapshotCommand = ko.observable();
         self.isRunning = ko.observable(false);
         self.snapshotCount = ko.observable(0);
         self.previewImage = ko.observable(null);
@@ -171,9 +172,10 @@ $(function() {
 
             console.log(data);
 
+            self.snapshotCommand(data.snapshotCommand);
             self.isRunning(data.isRunning);
             self.snapshotCount(data.snapshotCount);
-            self.previewImage("data:image/jpeg;base64," + data.previewImage);
+            self.previewImage(data.previewImage == null ? null : "data:image/jpeg;base64," + data.previewImage);
             self.frameCollections(data.frameCollections);
             self.videos(data.videos);
             self.renderJobs(data.renderJobs);

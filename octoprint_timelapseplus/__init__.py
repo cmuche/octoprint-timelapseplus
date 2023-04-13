@@ -197,6 +197,7 @@ class TimelapsePlusPlugin(
     def sendClientData(self):
         data = dict(
             isRunning=False,
+            snapshotCommand=self._settings.get(["snapshotCommand"]),
             snapshotCount=0,
             previewImage=None,
             frameCollections=list(map(lambda x: x.getJSON(), self.listFrameZips())),

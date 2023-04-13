@@ -1,13 +1,24 @@
 <div id="timelapseplus">
     <div data-bind="visible: isRunning">
         <h1>Current Print Job</h1>
-        <div class="tlp-currentPrint">
+        <div class="current">
             <div class="info">
-                <div>Frames Captured:</div>
-                <div data-bind="text: snapshotCount"></div>
+                <div class="properties">
+                    <div>
+                        <span>Frames captured:</span>
+                        <span data-bind="text: snapshotCount"></span>
+                    </div>
+                    <div>
+                        <span>Snapshot Command:</span>
+                        <span data-bind="text: snapshotCommand"></span>
+                    </div>
+                </div>
             </div>
             <div class="preview">
-                <img data-bind="attr: {src: previewImage}" />
+                <img data-bind="visible: previewImage() !== null ,attr: {src: previewImage}" />
+                <div class="no-img" data-bind="visible: previewImage() === null">
+                    No Snapshots yet
+                </div>
             </div>
         </div>
     </div>
@@ -20,7 +31,7 @@
                     <i data-bind="class: $parent.getRenderJobVm($data).icon"></i>
                 </div>
                 <div class="info">
-                    <div class="file" data-bind="text: $data.name"></div>
+                    <div class="name" data-bind="text: $data.name"></div>
                     <div class="state" data-bind="text: $parent.getRenderJobVm($data).title"></div>
                     <div class="progress progress-text-centered" data-bind="visible: $parent.getRenderJobVm($data).showProgress">
                         <div class="bar" data-bind="style: {width: $data.progress + '%'}"></div>
@@ -93,7 +104,7 @@
             <div class="buttons">
                 <div class="btn-group action-buttons">
                     <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: $parent.startRender"><i class="fas fa-file-video"></i></div>
-            <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('frameZip', $data.id) }"><i class="fas fa-trash"></i></div>
+                    <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('frameZip', $data.id) }"><i class="fas fa-trash"></i></div>
                 </div>
             </div>
         </div>
