@@ -118,7 +118,7 @@
             </div>
             <div class="buttons">
                 <div class="btn-group action-buttons">
-                    <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: $parent.startRender"><i class="fas fa-file-video"></i></div>
+                    <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: $parent.openRenderDialog"><i class="fas fa-file-video"></i></div>
                     <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('frameZip', $data.id) }"><i class="fas fa-trash"></i></div>
                 </div>
             </div>
@@ -128,6 +128,28 @@
 </div>
 
 <!------------------------------------------------------->
+
+<div id="tlp-modal-render" class="modal hide fade">
+    <div class="modal-header">
+        <a href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+        <h3>Start Render Job</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row-fluid">
+            <h4>Enhancement</h4>
+            <select data-bind="options: presetsEnhancement, optionsText: function(x) { return x.name }, value: selectedPresetEnhancement">
+            </select>
+
+            <h4>Render Settings</h4>
+            <select data-bind="options: presetsRender, optionsText: function(x) { return x.name }, value: selectedPresetRender">
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn pull-left" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary pull-right" data-bind="click: startRender">Start</button>
+    </div>
+</div>
 
 <div id="tlp-modal-video" class="modal hide fade">
     <div class="modal-header">
@@ -144,6 +166,6 @@
 
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary pull-right" href="#" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary pull-right" data-dismiss="modal">Close</button>
     </div>
 </div>

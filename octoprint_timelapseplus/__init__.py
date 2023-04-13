@@ -39,12 +39,13 @@ class TimelapsePlusPlugin(
     def get_api_commands(self):
         return dict(
             getData=[],
-            render=['frameZipId'],
+            render=['frameZipId', 'presetEnhancement', 'presetRender'],
             thumbnail=['type', 'id'],
             download=['type', 'id'],
             delete=['type', 'id'],
             defaultEnhancementPreset=[],
-            defaultRenderPreset=[]
+            defaultRenderPreset=[],
+            listPresets=[]
         )
 
     def on_api_command(self, command, data):
@@ -54,7 +55,20 @@ class TimelapsePlusPlugin(
             frameZipId = data['frameZipId']
             allFrameZips = self.listFrameZips()
             frameZip = next(x for x in allFrameZips if x.ID == frameZipId)
-            self.render(frameZip)
+
+            enhancementPreset = EnhancementPreset(self, data['presetEnhancement'])
+            renderPreset = RenderPreset(data['presetRender'])
+
+            self.render(frameZip, enhancementPreset, renderPreset)
+        if command == 'listPresets':
+            epRaw = self._settings.get(["enhancementPresets"])
+            epList = list(map(lambda x: EnhancementPreset(self, x), epRaw))
+            epNew = list(map(lambda x: x.getJSON(), epList))
+
+            rpRaw = self._settings.get(["renderPresets"])
+            rpList = list(map(lambda x: RenderPreset(x), rpRaw))
+            rpNew = list(map(lambda x: x.getJSON(), rpList))
+            return dict(enhancementPresets=epNew, renderPresets=rpNew)
         if command == 'defaultEnhancementPreset':
             ep = EnhancementPreset(self)
             return ep.getJSON()
@@ -276,8 +290,8 @@ class TimelapsePlusPlugin(
 
         self.PRINTJOB.doSnapshot()
 
-    def render(self, frameZip):
-        job = RenderJob(frameZip, self, self._logger, self._settings, self._data_folder)
+    def render(self, frameZip, enhancementPreset=None, renderPreset=None):
+        job = RenderJob(frameZip, self, self._logger, self._settings, self._data_folder, enhancementPreset, renderPreset)
         job.start()
         self.RENDERJOBS.append(job)
 

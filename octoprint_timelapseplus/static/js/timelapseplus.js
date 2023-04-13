@@ -16,6 +16,12 @@ $(function() {
         self.videos = ko.observable([]);
         self.renderJobs = ko.observable([]);
 
+        self.presetsEnhancement = ko.observable([]);
+        self.presetsRender = ko.observable([]);
+        self.selectedPresetEnhancement = ko.observable();
+        self.selectedPresetRender = ko.observable();
+        self.selectedFrameZip = ko.observable();
+
         // https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
         self.humanFileSize = function(size) {
             let i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
@@ -177,8 +183,27 @@ $(function() {
             self.api("getData");
         };
 
-        self.startRender = function(data) {
-            self.api("render", {frameZipId: data.id});
+        self.openRenderDialog = function(frameZip) {
+            self.api("listPresets", {}, function(data) {
+                self.selectedFrameZip(frameZip);
+                self.presetsEnhancement(data.enhancementPresets);
+                self.presetsRender(data.renderPresets);
+                self.selectedPresetEnhancement(data.enhancementPresets[0]);
+                self.selectedPresetRender(data.renderPresets[0]);
+
+                $("div#tlp-modal-render").modal({
+                    width: "auto"
+                });
+            });
+        };
+
+        self.startRender = function() {
+            self.api("render", {
+                frameZipId: self.selectedFrameZip().id,
+                presetEnhancement: self.selectedPresetEnhancement(),
+                presetRender: self.selectedPresetRender()
+            });
+            $("div#tlp-modal-render").modal('hide');
         };
 
         self.onDataUpdaterPluginMessage = function(plugin, data) {
