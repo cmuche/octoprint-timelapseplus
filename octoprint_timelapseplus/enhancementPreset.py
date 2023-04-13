@@ -53,6 +53,6 @@ class EnhancementPreset:
         )
 
         if self.BLUR_MASK is not None:
-            d['blurMask'] = self.BLUR_MASK.toJSON()
+            d['blurMask'] = self.BLUR_MASK.ID
 
         return d
