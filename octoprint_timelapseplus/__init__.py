@@ -21,11 +21,13 @@ from .renderJob import RenderJob
 from .renderJobState import RenderJobState
 from .renderPreset import RenderPreset
 from .video import Video
+from octoprint.events import Events
 
 
 class TimelapsePlusPlugin(
     octoprint.plugin.SettingsPlugin,
     octoprint.plugin.StartupPlugin,
+    octoprint.plugin.EventHandlerPlugin,
     octoprint.plugin.AssetPlugin,
     octoprint.plugin.TemplatePlugin,
     octoprint.plugin.SimpleApiPlugin,
@@ -306,7 +308,7 @@ class TimelapsePlusPlugin(
         self.PRINTJOB.start()
         self.sendClientData()
 
-    def printFinished(self):
+    def printFinished(self, success):
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
 
@@ -318,15 +320,27 @@ class TimelapsePlusPlugin(
                 frameZip = FrameZip(zipFileName, self, self._logger)
                 self.render(frameZip)
 
-    def onScript(self, comm, script_type, script_name, *args, **kwargs):
-        if script_name == 'beforePrintStarted':
+    def on_event(self, event, payload):
+        if event == Events.PRINT_STARTED:
             self.printStarted()
-        if script_name == 'afterPrintCancelled':
-            self.printFinished()
-        if script_name == 'afterPrintDone':
-            self.printFinished()
-        if script_name == 'beforePrinterDisconnected':
-            self.printFinished()
+        if event == Events.PRINT_DONE:
+            self.printFinished(True)
+        if event == Events.DISCONNECTING:
+            self.printFinished(False)
+        if event == Events.DISCONNECTED:
+            self.printFinished(False)
+        if event == Events.PRINT_PAUSED:
+            print("Print Paused")
+        if event == Events.PRINT_RESUMED:
+            print("Print Resumed.")
+        if event == Events.PRINT_FAILED:
+            self.printFinished(False)
+        if event == Events.PRINT_CANCELLING:
+            self.printFinished(False)
+        if event == Events.PRINT_CANCELLED:
+            self.printFinished(False)
+        if event == Events.PRINTER_RESET:
+            self.printFinished(False)
 
     def increaseBodyUploadSize(self, current_max_body_sizes, *args, **kwargs):
         return [("POST", '/createBlurMask', 50 * 1024 * 1024)]
@@ -344,6 +358,5 @@ def __plugin_load__():
     __plugin_hooks__ = {
         "octoprint.server.http.bodysize": __plugin_implementation__.increaseBodyUploadSize,
         "octoprint.comm.protocol.atcommand.sending": __plugin_implementation__.atCommand,
-        "octoprint.comm.protocol.scripts": __plugin_implementation__.onScript,
         "octoprint.comm.protocol.action": __plugin_implementation__.atAction
     }
