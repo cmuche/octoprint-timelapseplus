@@ -328,8 +328,7 @@ class TimelapsePlusPlugin(
         if script_name == 'beforePrinterDisconnected':
             self.printFinished()
 
-    def increase_upload_bodysize(self, current_max_body_sizes, *args, **kwargs):
-        # set a maximum body size of 50 MB for plugin archive uploads
+    def increaseBodyUploadSize(self, current_max_body_sizes, *args, **kwargs):
         return [("POST", '/createBlurMask', 50 * 1024 * 1024)]
 
 
@@ -343,7 +342,7 @@ def __plugin_load__():
 
     global __plugin_hooks__
     __plugin_hooks__ = {
-        "octoprint.server.http.bodysize": __plugin_implementation__.increase_upload_bodysize,
+        "octoprint.server.http.bodysize": __plugin_implementation__.increaseBodyUploadSize,
         "octoprint.comm.protocol.atcommand.sending": __plugin_implementation__.atCommand,
         "octoprint.comm.protocol.scripts": __plugin_implementation__.onScript,
         "octoprint.comm.protocol.action": __plugin_implementation__.atAction
