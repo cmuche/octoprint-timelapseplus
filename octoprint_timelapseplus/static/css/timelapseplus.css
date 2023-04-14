@@ -109,7 +109,7 @@
 
 }
 
-#tlp-modal-render .startRender h4 {
+#tlp-modal-render .startRender h4:first-child {
     margin-top: 0;
 }
 
