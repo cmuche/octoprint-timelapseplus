@@ -136,13 +136,22 @@
     </div>
     <div class="modal-body">
         <div class="row-fluid">
-            <h4>Enhancement</h4>
-            <select data-bind="options: presetsEnhancement, optionsText: function(x) { return x.name }, value: selectedPresetEnhancement">
-            </select>
+            <div class="startRender">
+                <div class="presets">
+                    <h4>Enhancement</h4>
+                    <select data-bind="options: presetsEnhancement, optionsText: function(x) { return x.name }, value: selectedPresetEnhancement">
+                    </select>
 
-            <h4>Render Settings</h4>
-            <select data-bind="options: presetsRender, optionsText: function(x) { return x.name }, value: selectedPresetRender">
-            </select>
+                    <h4>Render Settings</h4>
+                    <select data-bind="options: presetsRender, optionsText: function(x) { return x.name }, value: selectedPresetRender">
+                    </select>
+                </div>
+                <div class="preview">
+                    <h4>Enhancement Preview</h4>
+                    <img data-bind="attr: {src: '/api/plugin/octoprint_timelapseplus?command=enhancementPreview&frameZipId=' + selectedFrameZip().id + '&presetIndex=' + presetsEnhancement().indexOf(selectedPresetEnhancement()) }" />
+                </div>
+            </div>
+
         </div>
     </div>
     <div class="modal-footer">

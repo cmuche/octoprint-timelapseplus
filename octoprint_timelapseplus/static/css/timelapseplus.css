@@ -109,6 +109,24 @@
 
 }
 
+#tlp-modal-render .startRender h4 {
+    margin-top: 0;
+}
+
+#tlp-modal-render .startRender {
+    display: flex;
+}
+
+#tlp-modal-render .startRender .presets {
+    margin-right: 2em;
+}
+
+#tlp-modal-render .startRender .preview img {
+    min-width: 30em;
+    max-width: 30em;
+    box-shadow: 0.2em 0.2em 0.35em rgba(0, 0, 0, 0.5);
+}
+
 #timelapseplus-settings .preset {
     border: 1px dashed rgba(127, 127, 127, 0.75);
     padding: 1em;

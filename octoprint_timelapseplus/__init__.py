@@ -47,7 +47,8 @@ class TimelapsePlusPlugin(
             delete=['type', 'id'],
             defaultEnhancementPreset=[],
             defaultRenderPreset=[],
-            listPresets=[]
+            listPresets=[],
+            enhancementPreview=['frameZipId', 'presetIndex']
         )
 
     def on_api_command(self, command, data):
@@ -143,6 +144,23 @@ class TimelapsePlusPlugin(
                 allFrameZips = self.listFrameZips()
                 frameZip = next(x for x in allFrameZips if x.ID == id)
                 return send_file(frameZip.PATH, mimetype=frameZip.MIMETYPE)
+        if command == 'enhancementPreview':
+            allFrameZips = self.listFrameZips()
+            frameZip = next(x for x in allFrameZips if x.ID == req.args['frameZipId'])
+            frame = frameZip.getThumbnail()
+            img = Image.open(io.BytesIO(frame))
+
+            epRaw = self._settings.get(["enhancementPresets"])
+            epList = list(map(lambda x: EnhancementPreset(self, x), epRaw))
+            preset = epList[int(req.args['presetIndex'])]
+
+            img = preset.applyEnhance(img)
+            img = preset.applyBlur(img)
+
+            res = self.makeThumbnail(img, (500, 500))
+            response = make_response(res)
+            response.mimetype = 'image/jpeg'
+            return response
 
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
