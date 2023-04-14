@@ -53,7 +53,6 @@ $(function() {
         };
 
         self.openBlurMask = function(preset) {
-            console.log("openBlurMask");
             $("<input type=\"file\">").on("change", function() {
                 let f = this.files[0];
 
@@ -203,7 +202,7 @@ $(function() {
                 presetEnhancement: self.selectedPresetEnhancement(),
                 presetRender: self.selectedPresetRender()
             });
-            $("div#tlp-modal-render").modal('hide');
+            $("div#tlp-modal-render").modal("hide");
         };
 
         self.onDataUpdaterPluginMessage = function(plugin, data) {
