@@ -23,6 +23,7 @@ class PrintJob:
         self.FRAMES = []
         self.CAPTURE_THREADS = []
         self.RUNNING = False
+        self.PAUSED = False
         self.CAPTURE_MODE = CaptureMode[self._settings.get(["captureMode"])]
         self.CAPTURE_TIMER_INTERVAL = int(self._settings.get(["captureTimerInterval"]))
         self.CAPTURE_TIMER = ResettableTimer(self.CAPTURE_TIMER_INTERVAL, self.captureTimerTriggered)
@@ -97,6 +98,9 @@ class PrintJob:
         return zipFileName
 
     def doSnapshot(self):
+        if self.PAUSED:
+            return
+
         thread = Thread(target=self.doSnapshotInner)
         self.CAPTURE_THREADS.append(thread)
         thread.start()

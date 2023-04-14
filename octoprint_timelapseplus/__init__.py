@@ -320,8 +320,21 @@ class TimelapsePlusPlugin(
                 frameZip = FrameZip(zipFileName, self, self._logger)
                 self.render(frameZip)
 
+    def printPaused(self):
+        if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
+            return
+
+        self.PRINTJOB.PAUSED = True
+
+    def printResumed(self):
+        if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
+            return
+
+        self.PRINTJOB.PAUSED = False
+
     def on_event(self, event, payload):
         if event == Events.PRINT_STARTED:
+            self.printFinished(False)
             self.printStarted()
         if event == Events.PRINT_DONE:
             self.printFinished(True)
@@ -330,9 +343,9 @@ class TimelapsePlusPlugin(
         if event == Events.DISCONNECTED:
             self.printFinished(False)
         if event == Events.PRINT_PAUSED:
-            print("Print Paused")
+            self.printPaused()
         if event == Events.PRINT_RESUMED:
-            print("Print Resumed.")
+            self.printResumed()
         if event == Events.PRINT_FAILED:
             self.printFinished(False)
         if event == Events.PRINT_CANCELLING:
