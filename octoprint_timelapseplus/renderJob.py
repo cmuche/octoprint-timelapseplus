@@ -7,7 +7,7 @@ import zipfile
 from datetime import datetime
 from threading import Thread
 
-from PIL import Image, ImageFilter, ImageOps, ImageEnhance
+from PIL import Image
 
 from .enhancementPreset import EnhancementPreset
 from .renderJobState import RenderJobState
@@ -87,17 +87,11 @@ class RenderJob:
 
         self.setState(RenderJobState.BLURRING)
 
-        imgMask = Image.open(preset.BLUR_MASK.PATH).convert('L')
         frameFiles = glob.glob(self.FOLDER + '/*.jpg')
         for i, frame in enumerate(frameFiles):
             img = Image.open(frame)
-
-            if img.width != imgMask.width or img.height != imgMask.height:
-                imgMask = imgMask.resize((img.width, img.height), resample=Image.LANCZOS)
-
-            imgBlurred = img.filter(ImageFilter.GaussianBlur(preset.BLUR_RADIUS))
-            imgOut = Image.composite(imgBlurred, img, imgMask)
-            imgOut.save(frame, quality=100, subsampling=0)
+            imgRes = preset.applyBlur(img)
+            imgRes.save(frame, quality=100, subsampling=0)
             self.setProgress((i + 1) / len(frameFiles))
 
     def enhanceImages(self, preset):
@@ -108,12 +102,8 @@ class RenderJob:
         frameFiles = glob.glob(self.FOLDER + '/*.jpg')
         for i, frame in enumerate(frameFiles):
             img = Image.open(frame)
-            img = ImageEnhance.Brightness(img).enhance(preset.BRIGHTNESS)
-            img = ImageEnhance.Contrast(img).enhance(preset.CONTRAST)
-            if preset.EQUALIZE:
-                img = ImageOps.equalize(img)
-            # img = ImageOps.autocontrast(img)
-            img.save(frame, quality=100, subsampling=0)
+            imgRes = preset.applyEnhance(img)
+            imgRes.save(frame, quality=100, subsampling=0)
             self.setProgress((i + 1) / len(frameFiles))
 
     def resizeImages(self, preset):
@@ -124,8 +114,8 @@ class RenderJob:
         frameFiles = glob.glob(self.FOLDER + '/*.jpg')
         for i, frame in enumerate(frameFiles):
             img = Image.open(frame)
-            img = img.resize((preset.RESIZE_W, preset.RESIZE_H), resample=Image.LANCZOS)
-            img.save(frame, quality=100, subsampling=0)
+            imgRes = preset.applyResize(img)
+            imgRes.save(frame, quality=100, subsampling=0)
             self.setProgress((i + 1) / len(frameFiles))
 
     def createVideo(self, preset):

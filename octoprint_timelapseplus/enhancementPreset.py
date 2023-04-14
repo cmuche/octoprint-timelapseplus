@@ -1,5 +1,5 @@
 from .mask import Mask
-
+from PIL import Image, ImageFilter, ImageOps, ImageEnhance
 
 class EnhancementPreset:
     def __init__(self, parent, d=None):
@@ -17,6 +17,28 @@ class EnhancementPreset:
 
         if d is not None:
             self.setJSON(parent, d)
+
+    def applyBlur(self, img):
+        imgMask = Image.open(self.BLUR_MASK.PATH).convert('L')
+        if img.width != imgMask.width or img.height != imgMask.height:
+            imgMask = imgMask.resize((img.width, img.height), resample=Image.LANCZOS)
+
+        imgBlurred = img.filter(ImageFilter.GaussianBlur(self.BLUR_RADIUS))
+        imgOut = Image.composite(imgBlurred, img, imgMask)
+        return imgOut
+
+
+    def applyEnhance(self, img):
+        img = ImageEnhance.Brightness(img).enhance(self.BRIGHTNESS)
+        img = ImageEnhance.Contrast(img).enhance(self.CONTRAST)
+        if self.EQUALIZE:
+            img = ImageOps.equalize(img)
+        # img = ImageOps.autocontrast(img)
+        return img
+
+    def applyResize(self, img):
+        img = img.resize((self.RESIZE_W, self.RESIZE_H), resample=Image.LANCZOS)
+        return img
 
     def setJSON(self, parent, d):
         if 'name' in d: self.NAME = d['name']
