@@ -12,6 +12,15 @@ class RenderPreset:
         if d is not None:
             self.setJSON(d)
 
+    def calculateVideoLength(self, frameZip):
+        return frameZip.FRAMES / self.FRAMERATE;
+
+    def calculateTotalFrames(self, frameZip):
+        totalFrames = frameZip.FRAMES
+        if(self.INTERPOLATE):
+            totalFrames *= (self.INTERPOLATE_FRAMERATE / self.FRAMERATE)
+        return totalFrames
+
     def setJSON(self, d):
         if 'name' in d: self.NAME = d['name']
         if 'framerate' in d: self.FRAMERATE = int(d['framerate'])

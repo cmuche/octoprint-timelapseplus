@@ -123,7 +123,7 @@ class RenderJob:
 
         timePart = datetime.now().strftime("%Y%d%m%H%M%S")
         videoFile = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.mp4'
-        totalFrames = self.FRAMEZIP.FRAMES
+        totalFrames = preset.calculateTotalFrames(self.FRAMEZIP)
 
         cmd = [self._settings.global_get(["webcam", "ffmpeg"]), '-y']
         cmd += ['-framerate', str(preset.FRAMERATE), '-i', '%05d.jpg']
@@ -136,7 +136,6 @@ class RenderJob:
                     ':mc_mode=' + preset.INTERPOLATE_COMPENSATION + \
                     ':me=' + preset.INTERPOLATE_ALGORITHM
             cmd += ['-vf', miStr]
-            totalFrames *= (preset.INTERPOLATE_FRAMERATE / preset.FRAMERATE)
         else:
             cmd += ['-r', str(preset.FRAMERATE)]
 
