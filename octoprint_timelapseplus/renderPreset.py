@@ -1,3 +1,6 @@
+from math import ceil
+
+
 class RenderPreset:
     def __init__(self, d=None):
         self.NAME = 'Default Render Preset'
@@ -19,7 +22,7 @@ class RenderPreset:
         totalFrames = frameZip.FRAMES
         if(self.INTERPOLATE):
             totalFrames *= (self.INTERPOLATE_FRAMERATE / self.FRAMERATE)
-        return totalFrames
+        return ceil(totalFrames)
 
     def setJSON(self, d):
         if 'name' in d: self.NAME = d['name']
