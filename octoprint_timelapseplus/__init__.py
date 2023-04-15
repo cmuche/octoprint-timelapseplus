@@ -12,15 +12,15 @@ from PIL import Image
 from flask import make_response, send_file
 
 import octoprint.plugin
-from .captureMode import CaptureMode
-from .enhancementPreset import EnhancementPreset
-from .frameZip import FrameZip
-from .mask import Mask
-from .printJob import PrintJob
-from .renderJob import RenderJob
-from .renderJobState import RenderJobState
-from .renderPreset import RenderPreset
-from .video import Video
+from .model.captureMode import CaptureMode
+from .model.enhancementPreset import EnhancementPreset
+from .model.frameZip import FrameZip
+from .model.mask import Mask
+from .model.printJob import PrintJob
+from .model.renderJob import RenderJob
+from .model.renderJobState import RenderJobState
+from .model.renderPreset import RenderPreset
+from .model.video import Video
 from octoprint.events import Events
 
 
