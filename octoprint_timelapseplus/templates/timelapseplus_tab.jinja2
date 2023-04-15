@@ -148,7 +148,7 @@
                 </div>
                 <div class="preview">
                     <h4>Enhancement Preview</h4>
-                    <img data-bind="attr: {src: selectedFrameZip() != null && selectedPresetEnhancement() != null ? '/api/plugin/octoprint_timelapseplus?command=enhancementPreview&frameZipId=' + selectedFrameZip().id + '&presetIndex=' + presetsEnhancement().indexOf(selectedPresetEnhancement()) : '' }" />
+                    <img data-bind="attr: {src: selectedFrameZip() != null && selectedPresetEnhancement() != null ? '/plugin/octoprint_timelapseplus/enhancementPreview?frameZipId=' + selectedFrameZip().id + '&presetIndex=' + presetsEnhancement().indexOf(selectedPresetEnhancement()) : '' }" />
                 </div>
             </div>
 

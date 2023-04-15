@@ -59,7 +59,7 @@ $(function() {
                 let reader = new FileReader();
                 reader.readAsDataURL(f);
                 reader.onload = function() {
-                    self.apiBlueprint("createBlurMask", {image: reader.result}, function(res) {
+                    self.api("createBlurMask", {image: reader.result}, function(res) {
                         preset.blurMask(res.id);
                     });
                 };
@@ -135,27 +135,6 @@ $(function() {
         };
 
         self.api = function(command, payload = {}, successFn = null) {
-            payload["command"] = command;
-
-            $.ajax({
-                url: API_BASEURL + "plugin/octoprint_timelapseplus",
-                type: "POST",
-                dataType: "json",
-                data: JSON.stringify(payload),
-                contentType: "application/json; charset=UTF-8",
-                success: function(response) {
-                    if (successFn !== null)
-                        successFn(response);
-                },
-                complete: function() {
-                },
-                error: function(err) {
-                    console.log("Error", err);
-                }
-            });
-        };
-
-        self.apiBlueprint = function(command, payload = {}, successFn = null) {
             $.ajax({
                 url: "./plugin/octoprint_timelapseplus/" + command,
                 type: "POST",

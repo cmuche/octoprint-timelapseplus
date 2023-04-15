@@ -3,15 +3,16 @@ import glob
 import io
 import os
 import random
-import re
 import string
 from threading import Thread
 from time import sleep
 
 from PIL import Image
-from flask import make_response, send_file
+from flask import make_response, send_file, Response
 
 import octoprint.plugin
+from octoprint.events import Events
+from .apiController import ApiController
 from .model.captureMode import CaptureMode
 from .model.enhancementPreset import EnhancementPreset
 from .model.frameZip import FrameZip
@@ -21,7 +22,6 @@ from .model.renderJob import RenderJob
 from .model.renderJobState import RenderJobState
 from .model.renderPreset import RenderPreset
 from .model.video import Video
-from octoprint.events import Events
 
 
 class TimelapsePlusPlugin(
@@ -30,7 +30,6 @@ class TimelapsePlusPlugin(
     octoprint.plugin.EventHandlerPlugin,
     octoprint.plugin.AssetPlugin,
     octoprint.plugin.TemplatePlugin,
-    octoprint.plugin.SimpleApiPlugin,
     octoprint.plugin.BlueprintPlugin
 ):
     def __init__(self):
@@ -38,129 +37,138 @@ class TimelapsePlusPlugin(
         self.PRINTJOB = None
         self.RENDERJOBS = []
 
-    def get_api_commands(self):
-        return dict(
-            getData=[],
-            render=['frameZipId', 'presetEnhancement', 'presetRender'],
-            thumbnail=['type', 'id'],
-            download=['type', 'id'],
-            delete=['type', 'id'],
-            defaultEnhancementPreset=[],
-            defaultRenderPreset=[],
-            listPresets=[],
-            enhancementPreview=['frameZipId', 'presetIndex']
-        )
-
-    def on_api_command(self, command, data):
-        if command == 'getData':
-            self.sendClientData()
-        if command == 'render':
-            frameZipId = data['frameZipId']
-            allFrameZips = self.listFrameZips()
-            frameZip = next(x for x in allFrameZips if x.ID == frameZipId)
-
-            enhancementPreset = EnhancementPreset(self, data['presetEnhancement'])
-            renderPreset = RenderPreset(data['presetRender'])
-
-            self.render(frameZip, enhancementPreset, renderPreset)
-        if command == 'listPresets':
-            epRaw = self._settings.get(["enhancementPresets"])
-            epList = list(map(lambda x: EnhancementPreset(self, x), epRaw))
-            epNew = list(map(lambda x: x.getJSON(), epList))
-
-            rpRaw = self._settings.get(["renderPresets"])
-            rpList = list(map(lambda x: RenderPreset(x), rpRaw))
-            rpNew = list(map(lambda x: x.getJSON(), rpList))
-            return dict(enhancementPresets=epNew, renderPresets=rpNew)
-        if command == 'defaultEnhancementPreset':
-            ep = EnhancementPreset(self)
-            return ep.getJSON()
-        if command == 'defaultRenderPreset':
-            ep = RenderPreset()
-            return ep.getJSON()
-        if command == 'delete':
-            id = data['id']
-            if data['type'] == 'video':
-                allVideos = self.listVideos()
-                video = next(x for x in allVideos if x.ID == id)
-                video.delete()
-            if data['type'] == 'frameZip':
-                allFrameZips = self.listFrameZips()
-                frameZip = next(x for x in allFrameZips if x.ID == id)
-                frameZip.delete()
-            self.sendClientData()
-
     @octoprint.plugin.BlueprintPlugin.route("/createBlurMask", methods=["POST"])
-    def createBlurMask(self):
+    def apiCreateBlurMask(self):
+        return self.API_CONTROLLER.createBlurMask()
+
+    @octoprint.plugin.BlueprintPlugin.route("/getData", methods=["POST"])
+    def apiGetData(self):
+        self.sendClientData()
+        return Response()
+
+    @octoprint.plugin.BlueprintPlugin.route("/defaultEnhancementPreset", methods=["POST"])
+    def apiDefaultEnhancementPreset(self):
+        ep = EnhancementPreset(self)
+        return ep.getJSON()
+
+    @octoprint.plugin.BlueprintPlugin.route("/defaultRenderPreset", methods=["POST"])
+    def apiDefaultRenderPreset(self):
+        ep = RenderPreset()
+        return ep.getJSON()
+
+    @octoprint.plugin.BlueprintPlugin.route("/delete", methods=["POST"])
+    def apiDelete(self):
         import flask
-        imgBase64 = flask.request.get_json()['image']
-        imgData = base64.b64decode(re.sub('^data:image/.+;base64,', '', imgBase64))
-        image = Image.open(io.BytesIO(imgData)).convert('L')
+        data = flask.request.get_json()
+        id = data['id']
+        if data['type'] == 'video':
+            allVideos = self.listVideos()
+            video = next(x for x in allVideos if x.ID == id)
+            video.delete()
+        if data['type'] == 'frameZip':
+            allFrameZips = self.listFrameZips()
+            frameZip = next(x for x in allFrameZips if x.ID == id)
+            frameZip.delete()
+        self.sendClientData()
+        return Response()
 
-        mask = Mask(self, self._data_folder, None)
-        image.save(mask.PATH)
+    @octoprint.plugin.BlueprintPlugin.route("/listPresets", methods=["POST"])
+    def apiListPresets(self):
+        epRaw = self._settings.get(["enhancementPresets"])
+        epList = list(map(lambda x: EnhancementPreset(self, x), epRaw))
+        epNew = list(map(lambda x: x.getJSON(), epList))
 
-        return dict(id=mask.ID)
+        rpRaw = self._settings.get(["renderPresets"])
+        rpList = list(map(lambda x: RenderPreset(x), rpRaw))
+        rpNew = list(map(lambda x: x.getJSON(), rpList))
+        return dict(enhancementPresets=epNew, renderPresets=rpNew)
 
-    def on_api_get(self, req):
-        command = req.args['command']
-        if command == 'maskPreview':
-            mask = Mask(self, self._data_folder, req.args['id'])
-            img = Image.open(mask.PATH)
+    @octoprint.plugin.BlueprintPlugin.route("/render", methods=["POST"])
+    def apiRender(self):
+        import flask
+        data = flask.request.get_json()
+        frameZipId = data['frameZipId']
+        allFrameZips = self.listFrameZips()
+        frameZip = next(x for x in allFrameZips if x.ID == frameZipId)
+
+        enhancementPreset = EnhancementPreset(self, data['presetEnhancement'])
+        renderPreset = RenderPreset(data['presetRender'])
+
+        self.render(frameZip, enhancementPreset, renderPreset)
+        return Response()
+
+    @octoprint.plugin.BlueprintPlugin.route("/thumbnail", methods=["GET"])
+    def apiThumbnail(self):
+        import flask
+        data = flask.request.args
+        id = data['id']
+        if data['type'] == 'video':
+            allVideos = self.listVideos()
+            video = next(x for x in allVideos if x.ID == id)
+
+            img = Image.open(video.THUMBNAIL)
             thumb = self.makeThumbnail(img)
+
             response = make_response(thumb)
             response.mimetype = 'image/jpeg'
             return response
-        if command == 'thumbnail':
-            id = req.args['id']
-            if req.args['type'] == 'video':
-                allVideos = self.listVideos()
-                video = next(x for x in allVideos if x.ID == id)
-
-                img = Image.open(video.THUMBNAIL)
-                thumb = self.makeThumbnail(img)
-
-                response = make_response(thumb)
-                response.mimetype = 'image/jpeg'
-                return response
-            if req.args['type'] == 'frameZip':
-                allFrameZips = self.listFrameZips()
-                frameZip = next(x for x in allFrameZips if x.ID == id)
-                imgBytes = frameZip.getThumbnail()
-
-                img = Image.open(io.BytesIO(imgBytes))
-                thumb = self.makeThumbnail(img)
-
-                response = make_response(thumb)
-                response.mimetype = 'image/jpeg'
-                return response
-        if command == 'download':
-            id = req.args['id']
-            if req.args['type'] == 'video':
-                allVideos = self.listVideos()
-                video = next(x for x in allVideos if x.ID == id)
-                return send_file(video.PATH, mimetype=video.MIMETYPE)
-            if req.args['type'] == 'frameZip':
-                allFrameZips = self.listFrameZips()
-                frameZip = next(x for x in allFrameZips if x.ID == id)
-                return send_file(frameZip.PATH, mimetype=frameZip.MIMETYPE)
-        if command == 'enhancementPreview':
+        if data['type'] == 'frameZip':
             allFrameZips = self.listFrameZips()
-            frameZip = next(x for x in allFrameZips if x.ID == req.args['frameZipId'])
-            frame = frameZip.getThumbnail()
-            img = Image.open(io.BytesIO(frame))
+            frameZip = next(x for x in allFrameZips if x.ID == id)
+            imgBytes = frameZip.getThumbnail()
 
-            epRaw = self._settings.get(["enhancementPresets"])
-            epList = list(map(lambda x: EnhancementPreset(self, x), epRaw))
-            preset = epList[int(req.args['presetIndex'])]
+            img = Image.open(io.BytesIO(imgBytes))
+            thumb = self.makeThumbnail(img)
 
-            img = preset.applyEnhance(img)
-            img = preset.applyBlur(img)
-
-            res = self.makeThumbnail(img, (500, 500))
-            response = make_response(res)
+            response = make_response(thumb)
             response.mimetype = 'image/jpeg'
             return response
+
+    @octoprint.plugin.BlueprintPlugin.route("/maskPreview", methods=["GET"])
+    def apiMaskPreview(self):
+        import flask
+        data = flask.request.args
+        mask = Mask(self, self._data_folder, data['id'])
+        img = Image.open(mask.PATH)
+        thumb = self.makeThumbnail(img)
+        response = make_response(thumb)
+        response.mimetype = 'image/jpeg'
+        return response
+
+    @octoprint.plugin.BlueprintPlugin.route("/download", methods=["GET"])
+    def apiDownload(self):
+        import flask
+        data = flask.request.args
+        id = data['id']
+        if data['type'] == 'video':
+            allVideos = self.listVideos()
+            video = next(x for x in allVideos if x.ID == id)
+            return send_file(video.PATH, mimetype=video.MIMETYPE)
+        if data['type'] == 'frameZip':
+            allFrameZips = self.listFrameZips()
+            frameZip = next(x for x in allFrameZips if x.ID == id)
+            return send_file(frameZip.PATH, mimetype=frameZip.MIMETYPE)
+
+    @octoprint.plugin.BlueprintPlugin.route("/enhancementPreview", methods=["GET"])
+    def apiEnhancementPreview(self):
+        import flask
+        data = flask.request.args
+        allFrameZips = self.listFrameZips()
+        frameZip = next(x for x in allFrameZips if x.ID == data['frameZipId'])
+        frame = frameZip.getThumbnail()
+        img = Image.open(io.BytesIO(frame))
+
+        epRaw = self._settings.get(["enhancementPresets"])
+        epList = list(map(lambda x: EnhancementPreset(self, x), epRaw))
+        preset = epList[int(data['presetIndex'])]
+
+        img = preset.applyEnhance(img)
+        img = preset.applyBlur(img)
+
+        res = self.makeThumbnail(img, (500, 500))
+        response = make_response(res)
+        response.mimetype = 'image/jpeg'
+        return response
 
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
@@ -268,7 +276,7 @@ class TimelapsePlusPlugin(
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
 
     def on_after_startup(self):
-        self._logger.info("TIMELAPSE-PLUS")
+        self.API_CONTROLLER = ApiController(self, self._data_folder, self._settings)
 
     def renderJobStateChanged(self, job, state):
         self.sendClientData()
