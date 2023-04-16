@@ -95,7 +95,7 @@ class PrintJob:
         self._logger.info('Zipping Frames...')
         self._logger.info(self.FRAMES)
 
-        timePart = datetime.now().strftime("%Y%d%m%H%M%S")
+        timePart = datetime.now().strftime("%Y%m%d%H%M%S")
         zipFileName = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.zip'
         with zipfile.ZipFile(zipFileName, 'w') as zipMe:
             for file in finishedFiles:
