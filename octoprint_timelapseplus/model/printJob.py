@@ -1,3 +1,5 @@
+import base64
+import io
 import os
 import shutil
 import zipfile
@@ -5,6 +7,7 @@ from datetime import datetime
 from threading import Thread
 
 import requests
+from PIL import Image
 
 from .captureMode import CaptureMode
 from octoprint.util import ResettableTimer
@@ -29,6 +32,8 @@ class PrintJob:
         self.CAPTURE_MODE = CaptureMode[self._settings.get(["captureMode"])]
         self.CAPTURE_TIMER_INTERVAL = int(self._settings.get(["captureTimerInterval"]))
         self.CAPTURE_TIMER = ResettableTimer(self.CAPTURE_TIMER_INTERVAL, self.captureTimerTriggered)
+
+        self.PREVIEW_IMAGE = None
 
         self.createFolder(dataFolder)
 
@@ -79,6 +84,7 @@ class PrintJob:
         for x in self.CAPTURE_THREADS:
             x.join()
 
+        self.PREVIEW_IMAGE = None
         finishedFiles = self.FRAMES.copy()
         self.FRAMES = []
         self.CAPTURE_THREADS = []
@@ -121,4 +127,12 @@ class PrintJob:
         else:
             self._logger.error('Could not load image')
 
+        self.generatePreviewImage()
         self.PARENT.doneSnapshot()
+
+    def generatePreviewImage(self):
+        with open(self.FRAMES[-1], 'rb') as image_file:
+            imgBytes = image_file.read()
+            img = Image.open(io.BytesIO(imgBytes))
+            thumb = self.PARENT.makeThumbnail(img, (640, 360))
+            self.PREVIEW_IMAGE = base64.b64encode(thumb)

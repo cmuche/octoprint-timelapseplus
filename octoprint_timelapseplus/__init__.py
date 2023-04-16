@@ -7,8 +7,6 @@ import string
 from threading import Thread
 from time import sleep
 
-from PIL import Image
-
 import octoprint.plugin
 from octoprint.events import Events
 from .apiController import ApiController
@@ -177,14 +175,7 @@ class TimelapsePlusPlugin(
             data['currentFileSize'] = self.PRINTJOB.getTotalFileSize()
             data['captureMode'] = self.PRINTJOB.CAPTURE_MODE.name
             data['captureTimerInterval'] = self.PRINTJOB.CAPTURE_TIMER_INTERVAL
-
-            if len(self.PRINTJOB.FRAMES) > 0:
-                with open(self.PRINTJOB.FRAMES[-1], 'rb') as image_file:
-                    imgBytes = image_file.read()
-                    img = Image.open(io.BytesIO(imgBytes))
-                    thumb = self.makeThumbnail(img, (640, 360))
-                    data['previewImage'] = base64.b64encode(thumb)
-
+            data['previewImage'] = self.PRINTJOB.PREVIEW_IMAGE
             data['isRunning'] = self.PRINTJOB.RUNNING
             data['snapshotCount'] = len(self.PRINTJOB.FRAMES)
 
