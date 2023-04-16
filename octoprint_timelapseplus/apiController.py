@@ -11,10 +11,11 @@ from .model.mask import Mask
 
 
 class ApiController:
-    def __init__(self, parent, dataFolder, settings):
+    def __init__(self, parent, dataFolder, settings, cacheController):
         self.PARENT = parent
         self._data_folder = dataFolder
         self._settings = settings
+        self.CACHE_CONTROLLER = cacheController
 
     def emptyResponse(self):
         response = make_response(dict(success=True))
@@ -37,22 +38,32 @@ class ApiController:
         data = flask.request.args
         id = data['id']
         if data['type'] == 'video':
-            allVideos = self.PARENT.listVideos()
-            video = next(x for x in allVideos if x.ID == id)
+            cacheId = ['thumbnail', 'video', id]
 
-            img = Image.open(video.THUMBNAIL)
-            thumb = self.PARENT.makeThumbnail(img)
+            if self.CACHE_CONTROLLER.isCached(cacheId):
+                thumb = self.CACHE_CONTROLLER.getBytes(cacheId)
+            else:
+                allVideos = self.PARENT.listVideos()
+                video = next(x for x in allVideos if x.ID == id)
+                img = Image.open(video.THUMBNAIL)
+                thumb = self.PARENT.makeThumbnail(img)
+                self.CACHE_CONTROLLER.storeBytes(cacheId, thumb)
 
             response = make_response(thumb)
             response.mimetype = 'image/jpeg'
             return response
         if data['type'] == 'frameZip':
-            allFrameZips = self.PARENT.listFrameZips()
-            frameZip = next(x for x in allFrameZips if x.ID == id)
-            imgBytes = frameZip.getThumbnail()
+            cacheId = ['thumbnail', 'framezip', id]
 
-            img = Image.open(io.BytesIO(imgBytes))
-            thumb = self.PARENT.makeThumbnail(img)
+            if self.CACHE_CONTROLLER.isCached(cacheId):
+                thumb = self.CACHE_CONTROLLER.getBytes(cacheId)
+            else:
+                allFrameZips = self.PARENT.listFrameZips()
+                frameZip = next(x for x in allFrameZips if x.ID == id)
+                imgBytes = frameZip.getThumbnail()
+                img = Image.open(io.BytesIO(imgBytes))
+                thumb = self.PARENT.makeThumbnail(img)
+                self.CACHE_CONTROLLER.storeBytes(cacheId, thumb)
 
             response = make_response(thumb)
             response.mimetype = 'image/jpeg'

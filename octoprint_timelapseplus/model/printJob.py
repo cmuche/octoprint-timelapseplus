@@ -11,8 +11,10 @@ from octoprint.util import ResettableTimer
 
 
 class PrintJob:
-    def __init__(self, baseName, parent, logger, settings, dataFolder):
+    def __init__(self, id, baseName, parent, logger, settings, dataFolder):
         self.PARENT = parent
+        self.ID = id
+
         self._settings = settings
         self._logger = logger
 

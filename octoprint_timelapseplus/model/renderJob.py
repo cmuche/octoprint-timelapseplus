@@ -158,7 +158,7 @@ class RenderJob:
 
         frameFiles = glob.glob(self.FOLDER + '/*.jpg')
         thumbImg = Image.open(frameFiles[-1])
-        thumbImg.save(videoFile + '.thumb.jpg', quality=50)
+        thumbImg.save(videoFile + '.thumb.jpg', quality=75)
 
     def renderTimelapse(self):
         isSuccess = False
