@@ -144,11 +144,15 @@ class RenderJob:
 
         if preset.FADE:
             videoLength = preset.calculateVideoLength(self.FRAMEZIP)
-            fpInD = str(float(float(preset.FADE_IN_DURATION) / 1000))
-            fpOutD = str(float(float(preset.FADE_OUT_DURATION) / 1000))
-            fpOutSt = str(float(videoLength - preset.FADE_OUT_DURATION) / 1000)
-            fadeStr = 'fade=t=in:st=0:d=' + fpInD + ':color=' + preset.FADE_COLOR + ',fade=t=out:st=' + fpOutSt + ':d=' + fpOutD + ':color=' + preset.FADE_COLOR
-            videoFilters += [fadeStr]
+
+            if preset.FADE_IN_DURATION > 0:
+                fpInD = str(float(float(preset.FADE_IN_DURATION) / 1000))
+                videoFilters += ['fade=t=in:st=0:d=' + fpInD + ':color=' + preset.FADE_COLOR]
+
+            if preset.FADE_OUT_DURATION > 0:
+                fpOutD = str(float(float(preset.FADE_OUT_DURATION) / 1000))
+                fpOutSt = str(float(videoLength - preset.FADE_OUT_DURATION) / 1000)
+                videoFilters += ['fade=t=out:st=' + fpOutSt + ':d=' + fpOutD + ':color=' + preset.FADE_COLOR]
 
         if len(videoFilters):
             cmd += ['-vf', ','.join(videoFilters)]
