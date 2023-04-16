@@ -228,6 +228,16 @@ $(function() {
 
             console.log(data);
 
+            if (data.type == "popup") {
+                new PNotify({
+                    title: data.title,
+                    text: data.message,
+                    type: data.popup,
+                    hide: true
+                });
+                return;
+            }
+
             self.snapshotCommand(data.snapshotCommand);
             self.captureMode(data.captureMode);
             self.captureTimerInterval(data.captureTimerInterval);

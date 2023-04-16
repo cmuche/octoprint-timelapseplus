@@ -157,8 +157,18 @@ class TimelapsePlusPlugin(
         videos.reverse()
         return videos
 
+    def sendClientPopup(self, type, title, message):
+        data = dict(
+            type='popup',
+            popup=type,
+            title=title,
+            message=message
+        )
+        self._plugin_manager.send_plugin_message(self._identifier, data)
+
     def sendClientData(self):
         data = dict(
+            type='data',
             isRunning=False,
             currentFileSize=0,
             captureMode=None,
@@ -192,6 +202,12 @@ class TimelapsePlusPlugin(
         self.sendClientData()
 
         if state == RenderJobState.FINISHED or state == RenderJobState.FAILED:
+            if state == RenderJobState.FINISHED:
+                self.sendClientPopup('success', 'Render Job finished', job.BASE_NAME)
+
+            if state == RenderJobState.FAILED:
+                self.sendClientPopup('error', 'Render Job failed', job.BASE_NAME + "\n\n" + job.ERROR)
+
             Thread(target=(lambda j: (
                 sleep(10),
                 self.RENDERJOBS.remove(j),
@@ -203,6 +219,9 @@ class TimelapsePlusPlugin(
 
     def doneSnapshot(self):
         self.sendClientData()
+
+    def errorSnapshot(self, err):
+        self.sendClientPopup('error', 'Webcam Capture failed', str(err))
 
     def atCommand(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:

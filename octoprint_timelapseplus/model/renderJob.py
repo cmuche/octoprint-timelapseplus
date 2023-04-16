@@ -29,6 +29,7 @@ class RenderJob:
         self.RUNNING = False
         self.THREAD = None
         self.PROGRESS = 0
+        self.ERROR = None
 
         self.ENHANCEMENT_PRESET = enhancementPreset
         self.RENDER_PRESET = renderPreset
@@ -161,19 +162,17 @@ class RenderJob:
         thumbImg.save(videoFile + '.thumb.jpg', quality=75)
 
     def renderTimelapse(self):
-        isSuccess = False
         try:
             self.extractZip()
             self.enhanceImages(self.ENHANCEMENT_PRESET)
             self.blurImages(self.ENHANCEMENT_PRESET)
             self.resizeImages(self.ENHANCEMENT_PRESET)
             self.createVideo(self.RENDER_PRESET)
-            isSuccess = True
-        finally:
-            shutil.rmtree(self.FOLDER)
-            self.RUNNING = False
 
-            if isSuccess:
-                self.setState(RenderJobState.FINISHED)
-            else:
-                self.setState(RenderJobState.FAILED)
+            self.setState(RenderJobState.FINISHED)
+        except Exception as e:
+            self.ERROR = str(e)
+            self.setState(RenderJobState.FAILED)
+        finally:
+            self.RUNNING = False
+            shutil.rmtree(self.FOLDER)

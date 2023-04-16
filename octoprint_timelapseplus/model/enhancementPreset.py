@@ -23,6 +23,9 @@ class EnhancementPreset:
         if not self.BLUR:
             return img
 
+        if self.BLUR_MASK is None:
+            raise Exception('Blur Mask is not set')
+
         imgMask = Image.open(self.BLUR_MASK.PATH).convert('L')
         if img.width != imgMask.width or img.height != imgMask.height:
             imgMask = imgMask.resize((img.width, img.height), resample=Image.LANCZOS)

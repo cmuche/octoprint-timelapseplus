@@ -114,21 +114,26 @@ class PrintJob:
         thread.start()
 
     def doSnapshotInner(self):
-        fileName = self.FOLDER + '/' + "{:05d}".format(self.CURRENT_INDEX) + ".jpg"
-        self.CURRENT_INDEX += 1
+        try:
+            res = requests.get(self._settings.global_get(["webcam", "snapshot"]), stream=True)
 
-        res = requests.get(self._settings.global_get(["webcam", "snapshot"]), stream=True)
+            if res.status_code == 200:
+                fileName = self.FOLDER + '/' + "{:05d}".format(self.CURRENT_INDEX) + ".jpg"
 
-        if res.status_code == 200:
-            with open(fileName, 'wb') as f:
-                shutil.copyfileobj(res.raw, f)
-            self.FRAMES.append(fileName)
-            self._logger.info(f'Downloaded Snapshot to {fileName}')
-        else:
-            self._logger.error('Could not load image')
+                with open(fileName, 'wb') as f:
+                    shutil.copyfileobj(res.raw, f)
+                self.FRAMES.append(fileName)
+                self._logger.info(f'Downloaded Snapshot to {fileName}')
 
-        self.generatePreviewImage()
-        self.PARENT.doneSnapshot()
+                self.CURRENT_INDEX += 1
+
+                self.generatePreviewImage()
+                self.PARENT.doneSnapshot()
+            else:
+                self._logger.error('Could not load image')
+                self.PARENT.errorSnapshot('Webcam URL returned status code ' + str(res.status_code))
+        except Exception as e:
+            self.PARENT.errorSnapshot(e)
 
     def generatePreviewImage(self):
         with open(self.FRAMES[-1], 'rb') as image_file:
