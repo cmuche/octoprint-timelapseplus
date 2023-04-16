@@ -47,7 +47,26 @@
                 </div>
                 <div class="info">
                     <div class="name" data-bind="text: $data.name"></div>
-                    <div class="state" data-bind="text: $parent.getRenderJobVm($data).title"></div>
+                    <div class="properties">
+                        <div>
+                            <span>Phase:</span>
+                            <span data-bind="text: $parent.getRenderJobVm($data).title"></span>
+                        </div>
+                        <div data-bind="visible: $parent.getRenderJobVm($data).showProgress">
+                            <span>Remaining:</span>
+                            <span data-bind="text: $parent.timeSpan($data.eta)"></span>
+                        </div>
+                    </div>
+                    <div class="properties presets">
+                        <div>
+                            <span>Enhancement:</span>
+                            <span data-bind="text: $data.enhancementPresetName"></span>
+                        </div>
+                        <div>
+                            <span>Render:</span>
+                            <span data-bind="text: $data.renderPresetName"></span>
+                        </div>
+                    </div>
                     <div class="progress progress-text-centered" data-bind="visible: $parent.getRenderJobVm($data).showProgress">
                         <div class="bar" data-bind="style: {width: $data.progress + '%'}"></div>
                         <span class="progress-text-back" data-bind="css: { 'progress-text-front': ($data.progress >= 50), 'progress-text-back': ($data.progress < 50) }, text: $parent.formatPercent($data.progress)"></span>

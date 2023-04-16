@@ -41,15 +41,33 @@
 #timelapseplus .renderjob .icon {
     font-size: 2em;
     margin-right: 1em;
+    margin-top: 0.2em;
     display: flex;
-    align-items: center;
 }
 
 #timelapseplus .renderjob .info {
     width: 100%;
 }
 
-#timelapseplus .renderjob .info .state {
+#timelapseplus .renderjob .info .properties {
+    display: flex;
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+}
+
+#timelapseplus .renderjob .info .properties.presets {
+    font-size: 0.75em;
+}
+
+#timelapseplus .renderjob .info .properties > div {
+    margin-left: 0.75em;
+}
+
+#timelapseplus .renderjob .info .properties > div:first-child {
+    margin-left: 0;
+}
+
+#timelapseplus .renderjob .info .properties > div > span:first-child {
     font-weight: bold;
 }
 
@@ -94,7 +112,7 @@
 }
 
 #timelapseplus .file .info .properties > div {
-    margin-left: 0.5em;
+    margin-left: 0.75em;
 }
 
 #timelapseplus .file .info .properties > div:first-child {

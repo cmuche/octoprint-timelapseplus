@@ -3,6 +3,7 @@ import os
 import re
 import shutil
 import subprocess
+import time
 import zipfile
 from datetime import datetime
 from threading import Thread
@@ -31,6 +32,9 @@ class RenderJob:
         self.PROGRESS = 0
         self.ERROR = None
 
+        self.ETA = 0
+        self._lastEtaStart = 0
+
         self.ENHANCEMENT_PRESET = enhancementPreset
         self.RENDER_PRESET = renderPreset
 
@@ -52,11 +56,19 @@ class RenderJob:
     def setState(self, state):
         self.STATE = state
         self.PROGRESS = 0
+        self.ETA = 0
+        self._lastEtaStart = round(time.time() * 1000)
         self.PARENT.renderJobStateChanged(self, state)
 
     def setProgress(self, progress):
         self.PROGRESS = progress
         self.PARENT.renderJobProgressChanged(self, progress)
+
+        if progress > 0:
+            progressLeft = 1.0 - progress
+            currentMillis = round(time.time() * 1000)
+            elapsedMillis = currentMillis - self._lastEtaStart
+            self.ETA = elapsedMillis / progress * progressLeft
 
     def getJSON(self):
         return dict(
@@ -64,7 +76,10 @@ class RenderJob:
             name=self.BASE_NAME,
             state=self.STATE.name,
             running=self.RUNNING,
-            progress=self.PROGRESS * 100
+            progress=self.PROGRESS * 100,
+            eta=self.ETA,
+            enhancementPresetName=self.ENHANCEMENT_PRESET.NAME,
+            renderPresetName=self.RENDER_PRESET.NAME
         )
 
     def start(self):
