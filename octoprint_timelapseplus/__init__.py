@@ -8,7 +8,6 @@ from threading import Thread
 from time import sleep
 
 from PIL import Image
-from flask import Response
 
 import octoprint.plugin
 from octoprint.events import Events
@@ -44,7 +43,7 @@ class TimelapsePlusPlugin(
     @octoprint.plugin.BlueprintPlugin.route("/getData", methods=["POST"])
     def apiGetData(self):
         self.sendClientData()
-        return Response()
+        return self.API_CONTROLLER.emptyResponse()
 
     @octoprint.plugin.BlueprintPlugin.route("/defaultEnhancementPreset", methods=["POST"])
     def apiDefaultEnhancementPreset(self):
@@ -57,7 +56,7 @@ class TimelapsePlusPlugin(
     @octoprint.plugin.BlueprintPlugin.route("/delete", methods=["POST"])
     def apiDelete(self):
         self.API_CONTROLLER.delete()
-        return Response()
+        return self.API_CONTROLLER.emptyResponse()
 
     @octoprint.plugin.BlueprintPlugin.route("/listPresets", methods=["POST"])
     def apiListPresets(self):
@@ -66,7 +65,7 @@ class TimelapsePlusPlugin(
     @octoprint.plugin.BlueprintPlugin.route("/render", methods=["POST"])
     def apiRender(self):
         self.API_CONTROLLER.render()
-        return Response()
+        return self.API_CONTROLLER.emptyResponse()
 
     @octoprint.plugin.BlueprintPlugin.route("/thumbnail", methods=["GET"])
     def apiThumbnail(self):

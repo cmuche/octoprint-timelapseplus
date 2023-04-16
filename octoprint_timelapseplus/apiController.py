@@ -16,6 +16,11 @@ class ApiController:
         self._data_folder = dataFolder
         self._settings = settings
 
+    def emptyResponse(self):
+        response = make_response(dict(success=True))
+        response.mimetype = 'application/json'
+        return response
+
     def createBlurMask(self):
         import flask
         imgBase64 = flask.request.get_json()['image']
