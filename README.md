@@ -2,7 +2,9 @@
 
 Timelapse+ is a powerful yet lightweight plugin to capture and render your print timelapses.
 
-![Demo](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/timelapseplus.gif)
+| [![Video](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/timelapseplus.gif)](https://www.youtube.com/watch?v=fV8yoPwcXAU) |
+|------------------------------------------------------------------------------------------------------------------------------------------------|
+| Click the image to see the video                                                                                                               |                                                                                                               |
 
 ## Features
 - Trigger snapshots via __commands__ in your GCODE (e.g. on layer change)
