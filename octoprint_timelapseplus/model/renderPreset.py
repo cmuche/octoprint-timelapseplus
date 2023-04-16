@@ -16,11 +16,11 @@ class RenderPreset:
             self.setJSON(d)
 
     def calculateVideoLength(self, frameZip):
-        return frameZip.FRAMES / self.FRAMERATE;
+        return int(frameZip.FRAMES / self.FRAMERATE * 1000)
 
     def calculateTotalFrames(self, frameZip):
         totalFrames = frameZip.FRAMES
-        if(self.INTERPOLATE):
+        if (self.INTERPOLATE):
             totalFrames *= (self.INTERPOLATE_FRAMERATE / self.FRAMERATE)
         return ceil(totalFrames)
 

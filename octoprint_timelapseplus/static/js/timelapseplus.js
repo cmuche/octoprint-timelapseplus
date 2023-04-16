@@ -21,6 +21,13 @@ $(function() {
         self.selectedPresetEnhancement = ko.observable();
         self.selectedPresetRender = ko.observable();
         self.selectedFrameZip = ko.observable();
+        self.selectedRenderPresetVideoLength = ko.observable(0);
+
+        self.selectedPresetRender.subscribe(function(data) {
+            self.api("getRenderPresetVideoLength", {preset: data, frameZipId: self.selectedFrameZip().id}, function(res) {
+                self.selectedRenderPresetVideoLength(res.length);
+            });
+        });
 
         // https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
         self.humanFileSize = function(size) {
@@ -50,6 +57,37 @@ $(function() {
                 return Math.round(elapsed / msPerMonth) + " months ago";
             else
                 return Math.round(elapsed / msPerYear) + " years ago";
+        };
+
+        self.timeSpan = function(ms) {
+            ms = Math.abs(ms);
+
+            if (ms < 1000)
+                return "0s";
+
+            let days = Math.floor(ms / (1000 * 60 * 60 * 24));
+            ms -= days * (1000 * 60 * 60 * 24);
+
+            let hours = Math.floor(ms / (1000 * 60 * 60));
+            ms -= hours * (1000 * 60 * 60);
+
+            let mins = Math.floor(ms / (1000 * 60));
+            ms -= mins * (1000 * 60);
+
+            let seconds = Math.floor(ms / (1000));
+            ms -= seconds * (1000);
+
+            let str = "";
+            if (days > 0 || str.length > 0)
+                str += days + "d ";
+            if (hours > 0 || str.length > 0)
+                str += hours + "h ";
+            if (mins > 0 || str.length > 0)
+                str += mins + "m ";
+            if (days == 0 && (seconds > 0 || str.length > 0))
+                str += seconds + "s ";
+
+            return str.trim();
         };
 
         self.openBlurMask = function(preset) {

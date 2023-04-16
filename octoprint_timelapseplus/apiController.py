@@ -136,3 +136,14 @@ class ApiController:
             frameZip = next(x for x in allFrameZips if x.ID == id)
             frameZip.delete()
         self.PARENT.sendClientData()
+
+    def getRenderPresetVideoLength(self):
+        import flask
+        data = flask.request.get_json()
+        preset = RenderPreset(data['preset'])
+
+        allFrameZips = self.PARENT.listFrameZips()
+        frameZip = next(x for x in allFrameZips if x.ID == data['frameZipId'])
+
+        length = preset.calculateVideoLength(frameZip)
+        return dict(length=length)

@@ -145,6 +145,11 @@
                     <h4>Render Settings</h4>
                     <select data-bind="options: presetsRender, optionsText: function(x) { return x.name }, value: selectedPresetRender">
                     </select>
+
+                    <div style="margin-top: 1em">
+                        <span style="font-weight: bold">Length:</span>
+                        <span data-bind="text: timeSpan(selectedRenderPresetVideoLength())"></span>
+                    </div>
                 </div>
                 <div class="preview">
                     <h4>Enhancement Preview</h4>

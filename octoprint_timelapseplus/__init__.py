@@ -49,6 +49,10 @@ class TimelapsePlusPlugin(
     def apiDefaultEnhancementPreset(self):
         return EnhancementPreset(self).getJSON()
 
+    @octoprint.plugin.BlueprintPlugin.route("/getRenderPresetVideoLength", methods=["POST"])
+    def apiGetRenderPresetVideoLength(self):
+        return self.API_CONTROLLER.getRenderPresetVideoLength()
+
     @octoprint.plugin.BlueprintPlugin.route("/defaultRenderPreset", methods=["POST"])
     def apiDefaultRenderPreset(self):
         return RenderPreset().getJSON()
