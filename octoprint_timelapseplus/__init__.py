@@ -198,6 +198,16 @@ class TimelapsePlusPlugin(
         self.CACHE_CONTROLLER = CacheController(self, self._data_folder, self._settings)
         self.API_CONTROLLER = ApiController(self, self._data_folder, self._settings, self.CACHE_CONTROLLER)
 
+        epRaw = self._settings.get(["enhancementPresets"])
+        epList = list(map(lambda x: EnhancementPreset(self, x), epRaw))
+        epNew = list(map(lambda x: x.getJSON(), epList))
+        self._settings.set(["enhancementPresets"], epNew)
+
+        rpRaw = self._settings.get(["renderPresets"])
+        rpList = list(map(lambda x: RenderPreset(x), rpRaw))
+        rpNew = list(map(lambda x: x.getJSON(), rpList))
+        self._settings.set(["renderPresets"], rpNew)
+
     def renderJobStateChanged(self, job, state):
         self.sendClientData()
 
