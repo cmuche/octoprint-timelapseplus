@@ -129,6 +129,8 @@ class RenderJob:
         cmd = [self._settings.global_get(["webcam", "ffmpeg"]), '-y']
         cmd += ['-framerate', str(preset.FRAMERATE), '-i', '%05d.jpg']
 
+        videoFilters = []
+
         if preset.INTERPOLATE:
             cmd += ['-r', str(preset.INTERPOLATE_FRAMERATE)]
             miStr = 'minterpolate=fps=' + str(preset.INTERPOLATE_FRAMERATE) + \
@@ -136,9 +138,20 @@ class RenderJob:
                     ':me_mode=' + preset.INTERPOLATE_ESTIMATION + \
                     ':mc_mode=' + preset.INTERPOLATE_COMPENSATION + \
                     ':me=' + preset.INTERPOLATE_ALGORITHM
-            cmd += ['-vf', miStr]
+            videoFilters += [miStr]
         else:
             cmd += ['-r', str(preset.FRAMERATE)]
+
+        if preset.FADE:
+            videoLength = preset.calculateVideoLength(self.FRAMEZIP)
+            fpInD = str(float(float(preset.FADE_IN_DURATION) / 1000))
+            fpOutD = str(float(float(preset.FADE_OUT_DURATION) / 1000))
+            fpOutSt = str(float(videoLength - preset.FADE_OUT_DURATION) / 1000)
+            fadeStr = 'fade=t=in:st=0:d=' + fpInD + ':color=' + preset.FADE_COLOR + ',fade=t=out:st=' + fpOutSt + ':d=' + fpOutD + ':color=' + preset.FADE_COLOR
+            videoFilters += [fadeStr]
+
+        if len(videoFilters):
+            cmd += ['-vf', ','.join(videoFilters)]
 
         cmd += ['-c:v', 'libx264', '-movflags', '+faststart', 'out.mp4']
         cmd += ["-hide_banner", "-loglevel", 'verbose', "-progress", "pipe:1", "-nostats"]

@@ -11,6 +11,10 @@ class RenderPreset:
         self.INTERPOLATE_ESTIMATION = 'bidir'
         self.INTERPOLATE_COMPENSATION = 'aobmc'
         self.INTERPOLATE_ALGORITHM = 'epzs'
+        self.FADE = False
+        self.FADE_IN_DURATION = 1000
+        self.FADE_OUT_DURATION = 1000
+        self.FADE_COLOR = 'Black'
 
         if d is not None:
             self.setJSON(d)
@@ -33,6 +37,10 @@ class RenderPreset:
         if 'interpolateEstimation' in d:  self.INTERPOLATE_ESTIMATION = d['interpolateEstimation']
         if 'interpolateCompensation' in d: self.INTERPOLATE_COMPENSATION = d['interpolateCompensation']
         if 'interpolateAlgorithm' in d: self.INTERPOLATE_ALGORITHM = d['interpolateAlgorithm']
+        if 'fade' in d: self.FADE = d['fade']
+        if 'fadeInDuration' in d: self.FADE_IN_DURATION = int(d['fadeInDuration'])
+        if 'fadeOutDuration' in d: self.FADE_OUT_DURATION = int(d['fadeOutDuration'])
+        if 'fadeColor' in d: self.FADE_COLOR = d['fadeColor']
 
     def getJSON(self):
         return dict(
@@ -43,5 +51,9 @@ class RenderPreset:
             interpolateMode=self.INTERPOLATE_MODE,
             interpolateEstimation=self.INTERPOLATE_ESTIMATION,
             interpolateCompensation=self.INTERPOLATE_COMPENSATION,
-            interpolateAlgorithm=self.INTERPOLATE_ALGORITHM
+            interpolateAlgorithm=self.INTERPOLATE_ALGORITHM,
+            fade=self.FADE,
+            fadeInDuration=self.FADE_IN_DURATION,
+            fadeOutDuration=self.FADE_OUT_DURATION,
+            fadeColor=self.FADE_COLOR
         )
