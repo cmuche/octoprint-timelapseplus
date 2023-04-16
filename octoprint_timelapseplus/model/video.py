@@ -13,8 +13,6 @@ class Video:
         self.TIMESTAMP = os.path.getmtime(path)
         self.SIZE = os.path.getsize(path)
         self.MIMETYPE = 'video/mp4'
-
-        self.HASH = self.getHash()
         self.ID = self.getId()
 
     def delete(self):
@@ -33,10 +31,5 @@ class Video:
         )
 
     def getId(self):
-        c = self.HASH + self.PATH + str(self.TIMESTAMP)
+        c = self.PATH + str(self.TIMESTAMP) + str(self.SIZE)
         return hashlib.md5(c.encode('utf-8')).hexdigest()
-
-    def getHash(self):
-        with open(self.PATH, "rb") as f:
-            firstBytes = f.read(256)
-        return hashlib.md5(firstBytes).hexdigest()
