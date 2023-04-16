@@ -148,7 +148,7 @@ $(function() {
                 complete: function() {
                 },
                 error: function(err) {
-                    console.log("Error", err);
+                    console.log("Error (Command=" + command + ")", err);
                 }
             });
         };
