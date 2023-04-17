@@ -93,8 +93,12 @@
                 <div class="name" data-bind="text: $data.file"></div>
                 <div class="properties">
                     <div>
-                        <span>Size:</span>
-                        <span data-bind="text: $parent.humanFileSize($data.size)"></span>
+                        <span>Length:</span>
+                        <span data-bind="text: $parent.timeSpanMedia($data.length)"></span>
+                    </div>
+                    <div>
+                        <span>Created:</span>
+                        <span data-bind="text: $parent.timeDifference($data.timestamp)"></span>
                     </div>
                     <div>
                         <span>Created:</span>

@@ -90,6 +90,18 @@ $(function() {
             return str.trim();
         };
 
+        self.timeSpanMedia = function formatDuration(duration) {
+            let seconds = Math.floor((duration / 1000) % 60);
+            let minutes = Math.floor((duration / (1000 * 60)) % 60);
+            let hours = Math.floor(duration / (1000 * 60 * 60));
+
+            let formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
+            let formattedMinutes = minutes < 10 ?  minutes : minutes;
+            let formattedHours = hours > 0 ? hours + ":" : "";
+
+            return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
+        };
+
         self.openBlurMask = function(preset) {
             $("<input type=\"file\">").on("change", function() {
                 let f = this.files[0];
