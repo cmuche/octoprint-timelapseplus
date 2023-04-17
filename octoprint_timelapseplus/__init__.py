@@ -117,6 +117,9 @@ class TimelapsePlusPlugin(
 
     def get_settings_defaults(self):
         return dict(
+            ffmpegPath='',
+            ffprobePath='',
+            webcamUrl='',
             captureMode=CaptureMode.COMMAND.name,
             captureTimerInterval=10,
             snapshotCommand="SNAPSHOT",
@@ -135,6 +138,9 @@ class TimelapsePlusPlugin(
         rpNew = list(map(lambda x: x.getJSON(), rpList))
 
         return dict(
+            ffmpegPath=self._settings.get(["ffmpegPath"]),
+            ffprobePath=self._settings.get(["ffprobePath"]),
+            webcamUrl=self._settings.get(["webcamUrl"]),
             captureMode=self._settings.get(["captureMode"]),
             captureTimerInterval=self._settings.get(["captureTimerInterval"]),
             snapshotCommand=self._settings.get(["snapshotCommand"]),
@@ -152,7 +158,7 @@ class TimelapsePlusPlugin(
 
     def listVideos(self):
         files = glob.glob(self._settings.getBaseFolder('timelapse') + '/*.mp4')
-        videos = list(map(lambda x: Video(x, self, self._logger), files))
+        videos = list(map(lambda x: Video(x, self, self._logger, self._settings), files))
         videos.sort(key=lambda x: x.TIMESTAMP)
         videos.reverse()
         return videos

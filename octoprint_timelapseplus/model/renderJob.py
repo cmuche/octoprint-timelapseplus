@@ -141,7 +141,7 @@ class RenderJob:
         videoFile = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.mp4'
         totalFrames = preset.calculateTotalFrames(self.FRAMEZIP)
 
-        cmd = [self._settings.global_get(["webcam", "ffmpeg"]), '-y']
+        cmd = [self._settings.get(["ffmpegPath"]), '-y']
         cmd += ['-framerate', str(preset.FRAMERATE), '-i', '%05d.jpg']
 
         videoFilters = []

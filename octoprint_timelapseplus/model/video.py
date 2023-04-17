@@ -3,9 +3,11 @@ import os
 
 
 class Video:
-    def __init__(self, path, parent, logger):
+    def __init__(self, path, parent, logger, settings):
         self.PARENT = parent
+        self.CACHE_CONTROLLER = parent.CACHE_CONTROLLER
         self._logger = logger
+        self._settings = settings
 
         self.FILE = os.path.splitext(os.path.basename(path))[0]
         self.THUMBNAIL = path + '.thumb.jpg'

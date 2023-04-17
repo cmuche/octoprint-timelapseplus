@@ -1,5 +1,29 @@
 <form class="form-horizontal" id="timelapseplus-settings">
 
+    <h3>Paths</h3>
+    <div class="control-group">
+        <label class="control-label">FFmpeg Path</label>
+        <div class="controls">
+            <input type="text" data-bind="value: settings.plugins.octoprint_timelapseplus.ffmpegPath">
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">FFprobe Path</label>
+        <div class="controls">
+            <input type="text" data-bind="value: settings.plugins.octoprint_timelapseplus.ffprobePath">
+            <span class="help-block">Usually FFprobe is located in the same folder as FFmpeg.</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Webcam Snapshot URL</label>
+        <div class="controls">
+            <input type="text" data-bind="value: settings.plugins.octoprint_timelapseplus.webcamUrl">
+        </div>
+    </div>
+
+    <h3>General</h3>
     <div class="control-group">
         <label class="control-label">Capture Mode</label>
         <div class="controls">
@@ -34,6 +58,7 @@
         </div>
     </div>
 
+    <h3>Enhancement</h3>
     <div class="control-group">
         <label class="control-label">Enhancement Presets</label>
         <div class="controls">
@@ -125,6 +150,7 @@
         </div>
     </div>
 
+    <h3>Rendering</h3>
     <div class="control-group">
         <label class="control-label">Render Presets</label>
         <div class="controls">

@@ -115,7 +115,7 @@ class PrintJob:
 
     def doSnapshotInner(self):
         try:
-            res = requests.get(self._settings.global_get(["webcam", "snapshot"]), stream=True)
+            res = requests.get(self._settings.get(["webcamUrl"]), stream=True)
 
             if res.status_code == 200:
                 fileName = self.FOLDER + '/' + "{:05d}".format(self.CURRENT_INDEX) + ".jpg"
