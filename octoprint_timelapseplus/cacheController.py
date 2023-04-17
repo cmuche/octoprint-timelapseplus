@@ -42,3 +42,13 @@ class CacheController:
         file = self.getIdFile(idList)
         with open(file, 'wb') as f:
             f.write(bytes)
+
+    def getString(self, idList):
+        file = self.getIdFile(idList)
+        with open(file, 'r') as f:
+            return f.read()
+
+    def storeString(self, idList, str):
+        file = self.getIdFile(idList)
+        with open(file, 'w') as f:
+            f.write(str)
