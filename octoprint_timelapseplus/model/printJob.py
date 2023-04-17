@@ -14,9 +14,10 @@ from octoprint.util import ResettableTimer
 
 
 class PrintJob:
-    def __init__(self, id, baseName, parent, logger, settings, dataFolder):
+    def __init__(self, id, baseName, parent, logger, settings, dataFolder, webcamController):
         self.PARENT = parent
         self.ID = id
+        self.WEBCAM_CONTROLLER = webcamController
 
         self._settings = settings
         self._logger = logger
@@ -114,26 +115,15 @@ class PrintJob:
         thread.start()
 
     def doSnapshotInner(self):
-        try:
-            res = requests.get(self._settings.get(["webcamUrl"]), stream=True)
+        snapshotFile = self.WEBCAM_CONTROLLER.getSnapshot()
+        fileName = self.FOLDER + '/' + "{:05d}".format(self.CURRENT_INDEX) + ".jpg"
+        shutil.move(snapshotFile, fileName)
 
-            if res.status_code == 200:
-                fileName = self.FOLDER + '/' + "{:05d}".format(self.CURRENT_INDEX) + ".jpg"
+        self.FRAMES.append(fileName)
+        self.CURRENT_INDEX += 1
 
-                with open(fileName, 'wb') as f:
-                    shutil.copyfileobj(res.raw, f)
-                self.FRAMES.append(fileName)
-                self._logger.info(f'Downloaded Snapshot to {fileName}')
-
-                self.CURRENT_INDEX += 1
-
-                self.generatePreviewImage()
-                self.PARENT.doneSnapshot()
-            else:
-                self._logger.error('Could not load image')
-                self.PARENT.errorSnapshot('Webcam URL returned status code ' + str(res.status_code))
-        except Exception as e:
-            self.PARENT.errorSnapshot(e)
+        self.generatePreviewImage()
+        self.PARENT.doneSnapshot()
 
     def generatePreviewImage(self):
         with open(self.FRAMES[-1], 'rb') as image_file:

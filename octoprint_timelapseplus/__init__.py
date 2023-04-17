@@ -9,6 +9,7 @@ from time import sleep
 
 import octoprint.plugin
 from octoprint.events import Events
+from .webcamController import WebcamController
 from .apiController import ApiController
 from .cacheController import CacheController
 from .model.captureMode import CaptureMode
@@ -203,6 +204,7 @@ class TimelapsePlusPlugin(
     def on_after_startup(self):
         self.CACHE_CONTROLLER = CacheController(self, self._data_folder, self._settings)
         self.API_CONTROLLER = ApiController(self, self._data_folder, self._settings, self.CACHE_CONTROLLER)
+        self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self._data_folder, self._settings)
 
         epRaw = self._settings.get(["enhancementPresets"])
         epList = list(map(lambda x: EnhancementPreset(self, x), epRaw))
@@ -276,7 +278,7 @@ class TimelapsePlusPlugin(
         baseName = os.path.splitext(os.path.basename(printerFile))[0]
         id = self.getRandomString(32)
 
-        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self._data_folder)
+        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self._data_folder, self.WEBCAM_CONTROLLER)
         self.PRINTJOB.start()
         self.sendClientData()
 
