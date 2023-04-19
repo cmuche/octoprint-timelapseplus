@@ -93,11 +93,11 @@ class ApiController:
         if data['type'] == 'video':
             allVideos = self.PARENT.listVideos()
             video = next(x for x in allVideos if x.ID == id)
-            return send_file(video.PATH, mimetype=video.MIMETYPE)
+            return send_file(video.PATH, mimetype=video.MIMETYPE, as_attachment=True, attachment_filename=os.path.basename(video.PATH))
         if data['type'] == 'frameZip':
             allFrameZips = self.PARENT.listFrameZips()
             frameZip = next(x for x in allFrameZips if x.ID == id)
-            return send_file(frameZip.PATH, mimetype=frameZip.MIMETYPE)
+            return send_file(frameZip.PATH, mimetype=frameZip.MIMETYPE, as_attachment=True, attachment_filename=os.path.basename(frameZip.PATH))
 
     def enhancementPreview(self):
         import flask
