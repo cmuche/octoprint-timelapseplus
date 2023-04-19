@@ -87,6 +87,10 @@ class TimelapsePlusPlugin(
     def apiEnhancementPreview(self):
         return self.API_CONTROLLER.enhancementPreview()
 
+    @octoprint.plugin.BlueprintPlugin.route("/enhancementPreviewSettings", methods=["POST"])
+    def apiEnhancementPreviewSettings(self):
+        return self.API_CONTROLLER.enhancementPreviewSettings()
+
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
         buf = io.BytesIO()
@@ -207,8 +211,8 @@ class TimelapsePlusPlugin(
 
     def on_after_startup(self):
         self.CACHE_CONTROLLER = CacheController(self, self._data_folder, self._settings)
-        self.API_CONTROLLER = ApiController(self, self._data_folder, self._settings, self.CACHE_CONTROLLER)
         self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self._data_folder, self._settings)
+        self.API_CONTROLLER = ApiController(self, self._data_folder, self._settings, self.CACHE_CONTROLLER, self.WEBCAM_CONTROLLER)
 
         epRaw = self._settings.get(["enhancementPresets"])
         epList = list(map(lambda x: EnhancementPreset(self, x), epRaw))

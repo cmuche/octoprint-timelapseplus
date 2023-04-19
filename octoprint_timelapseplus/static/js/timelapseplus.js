@@ -98,7 +98,7 @@ $(function() {
             let hours = Math.floor(duration / (1000 * 60 * 60));
 
             let formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
-            let formattedMinutes = minutes < 10 ?  minutes : minutes;
+            let formattedMinutes = minutes < 10 ? minutes : minutes;
             let formattedHours = hours > 0 ? hours + ":" : "";
 
             return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
@@ -130,6 +130,16 @@ $(function() {
             $("div#tlp-modal-video video")[0].load();
             $("div#tlp-modal-video video")[0].currentTime = 0;
             $("div#tlp-modal-video video").trigger("play");
+        };
+
+        self.openEnhancementPresetPreview = function(preset) {
+            preset = ko.toJS(preset);
+            self.api("enhancementPreviewSettings", {preset: preset}, function(data) {
+                $("div#tlp-modal-enhancement-live-preview img.preview").attr("src", "data:image/png;base64," + data.result);
+                $("div#tlp-modal-enhancement-live-preview").modal({
+                    width: "auto"
+                });
+            });
         };
 
         self.addEnhancementPreset = function(listObservable) {

@@ -12,11 +12,12 @@ from .model.mask import Mask
 
 
 class ApiController:
-    def __init__(self, parent, dataFolder, settings, cacheController):
+    def __init__(self, parent, dataFolder, settings, cacheController, webcamController):
         self.PARENT = parent
         self._data_folder = dataFolder
         self._settings = settings
         self.CACHE_CONTROLLER = cacheController
+        self.WEBCAM_CONTROLLER = webcamController
 
     def emptyResponse(self):
         response = make_response(dict(success=True))
@@ -117,6 +118,24 @@ class ApiController:
         response = make_response(res)
         response.mimetype = 'image/jpeg'
         return response
+
+    def enhancementPreviewSettings(self):
+        import flask
+        data = flask.request.get_json()
+        preset = EnhancementPreset(self.PARENT, data['preset'])
+
+        snapshot = self.WEBCAM_CONTROLLER.getSnapshot()
+        try:
+            with Image.open(snapshot) as img:
+                img = preset.applyEnhance(img)
+                img = preset.applyBlur(img)
+
+                res = self.PARENT.makeThumbnail(img, (500, 500))
+                resBase64 = base64.b64encode(res)
+                return dict(result=resBase64)
+        finally:
+            if snapshot is not None and os.path.isfile(snapshot):
+                os.remove(snapshot)
 
     def render(self):
         import flask

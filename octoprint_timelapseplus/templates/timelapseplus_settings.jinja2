@@ -136,9 +136,9 @@
                         <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
                     </div>
 
-                    <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.octoprint_timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.octoprint_timelapseplus.enhancementPresets().length > 1">
+                    <button class="btn btn-mini" data-bind="click: $parent.parent.openEnhancementPresetPreview">
                         <i class="fa fa-eye"></i>
-                        Preview
+                        Live Preview
                     </button>
 
                     <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.octoprint_timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.octoprint_timelapseplus.enhancementPresets().length > 1">
@@ -406,3 +406,21 @@
         </div>
     </div>
 </form>
+
+<!------------------------------------------------------->
+
+<div id="tlp-modal-enhancement-live-preview" class="modal hide fade">
+    <div class="modal-header">
+        <a href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+        <h3>Live Preview</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row-fluid">
+            <img class="preview" />
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary pull-right" data-dismiss="modal">Close</button>
+    </div>
+</div>
