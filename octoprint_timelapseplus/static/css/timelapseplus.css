@@ -33,6 +33,17 @@
     font-weight: bold;
 }
 
+#timelapseplus .h-info {
+    font-size: 0.5em;
+    margin-left: 0.5em;
+    font-weight: normal;
+    opacity: 0.75;
+}
+
+#timelapseplus h1 {
+    margin-top: 1em;
+}
+
 #timelapseplus .renderjob {
     padding: 1em;
     display: flex;

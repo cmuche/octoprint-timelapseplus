@@ -15,6 +15,8 @@ $(function() {
         self.frameCollections = ko.observable([]);
         self.videos = ko.observable([]);
         self.renderJobs = ko.observable([]);
+        self.sizeFrameCollections = ko.observable(0);
+        self.sizeVideos = ko.observable(0);
 
         self.presetsEnhancement = ko.observable([]);
         self.presetsRender = ko.observable([]);
@@ -260,6 +262,8 @@ $(function() {
             self.frameCollections(data.frameCollections);
             self.videos(data.videos);
             self.renderJobs(data.renderJobs);
+            self.sizeFrameCollections(data.sizeFrameCollections);
+            self.sizeVideos(data.sizeVideos);
         };
     }
 

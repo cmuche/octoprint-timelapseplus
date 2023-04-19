@@ -174,6 +174,8 @@ class TimelapsePlusPlugin(
         self._plugin_manager.send_plugin_message(self._identifier, data)
 
     def sendClientData(self):
+        allFrameZips = self.listFrameZips()
+        allVideos = self.listVideos()
         data = dict(
             type='data',
             isRunning=False,
@@ -183,9 +185,11 @@ class TimelapsePlusPlugin(
             snapshotCommand=self._settings.get(["snapshotCommand"]),
             snapshotCount=0,
             previewImage=None,
-            frameCollections=list(map(lambda x: x.getJSON(), self.listFrameZips())),
+            frameCollections=list(map(lambda x: x.getJSON(), allFrameZips)),
             renderJobs=list(map(lambda x: x.getJSON(), self.RENDERJOBS)),
-            videos=list(map(lambda x: x.getJSON(), self.listVideos()))
+            videos=list(map(lambda x: x.getJSON(), allVideos)),
+            sizeFrameCollections=sum(c.SIZE for c in allFrameZips),
+            sizeVideos=sum(c.SIZE for c in allVideos)
         )
 
         if self.PRINTJOB is not None:

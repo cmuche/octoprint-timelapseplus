@@ -83,7 +83,10 @@
     </div>
     -->
 
-    <h1>Videos</h1>
+    <h1>
+        Videos
+        <span class="h-info" data-bind="text: humanFileSize(sizeVideos())"></span>
+    </h1>
     <div data-bind="foreach: videos">
         <div class="file video">
             <div class="preview">
@@ -115,7 +118,10 @@
         </div>
     </div>
 
-    <h1>Frame Collections</h1>
+    <h1>
+        Frame Collections
+        <span class="h-info" data-bind="text: humanFileSize(sizeFrameCollections())"></span>
+    </h1>
     <div data-bind="foreach: frameCollections">
 
         <div class="file frameCollection">
