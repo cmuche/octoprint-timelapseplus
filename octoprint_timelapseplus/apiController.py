@@ -1,5 +1,6 @@
 import base64
 import io
+import os
 import re
 
 from PIL import Image
@@ -45,7 +46,12 @@ class ApiController:
             else:
                 allVideos = self.PARENT.listVideos()
                 video = next(x for x in allVideos if x.ID == id)
-                img = Image.open(video.THUMBNAIL)
+
+                if os.path.isfile(video.THUMBNAIL):
+                    img = Image.open(video.THUMBNAIL)
+                else:
+                    img = Image.open(os.path.dirname(__file__) + '/assets/no-thumbnail.jpg')
+
                 thumb = self.PARENT.makeThumbnail(img)
                 self.CACHE_CONTROLLER.storeBytes(cacheId, thumb)
 
