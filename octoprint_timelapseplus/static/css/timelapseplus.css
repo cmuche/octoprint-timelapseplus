@@ -35,9 +35,13 @@
 
 #timelapseplus .h-info {
     font-size: 0.5em;
-    margin-left: 0.5em;
+    margin-left: 0.4em;
     font-weight: normal;
     opacity: 0.75;
+}
+
+#timelapseplus .h-info:first-child {
+    margin-left: 0.5em;
 }
 
 #timelapseplus h1 {
