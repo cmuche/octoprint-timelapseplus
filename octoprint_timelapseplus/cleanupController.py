@@ -5,7 +5,7 @@ import time
 
 from .model.mask import Mask
 from .model.enhancementPreset import EnhancementPreset
-from ...util import ResettableTimer
+from octoprint.util import ResettableTimer
 
 
 class CleanupController:
