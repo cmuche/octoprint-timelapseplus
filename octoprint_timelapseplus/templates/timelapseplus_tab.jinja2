@@ -87,7 +87,7 @@
         Videos
         <span class="h-info" data-bind="text: humanFileSize(sizeVideos())"></span>
     </h1>
-    <div data-bind="foreach: videos">
+    <div data-bind="foreach: videos.paginatedItems">
         <div class="file video">
             <div class="preview">
                 <img data-bind="attr: {src: $data.thumbnail}" />
@@ -119,12 +119,23 @@
         </div>
     </div>
 
+    <div class="pagination pagination-mini pagination-centered">
+        <ul>
+            <li data-bind="css: {disabled: videos.currentPage() === 0}"><a href="javascript:void(0)" data-bind="click: videos.prevPage">«</a></li>
+        </ul>
+        <ul data-bind="foreach: videos.pages">
+            <li data-bind="css: { active: $data.number === $root.videos.currentPage(), disabled: $data.number === -1 }"><a href="javascript:void(0)" data-bind="text: $data.text, click: function() { $root.videos.changePage($data.number); }"></a></li>
+        </ul>
+        <ul>
+            <li data-bind="css: {disabled: videos.currentPage() === videos.lastPage()}"><a href="javascript:void(0)" data-bind="click: videos.nextPage">»</a></li>
+        </ul>
+    </div>
+
     <h1>
         Frame Collections
         <span class="h-info" data-bind="text: humanFileSize(sizeFrameCollections())"></span>
     </h1>
-    <div data-bind="foreach: frameCollections">
-
+    <div data-bind="foreach: frameCollections.paginatedItems">
         <div class="file frameCollection">
             <div class="preview">
                 <img data-bind="attr: {src: $data.thumbnail}" />
@@ -153,6 +164,18 @@
                 </div>
             </div>
         </div>
+    </div>
+    
+    <div class="pagination pagination-mini pagination-centered">
+        <ul>
+            <li data-bind="css: {disabled: frameCollections.currentPage() === 0}"><a href="javascript:void(0)" data-bind="click: frameCollections.prevPage">«</a></li>
+        </ul>
+        <ul data-bind="foreach: frameCollections.pages">
+            <li data-bind="css: { active: $data.number === $root.frameCollections.currentPage(), disabled: $data.number === -1 }"><a href="javascript:void(0)" data-bind="text: $data.text, click: function() { $root.frameCollections.changePage($data.number); }"></a></li>
+        </ul>
+        <ul>
+            <li data-bind="css: {disabled: frameCollections.currentPage() === frameCollections.lastPage()}"><a href="javascript:void(0)" data-bind="click: frameCollections.nextPage">»</a></li>
+        </ul>
     </div>
 
 </div>

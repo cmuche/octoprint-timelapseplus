@@ -2,6 +2,40 @@ $(function() {
     function TimelapsePlusViewModel(parameters) {
         let self = this;
 
+        self.videos = new ItemListHelper(
+            "plugin.timelapseplus.video",
+            {
+                date: function (a, b) {
+                    // sorts descending
+                    if (a["timestamp"] > b["timestamp"]) return -1;
+                    if (a["timestamp"] < b["timestamp"]) return 1;
+                    return 0;
+                }
+            },
+            {},
+            "timestamp",
+            [],
+            [],
+            4
+        );
+
+        self.frameCollections = new ItemListHelper(
+            "plugin.timelapseplus.frameCollection",
+            {
+                date: function (a, b) {
+                    // sorts descending
+                    if (a["timestamp"] > b["timestamp"]) return -1;
+                    if (a["timestamp"] < b["timestamp"]) return 1;
+                    return 0;
+                }
+            },
+            {},
+            "timestamp",
+            [],
+            [],
+            4
+        );
+
         self.settings = parameters[0];
         self.settings.parent = self;
 
@@ -12,8 +46,6 @@ $(function() {
         self.currentFileSize = ko.observable(0);
         self.snapshotCount = ko.observable(0);
         self.previewImage = ko.observable(null);
-        self.frameCollections = ko.observable([]);
-        self.videos = ko.observable([]);
         self.renderJobs = ko.observable([]);
         self.sizeFrameCollections = ko.observable(0);
         self.sizeVideos = ko.observable(0);
@@ -262,6 +294,9 @@ $(function() {
                 return;
             }
 
+            self.videos.updateItems(data.videos);
+            self.frameCollections.updateItems(data.frameCollections);
+
             self.snapshotCommand(data.snapshotCommand);
             self.captureMode(data.captureMode);
             self.captureTimerInterval(data.captureTimerInterval);
@@ -269,8 +304,6 @@ $(function() {
             self.currentFileSize(data.currentFileSize);
             self.snapshotCount(data.snapshotCount);
             self.previewImage(data.previewImage == null ? null : "data:image/jpeg;base64," + data.previewImage);
-            self.frameCollections(data.frameCollections);
-            self.videos(data.videos);
             self.renderJobs(data.renderJobs);
             self.sizeFrameCollections(data.sizeFrameCollections);
             self.sizeVideos(data.sizeVideos);
