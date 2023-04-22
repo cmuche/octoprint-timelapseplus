@@ -6,11 +6,10 @@ import zipfile
 from datetime import datetime
 from threading import Thread
 
-import requests
 from PIL import Image
 
-from .captureMode import CaptureMode
 from octoprint.util import ResettableTimer
+from .captureMode import CaptureMode
 
 
 class PrintJob:
