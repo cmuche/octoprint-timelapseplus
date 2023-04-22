@@ -5,7 +5,7 @@ $(function() {
         self.videos = new ItemListHelper(
             "plugin.timelapseplus.video",
             {
-                date: function (a, b) {
+                date: function(a, b) {
                     // sorts descending
                     if (a["timestamp"] > b["timestamp"]) return -1;
                     if (a["timestamp"] < b["timestamp"]) return 1;
@@ -22,7 +22,7 @@ $(function() {
         self.frameCollections = new ItemListHelper(
             "plugin.timelapseplus.frameCollection",
             {
-                date: function (a, b) {
+                date: function(a, b) {
                     // sorts descending
                     if (a["timestamp"] > b["timestamp"]) return -1;
                     if (a["timestamp"] < b["timestamp"]) return 1;
@@ -38,6 +38,9 @@ $(function() {
 
         self.settings = parameters[0];
         self.settings.parent = self;
+
+        self.error = ko.observable(null);
+        self.hasError = ko.observable(false);
 
         self.snapshotCommand = ko.observable();
         self.captureMode = ko.observable();
@@ -296,6 +299,9 @@ $(function() {
 
             self.videos.updateItems(data.videos);
             self.frameCollections.updateItems(data.frameCollections);
+
+            self.error(data.error);
+            self.hasError(data.error != null);
 
             self.snapshotCommand(data.snapshotCommand);
             self.captureMode(data.captureMode);

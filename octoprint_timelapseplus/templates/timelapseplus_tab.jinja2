@@ -1,4 +1,16 @@
 <div id="timelapseplus">
+    <div data-bind="if: hasError">
+        <div class="alert alert-block">
+            <strong>Error: </strong>
+            <div style="margin-bottom: 1em">
+                Hmm, something isn't working properly.
+                Please fix the following error so Timelapse+ can run.
+                Open the settings page to edit or fix the configuration.
+            </div>
+            <strong data-bind="text: error"></strong>
+        </div>
+    </div>
+
     <div data-bind="if: isRunning">
         <h1>Current Print Job</h1>
         <div class="current">
@@ -167,7 +179,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="pagination pagination-mini pagination-centered">
         <ul>
             <li data-bind="css: {disabled: frameCollections.currentPage() === 0}"><a href="javascript:void(0)" data-bind="click: frameCollections.prevPage">«</a></li>

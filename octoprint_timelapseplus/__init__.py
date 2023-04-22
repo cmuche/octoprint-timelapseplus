@@ -1,4 +1,3 @@
-import base64
 import glob
 import io
 import os
@@ -9,10 +8,9 @@ from time import sleep
 
 import octoprint.plugin
 from octoprint.events import Events
-from .cleanupController import CleanupController
-from .webcamController import WebcamController
 from .apiController import ApiController
 from .cacheController import CacheController
+from .cleanupController import CleanupController
 from .model.captureMode import CaptureMode
 from .model.enhancementPreset import EnhancementPreset
 from .model.frameZip import FrameZip
@@ -22,6 +20,8 @@ from .model.renderJob import RenderJob
 from .model.renderJobState import RenderJobState
 from .model.renderPreset import RenderPreset
 from .model.video import Video
+from .prerequisitesController import PrerequisitesController
+from .webcamController import WebcamController
 
 
 class TimelapsePlusPlugin(
@@ -36,6 +36,7 @@ class TimelapsePlusPlugin(
         super().__init__()
         self.PRINTJOB = None
         self.RENDERJOBS = []
+        self.ERROR = None
 
     @octoprint.plugin.BlueprintPlugin.route("/createBlurMask", methods=["POST"])
     def apiCreateBlurMask(self):
@@ -183,6 +184,7 @@ class TimelapsePlusPlugin(
         allVideos = self.listVideos()
         data = dict(
             type='data',
+            error=self.ERROR,
             isRunning=False,
             currentFileSize=0,
             captureMode=None,
@@ -227,6 +229,22 @@ class TimelapsePlusPlugin(
         rpList = list(map(lambda x: RenderPreset(x), rpRaw))
         rpNew = list(map(lambda x: x.getJSON(), rpList))
         self._settings.set(["renderPresets"], rpNew)
+
+        self.checkPrerequisites()
+
+    def on_settings_save(self, data):
+        ret = super().on_settings_save(data)
+        self.checkPrerequisites()
+        return ret
+
+    def checkPrerequisites(self):
+        try:
+            PrerequisitesController.check(self._settings, self.WEBCAM_CONTROLLER)
+            self.ERROR = None
+        except Exception as ex:
+            self.ERROR = str(ex)
+
+        self.sendClientData()
 
     def renderJobStateChanged(self, job, state):
         self.sendClientData()
@@ -284,6 +302,9 @@ class TimelapsePlusPlugin(
 
     def printStarted(self):
         if self.PRINTJOB is not None and self.PRINTJOB.RUNNING:
+            return
+
+        if self.ERROR is not None:
             return
 
         printerFile = self._printer.get_current_job()['file']['path']
