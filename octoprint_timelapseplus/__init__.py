@@ -9,6 +9,7 @@ from time import sleep
 
 import octoprint.plugin
 from octoprint.events import Events
+from .cleanupController import CleanupController
 from .webcamController import WebcamController
 from .apiController import ApiController
 from .cacheController import CacheController
@@ -213,6 +214,9 @@ class TimelapsePlusPlugin(
         self.CACHE_CONTROLLER = CacheController(self, self._data_folder, self._settings)
         self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self._data_folder, self._settings)
         self.API_CONTROLLER = ApiController(self, self._data_folder, self._settings, self.CACHE_CONTROLLER, self.WEBCAM_CONTROLLER)
+        self.CLEANUP_CONTROLLER = CleanupController(self, self._data_folder, self._settings)
+
+        self.CLEANUP_CONTROLLER.init()
 
         epRaw = self._settings.get(["enhancementPresets"])
         epList = list(map(lambda x: EnhancementPreset(self, x), epRaw))

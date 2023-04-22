@@ -8,6 +8,10 @@ class Mask:
         else:
             self.ID = id
 
-        folder = dataFolder + '/mask'
+        folder = self.getMaskFolder(dataFolder)
         self.PATH = folder + '/' + self.ID + '.png'
         os.makedirs(folder, exist_ok=True)
+
+    @staticmethod
+    def getMaskFolder(dataFolder):
+        return dataFolder + '/mask'
