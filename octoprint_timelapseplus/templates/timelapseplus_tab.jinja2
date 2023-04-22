@@ -100,6 +100,11 @@
         <span class="h-info" data-bind="text: 'Total: ' + videos.allSize()"></span>
         <span class="h-info" data-bind="text: 'Size: ' + humanFileSize(sizeVideos())"></span>
     </h1>
+
+    <div data-bind="visible: videos.allSize() == 0">
+        You didn't render any videos yet.
+    </div>
+
     <div data-bind="foreach: videos.paginatedItems">
         <div class="file video">
             <div class="preview">
@@ -132,7 +137,7 @@
         </div>
     </div>
 
-    <div class="pagination pagination-mini pagination-centered">
+    <div data-bind="visible: videos.allSize() > 0" class="pagination pagination-mini pagination-centered">
         <ul>
             <li data-bind="css: {disabled: videos.currentPage() === 0}"><a href="javascript:void(0)" data-bind="click: videos.prevPage">«</a></li>
         </ul>
@@ -149,6 +154,11 @@
         <span class="h-info" data-bind="text: 'Total: ' + frameCollections.allSize()"></span>
         <span class="h-info" data-bind="text: 'Size: ' + humanFileSize(sizeFrameCollections())"></span>
     </h1>
+
+    <div data-bind="visible: frameCollections.allSize() == 0">
+        You didn't capture any prints yet.
+    </div>
+
     <div data-bind="foreach: frameCollections.paginatedItems">
         <div class="file frameCollection">
             <div class="preview">
@@ -180,7 +190,7 @@
         </div>
     </div>
 
-    <div class="pagination pagination-mini pagination-centered">
+    <div data-bind="visible: frameCollections.allSize() > 0" class="pagination pagination-mini pagination-centered">
         <ul>
             <li data-bind="css: {disabled: frameCollections.currentPage() === 0}"><a href="javascript:void(0)" data-bind="click: frameCollections.prevPage">«</a></li>
         </ul>
