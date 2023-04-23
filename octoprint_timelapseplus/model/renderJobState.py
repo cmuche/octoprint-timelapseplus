@@ -9,4 +9,5 @@ class RenderJobState(Enum):
     FAILED = 5
     ENHANCING = 6
     BLURRING = 7
-    RESIZING = 8
+    RESIZING = 8,
+    COMBINING = 9

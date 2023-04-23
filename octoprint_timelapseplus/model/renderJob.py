@@ -13,6 +13,8 @@ from PIL import Image
 from .enhancementPreset import EnhancementPreset
 from .renderJobState import RenderJobState
 from .renderPreset import RenderPreset
+from ..helpers.imageCombineHelper import ImageCombineHelper
+from ..helpers.listHelper import ListHelper
 
 
 class RenderJob:
@@ -97,6 +99,24 @@ class RenderJob:
         with zipfile.ZipFile(self.FRAMEZIP.PATH, "r") as zip_ref:
             zip_ref.extractall(self.FOLDER)
 
+    def combineImages(self, preset):
+        if not preset.COMBINE:
+            return
+
+        self.setState(RenderJobState.COMBINING)
+
+        frameFiles = glob.glob(self.FOLDER + '/*.jpg')
+        chunks = ListHelper.chunkList(frameFiles, preset.COMBINE_SIZE)
+        for i, chunk in enumerate(chunks):
+            img = ImageCombineHelper.createCombinedImage(chunk, preset.COMBINE_METHOD)
+            imgPath = self.FOLDER + '/' + "C_{:05d}".format(i + 1) + ".jpg"
+            img.save(imgPath, quality=100, subsampling=0)
+
+            for f in chunk:
+                os.remove(f)
+
+            self.setProgress((i + 1) / len(chunks))
+
     def blurImages(self, preset):
         if not preset.BLUR:
             return
@@ -141,8 +161,12 @@ class RenderJob:
         videoFile = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.mp4'
         totalFrames = preset.calculateTotalFrames(self.FRAMEZIP)
 
+        framePattern = '%05d.jpg'
+        if preset.COMBINE:
+            framePattern = 'C_%05d.jpg'
+
         cmd = [self._settings.get(["ffmpegPath"]), '-y']
-        cmd += ['-framerate', str(preset.FRAMERATE), '-i', '%05d.jpg']
+        cmd += ['-framerate', str(preset.FRAMERATE), '-i', framePattern]
 
         videoFilters = []
 
@@ -199,6 +223,7 @@ class RenderJob:
             self.enhanceImages(self.ENHANCEMENT_PRESET)
             self.blurImages(self.ENHANCEMENT_PRESET)
             self.resizeImages(self.ENHANCEMENT_PRESET)
+            self.combineImages(self.RENDER_PRESET)
             self.createVideo(self.RENDER_PRESET)
 
             self.setState(RenderJobState.FINISHED)

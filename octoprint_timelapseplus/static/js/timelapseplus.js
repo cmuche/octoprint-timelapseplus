@@ -210,7 +210,8 @@ $(function() {
                 "FAILED": {title: "Failed", showProgress: false, icon: "fas fa-exclamation-triangle"},
                 "ENHANCING": {title: "Enhancing Images", showProgress: true, icon: "fas fa-magic"},
                 "BLURRING": {title: "Blurring Areas", showProgress: true, icon: "fas fa-eraser"},
-                "RESIZING": {title: "Resizing Frames", showProgress: true, icon: "fas fa-arrows-alt"}
+                "RESIZING": {title: "Resizing Frames", showProgress: true, icon: "fas fa-arrows-alt"},
+                "COMBINING": {title: "Combining Frames", showProgress: true, icon: "fas fa-clone"}
             };
 
             if (job.state in stateVms)

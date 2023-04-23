@@ -2,3 +2,5 @@
 octoprint_timelapseplus/__pycache__/
 
 octoprint_timelapseplus/model/__pycache__/
+
+octoprint_timelapseplus/helpers/__pycache__/
