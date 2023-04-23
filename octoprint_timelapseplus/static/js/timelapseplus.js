@@ -202,6 +202,7 @@ $(function() {
         };
 
         self.getRenderJobVm = function(job) {
+            // https://fontawesome.com/v5/cheatsheet
             let stateVms = {
                 "WAITING": {title: "Waiting", showProgress: false, icon: "fas fa-hourglass-half"},
                 "EXTRACTING": {title: "Extracting Frame Collection", showProgress: false, icon: "fas fa-box-open"},
