@@ -84,21 +84,23 @@
                         </label>
                     </div>
 
-                    <div data-bind="visible: $data.enhance">
-                        <label class="sub">Brightness Factor</label>
-                        <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.brightness">
-                    </div>
+                    <div class="sub-settings">
+                        <div data-bind="visible: $data.enhance">
+                            <label class="sub">Brightness Factor</label>
+                            <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.brightness">
+                        </div>
 
-                    <div data-bind="visible: $data.enhance">
-                        <label class="sub">Contrast Factor</label>
-                        <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.contrast">
-                    </div>
+                        <div data-bind="visible: $data.enhance">
+                            <label class="sub">Contrast Factor</label>
+                            <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.contrast">
+                        </div>
 
-                    <div data-bind="visible: $data.enhance">
-                        <label class="sub checkbox">
-                            <input type="checkbox" data-bind="checked: $data.equalize">
-                            Equalize Histogram
-                        </label>
+                        <div data-bind="visible: $data.enhance">
+                            <label class="sub checkbox">
+                                <input type="checkbox" data-bind="checked: $data.equalize">
+                                Equalize Histogram
+                            </label>
+                        </div>
                     </div>
 
                     <div>
@@ -108,20 +110,22 @@
                         </label>
                     </div>
 
-                    <div data-bind="visible: $data.blur">
-                        <label class="sub">Blur Radius</label>
-                        <input type="number" step='1' placeholder='0' min="1" max="500" width="5" data-bind="value: $data.blurRadius">
-                    </div>
-
-                    <div data-bind="visible: $data.blur">
-                        <label class="sub">Mask</label>
-                        <div>
-                            <img style="width:8em" data-bind="visible: $data.blurMask() != null, attr: {src: $data.blurMask() == null ? '' : '/plugin/octoprint_timelapseplus/maskPreview?id=' + $data.blurMask()}">
-                            <div data-bind="visible: $data.blurMask() == null" style="color: red !important">
-                                With Blur enabled you must provide a grayscale blur mask!
-                            </div>
+                    <div class="sub-settings">
+                        <div data-bind="visible: $data.blur">
+                            <label class="sub">Blur Radius</label>
+                            <input type="number" step='1' placeholder='0' min="1" max="500" width="5" data-bind="value: $data.blurRadius">
                         </div>
-                        <button style="margin-top: 1em" class="btn" data-bind="click: $parent.parent.openBlurMask">Import Blur Mask</button>
+
+                        <div data-bind="visible: $data.blur">
+                            <label class="sub">Mask</label>
+                            <div>
+                                <img style="width:8em" data-bind="visible: $data.blurMask() != null, attr: {src: $data.blurMask() == null ? '' : '/plugin/octoprint_timelapseplus/maskPreview?id=' + $data.blurMask()}">
+                                <div data-bind="visible: $data.blurMask() == null" style="color: red !important">
+                                    With Blur enabled you must provide a grayscale blur mask!
+                                </div>
+                            </div>
+                            <button style="margin-top: 1em" class="btn" data-bind="click: $parent.parent.openBlurMask">Import Blur Mask</button>
+                        </div>
                     </div>
 
                     <div>
@@ -130,15 +134,16 @@
                             Enable Resizing
                         </label>
                     </div>
+                    <div class="sub-settings">
+                        <div data-bind="visible: $data.resize">
+                            <label class="sub">Width</label>
+                            <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeW">
+                        </div>
 
-                    <div data-bind="visible: $data.resize">
-                        <label class="sub">Width</label>
-                        <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeW">
-                    </div>
-
-                    <div data-bind="visible: $data.resize">
-                        <label class="sub">Height</label>
-                        <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
+                        <div data-bind="visible: $data.resize">
+                            <label class="sub">Height</label>
+                            <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
+                        </div>
                     </div>
 
                     <button class="btn btn-mini" data-bind="click: $parent.parent.openEnhancementPresetPreview">
@@ -187,20 +192,22 @@
                         <span class="help-block">Before rendering, multiple frames will be combined to reduce the number of total frames and by that the length of the final video.</span>
                     </div>
 
-                    <div data-bind="visible: $data.combine">
-                        <label class="sub">Chunk Size</label>
-                        <input type="number" step='1' min="2" max="100" width="5" data-bind="value: $data.combineSize">
-                        <span class="help-block">Defines how many frames should be combined into one chunk.</span>
-                    </div>
+                    <div class="sub-settings">
+                        <div data-bind="visible: $data.combine">
+                            <label class="sub">Chunk Size</label>
+                            <input type="number" step='1' min="2" max="100" width="5" data-bind="value: $data.combineSize">
+                            <span class="help-block">Defines how many frames should be combined into one chunk.</span>
+                        </div>
 
-                    <div data-bind="visible: $data.combine">
-                        <label class="sub">Method</label>
-                        <select data-bind="value: $data.combineMethod">
-                            <option value="DROP">Drop Frames</option>
-                            <option value="BLEND">Blend</option>
-                            <option value="BLEND_WEIGHTED">Weighted Blend</option>
-                        </select>
-                        <span class="help-block">When dropping frames, only the last frame of a combined chunk will be used, blending creates a combined frame by mixing all chunk frames into one.</span>
+                        <div data-bind="visible: $data.combine">
+                            <label class="sub">Method</label>
+                            <select data-bind="value: $data.combineMethod">
+                                <option value="DROP">Drop Frames</option>
+                                <option value="BLEND">Blend</option>
+                                <option value="BLEND_WEIGHTED">Weighted Blend</option>
+                            </select>
+                            <span class="help-block">When dropping frames, only the last frame of a combined chunk will be used, blending creates a combined frame by mixing all chunk frames into one.</span>
+                        </div>
                     </div>
 
                     <div>
@@ -210,162 +217,164 @@
                         </label>
                     </div>
 
-                    <div data-bind="visible: $data.fade">
-                        <label class="sub">Fade-In Duration (ms)</label>
-                        <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.fadeInDuration">
-                    </div>
+                    <div class="sub-settings">
+                        <div data-bind="visible: $data.fade">
+                            <label class="sub">Fade-In Duration (ms)</label>
+                            <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.fadeInDuration">
+                        </div>
 
-                    <div data-bind="visible: $data.fade">
-                        <label class="sub">Fade-Out Duration (ms)</label>
-                        <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.fadeOutDuration">
-                    </div>
+                        <div data-bind="visible: $data.fade">
+                            <label class="sub">Fade-Out Duration (ms)</label>
+                            <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.fadeOutDuration">
+                        </div>
 
-                    <div data-bind="visible: $data.fade">
-                        <label class="sub">Fade Color</label>
-                        <div style="display: flex">
-                            <select data-bind="value: $data.fadeColor">
-                                <option value="AliceBlue">AliceBlue</option>
-                                <option value="AntiqueWhite">AntiqueWhite</option>
-                                <option value="Aqua">Aqua</option>
-                                <option value="Aquamarine">Aquamarine</option>
-                                <option value="Azure">Azure</option>
-                                <option value="Beige">Beige</option>
-                                <option value="Bisque">Bisque</option>
-                                <option value="Black">Black</option>
-                                <option value="BlanchedAlmond">BlanchedAlmond</option>
-                                <option value="Blue">Blue</option>
-                                <option value="BlueViolet">BlueViolet</option>
-                                <option value="Brown">Brown</option>
-                                <option value="BurlyWood">BurlyWood</option>
-                                <option value="CadetBlue">CadetBlue</option>
-                                <option value="Chartreuse">Chartreuse</option>
-                                <option value="Chocolate">Chocolate</option>
-                                <option value="Coral">Coral</option>
-                                <option value="CornflowerBlue">CornflowerBlue</option>
-                                <option value="Cornsilk">Cornsilk</option>
-                                <option value="Crimson">Crimson</option>
-                                <option value="Cyan">Cyan</option>
-                                <option value="DarkBlue">DarkBlue</option>
-                                <option value="DarkCyan">DarkCyan</option>
-                                <option value="DarkGoldenRod">DarkGoldenRod</option>
-                                <option value="DarkGray">DarkGray</option>
-                                <option value="DarkGreen">DarkGreen</option>
-                                <option value="DarkKhaki">DarkKhaki</option>
-                                <option value="DarkMagenta">DarkMagenta</option>
-                                <option value="DarkOliveGreen">DarkOliveGreen</option>
-                                <option value="Darkorange">Darkorange</option>
-                                <option value="DarkOrchid">DarkOrchid</option>
-                                <option value="DarkRed">DarkRed</option>
-                                <option value="DarkSalmon">DarkSalmon</option>
-                                <option value="DarkSeaGreen">DarkSeaGreen</option>
-                                <option value="DarkSlateBlue">DarkSlateBlue</option>
-                                <option value="DarkSlateGray">DarkSlateGray</option>
-                                <option value="DarkTurquoise">DarkTurquoise</option>
-                                <option value="DarkViolet">DarkViolet</option>
-                                <option value="DeepPink">DeepPink</option>
-                                <option value="DeepSkyBlue">DeepSkyBlue</option>
-                                <option value="DimGray">DimGray</option>
-                                <option value="DodgerBlue">DodgerBlue</option>
-                                <option value="FireBrick">FireBrick</option>
-                                <option value="FloralWhite">FloralWhite</option>
-                                <option value="ForestGreen">ForestGreen</option>
-                                <option value="Fuchsia">Fuchsia</option>
-                                <option value="Gainsboro">Gainsboro</option>
-                                <option value="GhostWhite">GhostWhite</option>
-                                <option value="Gold">Gold</option>
-                                <option value="GoldenRod">GoldenRod</option>
-                                <option value="Gray">Gray</option>
-                                <option value="Green">Green</option>
-                                <option value="GreenYellow">GreenYellow</option>
-                                <option value="HoneyDew">HoneyDew</option>
-                                <option value="HotPink">HotPink</option>
-                                <option value="IndianRed">IndianRed</option>
-                                <option value="Indigo">Indigo</option>
-                                <option value="Ivory">Ivory</option>
-                                <option value="Khaki">Khaki</option>
-                                <option value="Lavender">Lavender</option>
-                                <option value="LavenderBlush">LavenderBlush</option>
-                                <option value="LawnGreen">LawnGreen</option>
-                                <option value="LemonChiffon">LemonChiffon</option>
-                                <option value="LightBlue">LightBlue</option>
-                                <option value="LightCoral">LightCoral</option>
-                                <option value="LightCyan">LightCyan</option>
-                                <option value="LightGoldenRodYellow">LightGoldenRodYellow</option>
-                                <option value="LightGreen">LightGreen</option>
-                                <option value="LightGrey">LightGrey</option>
-                                <option value="LightPink">LightPink</option>
-                                <option value="LightSalmon">LightSalmon</option>
-                                <option value="LightSeaGreen">LightSeaGreen</option>
-                                <option value="LightSkyBlue">LightSkyBlue</option>
-                                <option value="LightSlateGray">LightSlateGray</option>
-                                <option value="LightSteelBlue">LightSteelBlue</option>
-                                <option value="LightYellow">LightYellow</option>
-                                <option value="Lime">Lime</option>
-                                <option value="LimeGreen">LimeGreen</option>
-                                <option value="Linen">Linen</option>
-                                <option value="Magenta">Magenta</option>
-                                <option value="Maroon">Maroon</option>
-                                <option value="MediumAquaMarine">MediumAquaMarine</option>
-                                <option value="MediumBlue">MediumBlue</option>
-                                <option value="MediumOrchid">MediumOrchid</option>
-                                <option value="MediumPurple">MediumPurple</option>
-                                <option value="MediumSeaGreen">MediumSeaGreen</option>
-                                <option value="MediumSlateBlue">MediumSlateBlue</option>
-                                <option value="MediumSpringGreen">MediumSpringGreen</option>
-                                <option value="MediumTurquoise">MediumTurquoise</option>
-                                <option value="MediumVioletRed">MediumVioletRed</option>
-                                <option value="MidnightBlue">MidnightBlue</option>
-                                <option value="MintCream">MintCream</option>
-                                <option value="MistyRose">MistyRose</option>
-                                <option value="Moccasin">Moccasin</option>
-                                <option value="NavajoWhite">NavajoWhite</option>
-                                <option value="Navy">Navy</option>
-                                <option value="OldLace">OldLace</option>
-                                <option value="Olive">Olive</option>
-                                <option value="OliveDrab">OliveDrab</option>
-                                <option value="Orange">Orange</option>
-                                <option value="OrangeRed">OrangeRed</option>
-                                <option value="Orchid">Orchid</option>
-                                <option value="PaleGoldenRod">PaleGoldenRod</option>
-                                <option value="PaleGreen">PaleGreen</option>
-                                <option value="PaleTurquoise">PaleTurquoise</option>
-                                <option value="PaleVioletRed">PaleVioletRed</option>
-                                <option value="PapayaWhip">PapayaWhip</option>
-                                <option value="PeachPuff">PeachPuff</option>
-                                <option value="Peru">Peru</option>
-                                <option value="Pink">Pink</option>
-                                <option value="Plum">Plum</option>
-                                <option value="PowderBlue">PowderBlue</option>
-                                <option value="Purple">Purple</option>
-                                <option value="Red">Red</option>
-                                <option value="RosyBrown">RosyBrown</option>
-                                <option value="RoyalBlue">RoyalBlue</option>
-                                <option value="SaddleBrown">SaddleBrown</option>
-                                <option value="Salmon">Salmon</option>
-                                <option value="SandyBrown">SandyBrown</option>
-                                <option value="SeaGreen">SeaGreen</option>
-                                <option value="SeaShell">SeaShell</option>
-                                <option value="Sienna">Sienna</option>
-                                <option value="Silver">Silver</option>
-                                <option value="SkyBlue">SkyBlue</option>
-                                <option value="SlateBlue">SlateBlue</option>
-                                <option value="SlateGray">SlateGray</option>
-                                <option value="Snow">Snow</option>
-                                <option value="SpringGreen">SpringGreen</option>
-                                <option value="SteelBlue">SteelBlue</option>
-                                <option value="Tan">Tan</option>
-                                <option value="Teal">Teal</option>
-                                <option value="Thistle">Thistle</option>
-                                <option value="Tomato">Tomato</option>
-                                <option value="Turquoise">Turquoise</option>
-                                <option value="Violet">Violet</option>
-                                <option value="Wheat">Wheat</option>
-                                <option value="White">White</option>
-                                <option value="WhiteSmoke">WhiteSmoke</option>
-                                <option value="Yellow">Yellow</option>
-                                <option value="YellowGreen">YellowGreen</option>
-                            </select>
-                            <div class="colorPreview" data-bind="style: {'background-color': $data.fadeColor()}"></div>
+                        <div data-bind="visible: $data.fade">
+                            <label class="sub">Fade Color</label>
+                            <div style="display: flex">
+                                <select data-bind="value: $data.fadeColor">
+                                    <option value="AliceBlue">AliceBlue</option>
+                                    <option value="AntiqueWhite">AntiqueWhite</option>
+                                    <option value="Aqua">Aqua</option>
+                                    <option value="Aquamarine">Aquamarine</option>
+                                    <option value="Azure">Azure</option>
+                                    <option value="Beige">Beige</option>
+                                    <option value="Bisque">Bisque</option>
+                                    <option value="Black">Black</option>
+                                    <option value="BlanchedAlmond">BlanchedAlmond</option>
+                                    <option value="Blue">Blue</option>
+                                    <option value="BlueViolet">BlueViolet</option>
+                                    <option value="Brown">Brown</option>
+                                    <option value="BurlyWood">BurlyWood</option>
+                                    <option value="CadetBlue">CadetBlue</option>
+                                    <option value="Chartreuse">Chartreuse</option>
+                                    <option value="Chocolate">Chocolate</option>
+                                    <option value="Coral">Coral</option>
+                                    <option value="CornflowerBlue">CornflowerBlue</option>
+                                    <option value="Cornsilk">Cornsilk</option>
+                                    <option value="Crimson">Crimson</option>
+                                    <option value="Cyan">Cyan</option>
+                                    <option value="DarkBlue">DarkBlue</option>
+                                    <option value="DarkCyan">DarkCyan</option>
+                                    <option value="DarkGoldenRod">DarkGoldenRod</option>
+                                    <option value="DarkGray">DarkGray</option>
+                                    <option value="DarkGreen">DarkGreen</option>
+                                    <option value="DarkKhaki">DarkKhaki</option>
+                                    <option value="DarkMagenta">DarkMagenta</option>
+                                    <option value="DarkOliveGreen">DarkOliveGreen</option>
+                                    <option value="Darkorange">Darkorange</option>
+                                    <option value="DarkOrchid">DarkOrchid</option>
+                                    <option value="DarkRed">DarkRed</option>
+                                    <option value="DarkSalmon">DarkSalmon</option>
+                                    <option value="DarkSeaGreen">DarkSeaGreen</option>
+                                    <option value="DarkSlateBlue">DarkSlateBlue</option>
+                                    <option value="DarkSlateGray">DarkSlateGray</option>
+                                    <option value="DarkTurquoise">DarkTurquoise</option>
+                                    <option value="DarkViolet">DarkViolet</option>
+                                    <option value="DeepPink">DeepPink</option>
+                                    <option value="DeepSkyBlue">DeepSkyBlue</option>
+                                    <option value="DimGray">DimGray</option>
+                                    <option value="DodgerBlue">DodgerBlue</option>
+                                    <option value="FireBrick">FireBrick</option>
+                                    <option value="FloralWhite">FloralWhite</option>
+                                    <option value="ForestGreen">ForestGreen</option>
+                                    <option value="Fuchsia">Fuchsia</option>
+                                    <option value="Gainsboro">Gainsboro</option>
+                                    <option value="GhostWhite">GhostWhite</option>
+                                    <option value="Gold">Gold</option>
+                                    <option value="GoldenRod">GoldenRod</option>
+                                    <option value="Gray">Gray</option>
+                                    <option value="Green">Green</option>
+                                    <option value="GreenYellow">GreenYellow</option>
+                                    <option value="HoneyDew">HoneyDew</option>
+                                    <option value="HotPink">HotPink</option>
+                                    <option value="IndianRed">IndianRed</option>
+                                    <option value="Indigo">Indigo</option>
+                                    <option value="Ivory">Ivory</option>
+                                    <option value="Khaki">Khaki</option>
+                                    <option value="Lavender">Lavender</option>
+                                    <option value="LavenderBlush">LavenderBlush</option>
+                                    <option value="LawnGreen">LawnGreen</option>
+                                    <option value="LemonChiffon">LemonChiffon</option>
+                                    <option value="LightBlue">LightBlue</option>
+                                    <option value="LightCoral">LightCoral</option>
+                                    <option value="LightCyan">LightCyan</option>
+                                    <option value="LightGoldenRodYellow">LightGoldenRodYellow</option>
+                                    <option value="LightGreen">LightGreen</option>
+                                    <option value="LightGrey">LightGrey</option>
+                                    <option value="LightPink">LightPink</option>
+                                    <option value="LightSalmon">LightSalmon</option>
+                                    <option value="LightSeaGreen">LightSeaGreen</option>
+                                    <option value="LightSkyBlue">LightSkyBlue</option>
+                                    <option value="LightSlateGray">LightSlateGray</option>
+                                    <option value="LightSteelBlue">LightSteelBlue</option>
+                                    <option value="LightYellow">LightYellow</option>
+                                    <option value="Lime">Lime</option>
+                                    <option value="LimeGreen">LimeGreen</option>
+                                    <option value="Linen">Linen</option>
+                                    <option value="Magenta">Magenta</option>
+                                    <option value="Maroon">Maroon</option>
+                                    <option value="MediumAquaMarine">MediumAquaMarine</option>
+                                    <option value="MediumBlue">MediumBlue</option>
+                                    <option value="MediumOrchid">MediumOrchid</option>
+                                    <option value="MediumPurple">MediumPurple</option>
+                                    <option value="MediumSeaGreen">MediumSeaGreen</option>
+                                    <option value="MediumSlateBlue">MediumSlateBlue</option>
+                                    <option value="MediumSpringGreen">MediumSpringGreen</option>
+                                    <option value="MediumTurquoise">MediumTurquoise</option>
+                                    <option value="MediumVioletRed">MediumVioletRed</option>
+                                    <option value="MidnightBlue">MidnightBlue</option>
+                                    <option value="MintCream">MintCream</option>
+                                    <option value="MistyRose">MistyRose</option>
+                                    <option value="Moccasin">Moccasin</option>
+                                    <option value="NavajoWhite">NavajoWhite</option>
+                                    <option value="Navy">Navy</option>
+                                    <option value="OldLace">OldLace</option>
+                                    <option value="Olive">Olive</option>
+                                    <option value="OliveDrab">OliveDrab</option>
+                                    <option value="Orange">Orange</option>
+                                    <option value="OrangeRed">OrangeRed</option>
+                                    <option value="Orchid">Orchid</option>
+                                    <option value="PaleGoldenRod">PaleGoldenRod</option>
+                                    <option value="PaleGreen">PaleGreen</option>
+                                    <option value="PaleTurquoise">PaleTurquoise</option>
+                                    <option value="PaleVioletRed">PaleVioletRed</option>
+                                    <option value="PapayaWhip">PapayaWhip</option>
+                                    <option value="PeachPuff">PeachPuff</option>
+                                    <option value="Peru">Peru</option>
+                                    <option value="Pink">Pink</option>
+                                    <option value="Plum">Plum</option>
+                                    <option value="PowderBlue">PowderBlue</option>
+                                    <option value="Purple">Purple</option>
+                                    <option value="Red">Red</option>
+                                    <option value="RosyBrown">RosyBrown</option>
+                                    <option value="RoyalBlue">RoyalBlue</option>
+                                    <option value="SaddleBrown">SaddleBrown</option>
+                                    <option value="Salmon">Salmon</option>
+                                    <option value="SandyBrown">SandyBrown</option>
+                                    <option value="SeaGreen">SeaGreen</option>
+                                    <option value="SeaShell">SeaShell</option>
+                                    <option value="Sienna">Sienna</option>
+                                    <option value="Silver">Silver</option>
+                                    <option value="SkyBlue">SkyBlue</option>
+                                    <option value="SlateBlue">SlateBlue</option>
+                                    <option value="SlateGray">SlateGray</option>
+                                    <option value="Snow">Snow</option>
+                                    <option value="SpringGreen">SpringGreen</option>
+                                    <option value="SteelBlue">SteelBlue</option>
+                                    <option value="Tan">Tan</option>
+                                    <option value="Teal">Teal</option>
+                                    <option value="Thistle">Thistle</option>
+                                    <option value="Tomato">Tomato</option>
+                                    <option value="Turquoise">Turquoise</option>
+                                    <option value="Violet">Violet</option>
+                                    <option value="Wheat">Wheat</option>
+                                    <option value="White">White</option>
+                                    <option value="WhiteSmoke">WhiteSmoke</option>
+                                    <option value="Yellow">Yellow</option>
+                                    <option value="YellowGreen">YellowGreen</option>
+                                </select>
+                                <div class="colorPreview" data-bind="style: {'background-color': $data.fadeColor()}"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -376,54 +385,56 @@
                         </label>
                     </div>
 
-                    <div data-bind="visible: $data.interpolate">
-                        <label class="sub">Interpolated Framerate</label>
-                        <input type="number" step='1' min="1" max="120" width="5" data-bind="value: $data.interpolateFramerate">
-                    </div>
+                    <div class="sub-settings">
+                        <div data-bind="visible: $data.interpolate">
+                            <label class="sub">Interpolated Framerate</label>
+                            <input type="number" step='1' min="1" max="120" width="5" data-bind="value: $data.interpolateFramerate">
+                        </div>
 
-                    <div data-bind="visible: $data.interpolate">
-                        <label class="sub">Mode</label>
-                        <select data-bind="value: $data.interpolateMode">
-                            <option value="blend">Blending Frames</option>
-                            <option value="mci">Motion Compensated</option>
-                        </select>
-                    </div>
+                        <div data-bind="visible: $data.interpolate">
+                            <label class="sub">Mode</label>
+                            <select data-bind="value: $data.interpolateMode">
+                                <option value="blend">Blending Frames</option>
+                                <option value="mci">Motion Compensated</option>
+                            </select>
+                        </div>
 
-                    <div class="alert alert-block" style="margin-top: 1em" data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
-                        <strong>Note: </strong>
-                        <a href="http://underpop.online.fr/f/ffmpeg/help/minterpolate.htm.gz" target="_blank">Click here</a>
-                        for more information about the interpolation parameters. If you are not sure, you can just keep the default settings.
-                    </div>
+                        <div class="alert alert-block" style="margin-top: 1em" data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
+                            <strong>Note: </strong>
+                            <a href="http://underpop.online.fr/f/ffmpeg/help/minterpolate.htm.gz" target="_blank">Click here</a>
+                            for more information about the interpolation parameters. If you are not sure, you can just keep the default settings.
+                        </div>
 
-                    <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
-                        <label class="sub">Motion Estimation</label>
-                        <select data-bind="value: $data.interpolateEstimation">
-                            <option value="bidir">Bidirectional</option>
-                            <option value="bilar">Bilateral</option>
-                        </select>
-                    </div>
+                        <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
+                            <label class="sub">Motion Estimation</label>
+                            <select data-bind="value: $data.interpolateEstimation">
+                                <option value="bidir">Bidirectional</option>
+                                <option value="bilar">Bilateral</option>
+                            </select>
+                        </div>
 
-                    <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
-                        <label class="sub">Motion Search Algorithm</label>
-                        <select data-bind="value: $data.interpolateAlgorithm">
-                            <option value="esa">Exhaustive</option>
-                            <option value="tss">Three step</option>
-                            <option value="tdls">Two dimensional logarithmic</option>
-                            <option value="ntss">New three step</option>
-                            <option value="fss">Four step</option>
-                            <option value="ds">Diamond</option>
-                            <option value="hexbs">Hexagon-based</option>
-                            <option value="epzs">Enhanced predictive zonal</option>
-                            <option value="umh">Uneven multi-hexagon</option>
-                        </select>
-                    </div>
+                        <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
+                            <label class="sub">Motion Search Algorithm</label>
+                            <select data-bind="value: $data.interpolateAlgorithm">
+                                <option value="esa">Exhaustive</option>
+                                <option value="tss">Three step</option>
+                                <option value="tdls">Two dimensional logarithmic</option>
+                                <option value="ntss">New three step</option>
+                                <option value="fss">Four step</option>
+                                <option value="ds">Diamond</option>
+                                <option value="hexbs">Hexagon-based</option>
+                                <option value="epzs">Enhanced predictive zonal</option>
+                                <option value="umh">Uneven multi-hexagon</option>
+                            </select>
+                        </div>
 
-                    <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
-                        <label class="sub">Motion Compensation</label>
-                        <select data-bind="value: $data.interpolateCompensation">
-                            <option value="obmc">Normal</option>
-                            <option value="aobmc">Adaptive</option>
-                        </select>
+                        <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
+                            <label class="sub">Motion Compensation</label>
+                            <select data-bind="value: $data.interpolateCompensation">
+                                <option value="obmc">Normal</option>
+                                <option value="aobmc">Adaptive</option>
+                            </select>
+                        </div>
                     </div>
 
                     <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.octoprint_timelapseplus.renderPresets.remove($data)}, enable: $parent.settings.plugins.octoprint_timelapseplus.renderPresets().length > 1">

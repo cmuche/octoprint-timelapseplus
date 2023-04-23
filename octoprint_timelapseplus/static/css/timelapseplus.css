@@ -154,6 +154,12 @@
     margin-right: 2em;
 }
 
+#timelapseplus-settings .sub-settings {
+    border-left: 0.25em solid rgba(127, 127, 127, 0.25);
+    padding-left: 1em;
+    margin-left: 0.5em;
+}
+
 #tlp-modal-render .startRender .preview img {
     min-width: 30em;
     max-width: 30em;
