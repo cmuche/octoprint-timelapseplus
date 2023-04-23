@@ -12,9 +12,10 @@ from .model.mask import Mask
 
 
 class ApiController:
-    def __init__(self, parent, dataFolder, settings, cacheController, webcamController):
+    def __init__(self, parent, dataFolder, baseFolder, settings, cacheController, webcamController):
         self.PARENT = parent
         self._data_folder = dataFolder
+        self._basefolder = baseFolder
         self._settings = settings
         self.CACHE_CONTROLLER = cacheController
         self.WEBCAM_CONTROLLER = webcamController
@@ -51,7 +52,7 @@ class ApiController:
                 if os.path.isfile(video.THUMBNAIL):
                     img = Image.open(video.THUMBNAIL)
                 else:
-                    img = Image.open(os.path.dirname(__file__) + '/assets/no-thumbnail.jpg')
+                    img = Image.open(self._basefolder + '/assets/no-thumbnail.jpg')
 
                 thumb = self.PARENT.makeThumbnail(img)
                 self.CACHE_CONTROLLER.storeBytes(cacheId, thumb)
