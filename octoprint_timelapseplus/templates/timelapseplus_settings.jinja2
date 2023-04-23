@@ -181,6 +181,30 @@
 
                     <div>
                         <label class="sub checkbox">
+                            <input type="checkbox" data-bind="checked: $data.combine">
+                            Combine Frames
+                        </label>
+                        <span class="help-block">Before rendering, multiple frames will be combined to reduce the number of total frames and by that the length of the final video.</span>
+                    </div>
+
+                    <div data-bind="visible: $data.combine">
+                        <label class="sub">Chunk Size</label>
+                        <input type="number" step='1' min="2" max="100" width="5" data-bind="value: $data.combineSize">
+                        <span class="help-block">Defines how many frames should be combined into one chunk.</span>
+                    </div>
+
+                    <div data-bind="visible: $data.combine">
+                        <label class="sub">Method</label>
+                        <select data-bind="value: $data.combineMethod">
+                            <option value="DROP">Drop Frames</option>
+                            <option value="BLEND">Blend</option>
+                            <option value="BLEND_WEIGHTED">Weighted Blend</option>
+                        </select>
+                        <span class="help-block">When dropping frames, only the last frame of a combined chunk will be used, blending creates a combined frame by mixing all chunk frames into one.</span>
+                    </div>
+
+                    <div>
+                        <label class="sub checkbox">
                             <input type="checkbox" data-bind="checked: $data.fade">
                             Enable Fade
                         </label>
