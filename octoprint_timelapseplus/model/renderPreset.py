@@ -18,8 +18,8 @@ class RenderPreset:
         self.FADE_IN_DURATION = 1000
         self.FADE_OUT_DURATION = 1000
         self.FADE_COLOR = 'Black'
-        self.COMBINE = True
-        self.COMBINE_SIZE = 5
+        self.COMBINE = False
+        self.COMBINE_SIZE = 2
         self.COMBINE_METHOD = CombineMethod.DROP
 
         if d is not None:
