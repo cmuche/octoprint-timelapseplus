@@ -8,10 +8,12 @@ Timelapse+ is a powerful yet lightweight plugin to capture and render your print
 
 ## Features
 - Trigger snapshots via __commands__ in your GCODE (e.g. on layer change)
+  - __@-Commands__ like ``@SNAPSHOT``
+  - __Action Commands__ like ``//action:SNAPSHOT`` (on Marlin via ``M118``)
 - Regular __time-based__ snapshot mode
 - User-friendly and tidy user interface
   - __View, watch and download__ your rendered videos
-  - Preview your settings before rendering
+  - __Preview__ your __render settings__ and check the estimated video length before starting a render job
 - Customizable __image enhancements for post-processing__
   - __Brightness__ and __contrast__
   - __Auto-Optimization__ by histogram equalization
@@ -21,8 +23,9 @@ Timelapse+ is a powerful yet lightweight plugin to capture and render your print
   - __Generate frames__ between your captured frames
   - Based on __motion calculation__ algorithms
   - Or just __blend frames__ together to generate sub-frames
-- Fade-In and Fade-Out effects
+- __Combine/Blend multiple frames__ to reduce the number of total frames
+- Colorful Fade-In and Fade-Out effects
 - Manage and set up your enhancement- and render presets via the settings page
 - Snapshots are stored in __Frame Collections__, so you can re-render them at any time with different settings and presets
-- Preview the snapshot capturing live while printing
-- Timelapse+ doesn't modify your GCODE and doesn't affect your printer's movements!
+- __Preview__ the __snapshot capturing__ live while printing
+- Timelapse+ __doesn't modify your GCODE__ and __doesn't affect your printer's movements__!
