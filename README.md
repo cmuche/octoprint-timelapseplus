@@ -1,6 +1,6 @@
-# Timelapse+ for OctoPrint
+![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/logo.png)
 
-Timelapse+ is a powerful yet lightweight plugin to capture and render your print timelapses.
+Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render your print timelapses.
 
 | [![Video](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/timelapseplus.gif)](https://www.youtube.com/watch?v=fV8yoPwcXAU) |
 |------------------------------------------------------------------------------------------------------------------------------------------------|
