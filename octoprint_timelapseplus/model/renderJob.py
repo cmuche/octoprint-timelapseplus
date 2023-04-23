@@ -230,6 +230,7 @@ class RenderJob:
         except Exception as e:
             self.ERROR = str(e)
             self.setState(RenderJobState.FAILED)
+            raise e
         finally:
             self.RUNNING = False
             shutil.rmtree(self.FOLDER)
