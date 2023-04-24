@@ -105,7 +105,7 @@ class RenderJob:
 
         self.setState(RenderJobState.COMBINING)
 
-        frameFiles = glob.glob(self.FOLDER + '/*.jpg')
+        frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
         chunks = ListHelper.chunkList(frameFiles, preset.COMBINE_SIZE)
         for i, chunk in enumerate(chunks):
             img = ImageCombineHelper.createCombinedImage(chunk, preset.COMBINE_METHOD)
@@ -123,7 +123,7 @@ class RenderJob:
 
         self.setState(RenderJobState.BLURRING)
 
-        frameFiles = glob.glob(self.FOLDER + '/*.jpg')
+        frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
         for i, frame in enumerate(frameFiles):
             img = Image.open(frame)
             imgRes = preset.applyBlur(img)
@@ -135,7 +135,7 @@ class RenderJob:
             return
 
         self.setState(RenderJobState.ENHANCING)
-        frameFiles = glob.glob(self.FOLDER + '/*.jpg')
+        frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
         for i, frame in enumerate(frameFiles):
             img = Image.open(frame)
             imgRes = preset.applyEnhance(img)
@@ -147,7 +147,7 @@ class RenderJob:
             return
 
         self.setState(RenderJobState.RESIZING)
-        frameFiles = glob.glob(self.FOLDER + '/*.jpg')
+        frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
         for i, frame in enumerate(frameFiles):
             img = Image.open(frame)
             imgRes = preset.applyResize(img)
