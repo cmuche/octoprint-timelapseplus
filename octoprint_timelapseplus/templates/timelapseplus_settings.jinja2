@@ -4,14 +4,14 @@
     <div class="control-group">
         <label class="control-label">FFmpeg Path</label>
         <div class="controls">
-            <input type="text" data-bind="value: settings.plugins.octoprint_timelapseplus.ffmpegPath">
+            <input type="text" data-bind="value: settings.plugins.timelapseplus.ffmpegPath">
         </div>
     </div>
 
     <div class="control-group">
         <label class="control-label">FFprobe Path</label>
         <div class="controls">
-            <input type="text" data-bind="value: settings.plugins.octoprint_timelapseplus.ffprobePath">
+            <input type="text" data-bind="value: settings.plugins.timelapseplus.ffprobePath">
             <span class="help-block">Usually FFprobe is located in the same folder as FFmpeg.</span>
         </div>
     </div>
@@ -19,7 +19,7 @@
     <div class="control-group">
         <label class="control-label">Webcam Snapshot URL</label>
         <div class="controls">
-            <input type="text" data-bind="value: settings.plugins.octoprint_timelapseplus.webcamUrl">
+            <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamUrl">
         </div>
     </div>
 
@@ -27,25 +27,25 @@
     <div class="control-group">
         <label class="control-label">Capture Mode</label>
         <div class="controls">
-            <select data-bind="value: settings.plugins.octoprint_timelapseplus.captureMode">
+            <select data-bind="value: settings.plugins.timelapseplus.captureMode">
                 <option value="COMMAND">Command</option>
                 <option value="TIMED">Timer</option>
             </select>
         </div>
     </div>
 
-    <div class="control-group" data-bind="visible: settings.plugins.octoprint_timelapseplus.captureMode() == 'COMMAND'">
+    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.captureMode() == 'COMMAND'">
         <label class="control-label">Snapshot Command</label>
         <div class="controls">
-            <input type="text" data-bind="value: settings.plugins.octoprint_timelapseplus.snapshotCommand">
+            <input type="text" data-bind="value: settings.plugins.timelapseplus.snapshotCommand">
             <span class="help-block">Action Command or @-Command that will trigger a snapshot capture</span>
         </div>
     </div>
 
-    <div class="control-group" data-bind="visible: settings.plugins.octoprint_timelapseplus.captureMode() == 'TIMED'">
+    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.captureMode() == 'TIMED'">
         <label class="control-label">Timer Interval</label>
         <div class="controls">
-            <input type="number" step='1' min="1" max="600" width="5" data-bind="value: settings.plugins.octoprint_timelapseplus.captureTimerInterval">
+            <input type="number" step='1' min="1" max="600" width="5" data-bind="value: settings.plugins.timelapseplus.captureTimerInterval">
             <span class="help-block">Capture Timer Interval in seconds</span>
         </div>
     </div>
@@ -53,7 +53,7 @@
     <div class="control-group">
         <label class="control-label">Render Video after Print</label>
         <div class="controls">
-            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.octoprint_timelapseplus.renderAfterPrint">
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.renderAfterPrint">
             <span class="help-block">When a Print has finished a Render Job will be started with the first Enhancement Preset and the first Render Preset defined below.</span>
         </div>
     </div>
@@ -65,12 +65,12 @@
 
             <div class="help-block">Enhancement presets define how the frames should be optimized and filtered before the final video is rendered</div>
 
-            <button class="btn btn-mini" data-bind="click: function(){parent.addEnhancementPreset(settings.plugins.octoprint_timelapseplus.enhancementPresets)}">
+            <button class="btn btn-mini" data-bind="click: function(){parent.addEnhancementPreset(settings.plugins.timelapseplus.enhancementPresets)}">
                 <i class="fa fa-plus"></i>
                 Add Enhancement Preset
             </button>
 
-            <div data-bind="foreach: settings.plugins.octoprint_timelapseplus.enhancementPresets">
+            <div data-bind="foreach: settings.plugins.timelapseplus.enhancementPresets">
                 <div class="preset">
                     <div>
                         <label class="sub">Name</label>
@@ -119,7 +119,7 @@
                         <div data-bind="visible: $data.blur">
                             <label class="sub">Mask</label>
                             <div>
-                                <img style="width:8em" data-bind="visible: $data.blurMask() != null, attr: {src: $data.blurMask() == null ? '' : '/plugin/octoprint_timelapseplus/maskPreview?id=' + $data.blurMask()}">
+                                <img style="width:8em" data-bind="visible: $data.blurMask() != null, attr: {src: $data.blurMask() == null ? '' : '/plugin/timelapseplus/maskPreview?id=' + $data.blurMask()}">
                                 <div data-bind="visible: $data.blurMask() == null" style="color: red !important">
                                     With Blur enabled you must provide a grayscale blur mask!
                                 </div>
@@ -151,7 +151,7 @@
                         Live Preview
                     </button>
 
-                    <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.octoprint_timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.octoprint_timelapseplus.enhancementPresets().length > 1">
+                    <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.timelapseplus.enhancementPresets().length > 1">
                         <i class="fa fa-trash"></i>
                         Remove this Preset
                     </button>
@@ -167,12 +167,12 @@
 
             <div class="help-block">Render presets define how the actual video should be rendered</div>
 
-            <button class="btn btn-mini" data-bind="click: function(){parent.addRenderPreset(settings.plugins.octoprint_timelapseplus.renderPresets)}">
+            <button class="btn btn-mini" data-bind="click: function(){parent.addRenderPreset(settings.plugins.timelapseplus.renderPresets)}">
                 <i class="fa fa-plus"></i>
                 Add Render Preset
             </button>
 
-            <div data-bind="foreach: settings.plugins.octoprint_timelapseplus.renderPresets">
+            <div data-bind="foreach: settings.plugins.timelapseplus.renderPresets">
                 <div class="preset">
                     <div>
                         <label class="sub">Name</label>
@@ -437,7 +437,7 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.octoprint_timelapseplus.renderPresets.remove($data)}, enable: $parent.settings.plugins.octoprint_timelapseplus.renderPresets().length > 1">
+                    <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.timelapseplus.renderPresets.remove($data)}, enable: $parent.settings.plugins.timelapseplus.renderPresets().length > 1">
                         <i class="fa fa-trash"></i>
                         Remove this Preset
                     </button>

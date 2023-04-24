@@ -368,6 +368,7 @@ class TimelapsePlusPlugin(
 
 __plugin_pythoncompat__ = ">=3.7,<4"
 __plugin_name__ = "Timelapse+"
+__plugin_identifier__ = "timelapseplus"
 
 
 def __plugin_load__():

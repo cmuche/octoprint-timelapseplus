@@ -235,7 +235,7 @@ $(function() {
 
         self.api = function(command, payload = {}, successFn = null) {
             $.ajax({
-                url: "./plugin/octoprint_timelapseplus/" + command,
+                url: "./plugin/timelapseplus/" + command,
                 type: "POST",
                 dataType: "json",
                 data: JSON.stringify(payload),
@@ -284,7 +284,7 @@ $(function() {
         };
 
         self.onDataUpdaterPluginMessage = function(plugin, data) {
-            if (plugin != "octoprint_timelapseplus")
+            if (plugin != "timelapseplus")
                 return;
 
             console.log(data);

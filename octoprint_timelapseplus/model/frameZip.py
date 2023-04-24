@@ -38,8 +38,8 @@ class FrameZip:
             frames=self.FRAMES,
             size=self.SIZE,
             timestamp=self.TIMESTAMP,
-            thumbnail='/plugin/octoprint_timelapseplus/thumbnail?type=frameZip&id=' + self.ID,
-            url='/plugin/octoprint_timelapseplus/download?type=frameZip&id=' + self.ID
+            thumbnail='/plugin/timelapseplus/thumbnail?type=frameZip&id=' + self.ID,
+            url='/plugin/timelapseplus/download?type=frameZip&id=' + self.ID
         )
 
     def countFrames(self):

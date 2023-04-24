@@ -56,8 +56,8 @@ class Video:
             size=self.SIZE,
             length=self.LENGTH,
             timestamp=self.TIMESTAMP,
-            thumbnail='/plugin/octoprint_timelapseplus/thumbnail?type=video&id=' + self.ID,
-            url='/plugin/octoprint_timelapseplus/download?type=video&id=' + self.ID
+            thumbnail='/plugin/timelapseplus/thumbnail?type=video&id=' + self.ID,
+            url='/plugin/timelapseplus/download?type=video&id=' + self.ID
         )
 
     def getId(self):
