@@ -140,6 +140,37 @@ $(function() {
             return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
         };
 
+        self.itemIndex = function(arr, elem) {
+            const i = arr().indexOf(elem);
+            return i;
+        };
+
+        self.canMoveItemDown = function(arr, elem) {
+            const i = arr().indexOf(elem);
+            return i < arr().length - 1;
+        };
+
+        self.canMoveItemUp = function(arr, elem) {
+            const i = arr().indexOf(elem);
+            return i > 0;
+        };
+
+        self.moveItemDown = function(arr, elem) {
+            const i = arr().indexOf(elem);
+            if (i < arr().length - 1) {
+                const rawNumbers = arr();
+                arr.splice(i, 2, rawNumbers[i + 1], rawNumbers[i]);
+            }
+        };
+
+        self.moveItemUp = function(arr, elem) {
+            const i = arr.indexOf(elem);
+            if (0 < i) {
+                const rawNumbers = arr();
+                arr.splice(i - 1, 2, rawNumbers[i], rawNumbers[i - 1]);
+            }
+        };
+
         self.openBlurMask = function(preset) {
             $("<input type=\"file\">").on("change", function() {
                 let f = this.files[0];

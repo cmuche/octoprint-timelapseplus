@@ -72,6 +72,8 @@
 
             <div data-bind="foreach: settings.plugins.timelapseplus.enhancementPresets">
                 <div class="preset">
+                    <h4 style="margin: 0">Preset #<span data-bind="text: $parent.parent.itemIndex($parent.settings.plugins.timelapseplus.enhancementPresets, $data) + 1"></span></h4>
+
                     <div>
                         <label class="sub">Name</label>
                         <input type="text" class="input-block-level" data-bind="value: $data.name">
@@ -146,6 +148,14 @@
                         </div>
                     </div>
 
+                    <button class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data), click: function(){$parent.parent.moveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data)}">
+                        <i class="fa fa-chevron-up"></i>
+                    </button>
+
+                    <button style="margin-right: 1em" class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemDown($parent.settings.plugins.timelapseplus.enhancementPresets, $data), click: function(){$parent.parent.moveItemDown($parent.settings.plugins.timelapseplus.enhancementPresets, $data)}">
+                        <i class="fa fa-chevron-down"></i>
+                    </button>
+
                     <button class="btn btn-mini" data-bind="click: $parent.parent.openEnhancementPresetPreview">
                         <i class="fa fa-eye"></i>
                         Live Preview
@@ -174,6 +184,8 @@
 
             <div data-bind="foreach: settings.plugins.timelapseplus.renderPresets">
                 <div class="preset">
+                    <h4 style="margin: 0">Preset #<span data-bind="text: $parent.parent.itemIndex($parent.settings.plugins.timelapseplus.renderPresets, $data) + 1"></span></h4>
+
                     <div>
                         <label class="sub">Name</label>
                         <input type="text" class="input-block-level" data-bind="value: $data.name">
@@ -436,6 +448,14 @@
                             </select>
                         </div>
                     </div>
+
+                    <button class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemUp($parent.settings.plugins.timelapseplus.renderPresets, $data), click: function(){$parent.parent.moveItemUp($parent.settings.plugins.timelapseplus.renderPresets, $data)}">
+                        <i class="fa fa-chevron-up"></i>
+                    </button>
+
+                    <button style="margin-right: 1em" class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemDown($parent.settings.plugins.timelapseplus.renderPresets, $data), click: function(){$parent.parent.moveItemDown($parent.settings.plugins.timelapseplus.renderPresets, $data)}">
+                        <i class="fa fa-chevron-down"></i>
+                    </button>
 
                     <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.timelapseplus.renderPresets.remove($data)}, enable: $parent.settings.plugins.timelapseplus.renderPresets().length > 1">
                         <i class="fa fa-trash"></i>
