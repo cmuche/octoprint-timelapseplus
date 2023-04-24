@@ -52,7 +52,7 @@ class ApiController:
                 if os.path.isfile(video.THUMBNAIL):
                     img = Image.open(video.THUMBNAIL)
                 else:
-                    img = Image.open(self._basefolder + '/assets/no-thumbnail.jpg')
+                    img = Image.open(self._basefolder + '/static/assets/no-thumbnail.jpg')
 
                 thumb = self.PARENT.makeThumbnail(img)
                 self.CACHE_CONTROLLER.storeBytes(cacheId, thumb)
