@@ -186,6 +186,7 @@ class TimelapsePlusPlugin(
             type='data',
             error=self.ERROR,
             isRunning=False,
+            isCapturing=False,
             currentFileSize=0,
             captureMode=None,
             captureTimerInterval=0,
@@ -205,6 +206,7 @@ class TimelapsePlusPlugin(
             data['captureTimerInterval'] = self.PRINTJOB.CAPTURE_TIMER_INTERVAL
             data['previewImage'] = self.PRINTJOB.PREVIEW_IMAGE
             data['isRunning'] = self.PRINTJOB.RUNNING
+            data['isCapturing'] = self.PRINTJOB.isCapturing()
             data['snapshotCount'] = len(self.PRINTJOB.FRAMES)
 
         self._plugin_manager.send_plugin_message(self._identifier, data)
@@ -332,12 +334,14 @@ class TimelapsePlusPlugin(
             return
 
         self.PRINTJOB.PAUSED = True
+        self.sendClientData()
 
     def printResumed(self):
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
 
         self.PRINTJOB.PAUSED = False
+        self.sendClientData()
 
     def on_event(self, event, payload):
         if event == Events.PRINT_STARTED:

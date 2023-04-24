@@ -17,6 +17,11 @@
             <div class="info">
                 <div class="properties">
                     <div>
+                        <span>Capturing:</span>
+                        <i data-bind="visible: isCapturing()" class="fa fa-check" style="color: #42a500"></i>
+                        <i data-bind="visible: !isCapturing()" class="fa fa-times" style="color: #a50d00"></i>
+                    </div>
+                    <div>
                         <span>Frames captured:</span>
                         <span data-bind="text: snapshotCount"></span>
                     </div>

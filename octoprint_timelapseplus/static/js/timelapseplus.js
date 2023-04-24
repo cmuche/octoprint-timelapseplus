@@ -46,6 +46,7 @@ $(function() {
         self.captureMode = ko.observable();
         self.captureTimerInterval = ko.observable();
         self.isRunning = ko.observable(false);
+        self.isCapturing = ko.observable(false);
         self.currentFileSize = ko.observable(0);
         self.snapshotCount = ko.observable(0);
         self.previewImage = ko.observable(null);
@@ -309,6 +310,7 @@ $(function() {
             self.captureMode(data.captureMode);
             self.captureTimerInterval(data.captureTimerInterval);
             self.isRunning(data.isRunning);
+            self.isCapturing(data.isCapturing);
             self.currentFileSize(data.currentFileSize);
             self.snapshotCount(data.snapshotCount);
             self.previewImage(data.previewImage == null ? null : "data:image/jpeg;base64," + data.previewImage);

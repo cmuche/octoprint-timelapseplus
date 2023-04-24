@@ -37,6 +37,9 @@ class PrintJob:
 
         self.createFolder(dataFolder)
 
+    def isCapturing(self):
+        return self.RUNNING and not self.PAUSED
+
     def createFolder(self, dataFolder):
         self.FOLDER_NAME = self.PARENT.getRandomString(16)
         self.FOLDER = dataFolder + '/capture/' + self.FOLDER_NAME
