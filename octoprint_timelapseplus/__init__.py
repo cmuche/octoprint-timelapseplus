@@ -215,10 +215,10 @@ class TimelapsePlusPlugin(
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
 
     def on_after_startup(self):
-        self.CACHE_CONTROLLER = CacheController(self, self._data_folder, self._settings)
-        self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self._data_folder, self._settings)
-        self.API_CONTROLLER = ApiController(self, self._data_folder, self._basefolder, self._settings, self.CACHE_CONTROLLER, self.WEBCAM_CONTROLLER)
-        self.CLEANUP_CONTROLLER = CleanupController(self, self._data_folder, self._settings)
+        self.CACHE_CONTROLLER = CacheController(self, self.get_plugin_data_folder(), self._settings)
+        self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self.get_plugin_data_folder(), self._settings)
+        self.API_CONTROLLER = ApiController(self, self.get_plugin_data_folder(), self._basefolder, self._settings, self.CACHE_CONTROLLER, self.WEBCAM_CONTROLLER)
+        self.CLEANUP_CONTROLLER = CleanupController(self, self.get_plugin_data_folder(), self._settings)
 
         self.CLEANUP_CONTROLLER.init()
 
@@ -298,7 +298,7 @@ class TimelapsePlusPlugin(
         self.PRINTJOB.doSnapshot()
 
     def render(self, frameZip, enhancementPreset=None, renderPreset=None):
-        job = RenderJob(frameZip, self, self._logger, self._settings, self._data_folder, enhancementPreset, renderPreset)
+        job = RenderJob(frameZip, self, self._logger, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset)
         job.start()
         self.RENDERJOBS.append(job)
 
@@ -313,7 +313,7 @@ class TimelapsePlusPlugin(
         baseName = os.path.splitext(os.path.basename(printerFile))[0]
         id = self.getRandomString(32)
 
-        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self._data_folder, self.WEBCAM_CONTROLLER)
+        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self.get_plugin_data_folder(), self.WEBCAM_CONTROLLER)
         self.PRINTJOB.start()
         self.sendClientData()
 
