@@ -387,7 +387,7 @@ class TimelapsePlusPlugin(
                 type="github_release",
                 current=self._plugin_version,
                 user="cmuche",
-                repo="timelapseplus",
+                repo="octoprint-timelapseplus",
 
                 pip="https://github.com/cmuche/octoprint-timelapseplus/archive/{target}.zip"
             )
