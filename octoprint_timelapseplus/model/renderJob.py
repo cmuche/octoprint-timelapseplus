@@ -86,7 +86,7 @@ class RenderJob:
 
     def start(self):
         self.RUNNING = True
-        self.THREAD = Thread(target=self.renderTimelapse)
+        self.THREAD = Thread(target=self.renderTimelapse, daemon=True)
         self.THREAD.start()
 
     def createFolder(self, dataFolder):

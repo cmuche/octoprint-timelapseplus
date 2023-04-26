@@ -262,7 +262,7 @@ class TimelapsePlusPlugin(
                 sleep(10),
                 self.RENDERJOBS.remove(j),
                 self.sendClientData()
-            )), args=(job,)).start()
+            )), args=(job,), daemon=True).start()
 
     def renderJobProgressChanged(self, job, progress):
         self.sendClientData()
