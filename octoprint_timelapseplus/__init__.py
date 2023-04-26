@@ -347,22 +347,31 @@ class TimelapsePlusPlugin(
         if event == Events.PRINT_STARTED:
             self.printFinished(False)
             self.printStarted()
+            return
         if event == Events.PRINT_DONE:
             self.printFinished(True)
+            return
         if event == Events.DISCONNECTING:
             self.printFinished(False)
+            return
         if event == Events.DISCONNECTED:
             self.printFinished(False)
+            return
         if event == Events.PRINT_PAUSED:
             self.printPaused()
+            return
         if event == Events.PRINT_RESUMED:
             self.printResumed()
+            return
         if event == Events.PRINT_FAILED:
             self.printFinished(False)
+            return
         if event == Events.PRINT_CANCELLING:
             self.printFinished(False)
+            return
         if event == Events.PRINT_CANCELLED:
             self.printFinished(False)
+            return
         if event == Events.PRINTER_RESET:
             self.printFinished(False)
 
