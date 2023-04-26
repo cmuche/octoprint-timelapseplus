@@ -112,7 +112,7 @@ class PrintJob:
         if self.PAUSED:
             return
 
-        thread = Thread(target=self.doSnapshotInner)
+        thread = Thread(target=self.doSnapshotInner, daemon=True)
         self.CAPTURE_THREADS.append(thread)
         thread.start()
 

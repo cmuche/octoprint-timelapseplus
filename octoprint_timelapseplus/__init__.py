@@ -215,10 +215,10 @@ class TimelapsePlusPlugin(
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
 
     def on_after_startup(self):
-        self.CACHE_CONTROLLER = CacheController(self, self._data_folder, self._settings)
-        self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self._data_folder, self._settings)
-        self.API_CONTROLLER = ApiController(self, self._data_folder, self._basefolder, self._settings, self.CACHE_CONTROLLER, self.WEBCAM_CONTROLLER)
-        self.CLEANUP_CONTROLLER = CleanupController(self, self._data_folder, self._settings)
+        self.CACHE_CONTROLLER = CacheController(self, self.get_plugin_data_folder(), self._settings)
+        self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self.get_plugin_data_folder(), self._settings)
+        self.API_CONTROLLER = ApiController(self, self.get_plugin_data_folder(), self._basefolder, self._settings, self.CACHE_CONTROLLER, self.WEBCAM_CONTROLLER)
+        self.CLEANUP_CONTROLLER = CleanupController(self, self.get_plugin_data_folder(), self._settings)
 
         self.CLEANUP_CONTROLLER.init()
 
@@ -262,7 +262,7 @@ class TimelapsePlusPlugin(
                 sleep(10),
                 self.RENDERJOBS.remove(j),
                 self.sendClientData()
-            )), args=(job,)).start()
+            )), args=(job,), daemon=True).start()
 
     def renderJobProgressChanged(self, job, progress):
         self.sendClientData()
@@ -298,7 +298,7 @@ class TimelapsePlusPlugin(
         self.PRINTJOB.doSnapshot()
 
     def render(self, frameZip, enhancementPreset=None, renderPreset=None):
-        job = RenderJob(frameZip, self, self._logger, self._settings, self._data_folder, enhancementPreset, renderPreset)
+        job = RenderJob(frameZip, self, self._logger, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset)
         job.start()
         self.RENDERJOBS.append(job)
 
@@ -313,7 +313,7 @@ class TimelapsePlusPlugin(
         baseName = os.path.splitext(os.path.basename(printerFile))[0]
         id = self.getRandomString(32)
 
-        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self._data_folder, self.WEBCAM_CONTROLLER)
+        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self.get_plugin_data_folder(), self.WEBCAM_CONTROLLER)
         self.PRINTJOB.start()
         self.sendClientData()
 
@@ -347,27 +347,51 @@ class TimelapsePlusPlugin(
         if event == Events.PRINT_STARTED:
             self.printFinished(False)
             self.printStarted()
+            return
         if event == Events.PRINT_DONE:
             self.printFinished(True)
+            return
         if event == Events.DISCONNECTING:
             self.printFinished(False)
+            return
         if event == Events.DISCONNECTED:
             self.printFinished(False)
+            return
         if event == Events.PRINT_PAUSED:
             self.printPaused()
+            return
         if event == Events.PRINT_RESUMED:
             self.printResumed()
+            return
         if event == Events.PRINT_FAILED:
             self.printFinished(False)
+            return
         if event == Events.PRINT_CANCELLING:
             self.printFinished(False)
+            return
         if event == Events.PRINT_CANCELLED:
             self.printFinished(False)
+            return
         if event == Events.PRINTER_RESET:
             self.printFinished(False)
 
     def increaseBodyUploadSize(self, current_max_body_sizes, *args, **kwargs):
         return [("POST", '/createBlurMask', 50 * 1024 * 1024)]
+
+    def getUpdateInformation(self, *args, **kwargs):
+        return dict(
+            timelapseplus=dict(
+                displayName=self._plugin_name,
+                displayVersion=self._plugin_version,
+
+                type="github_release",
+                current=self._plugin_version,
+                user="cmuche",
+                repo="timelapseplus",
+
+                pip="https://github.com/cmuche/octoprint-timelapseplus/archive/{target}.zip"
+            )
+        )
 
 
 __plugin_pythoncompat__ = ">=3.7,<4"
@@ -383,5 +407,6 @@ def __plugin_load__():
     __plugin_hooks__ = {
         "octoprint.server.http.bodysize": __plugin_implementation__.increaseBodyUploadSize,
         "octoprint.comm.protocol.atcommand.sending": __plugin_implementation__.atCommand,
-        "octoprint.comm.protocol.action": __plugin_implementation__.atAction
+        "octoprint.comm.protocol.action": __plugin_implementation__.atAction,
+        "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.getUpdateInformation
     }
