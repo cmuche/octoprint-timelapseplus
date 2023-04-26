@@ -378,6 +378,21 @@ class TimelapsePlusPlugin(
     def increaseBodyUploadSize(self, current_max_body_sizes, *args, **kwargs):
         return [("POST", '/createBlurMask', 50 * 1024 * 1024)]
 
+    def getUpdateInformation(self, *args, **kwargs):
+        return dict(
+            timelapseplus=dict(
+                displayName=self._plugin_name,
+                displayVersion=self._plugin_version,
+
+                type="github_release",
+                current=self._plugin_version,
+                user="cmuche",
+                repo="timelapseplus",
+
+                pip="https://github.com/cmuche/octoprint-timelapseplus/archive/{target}.zip"
+            )
+        )
+
 
 __plugin_pythoncompat__ = ">=3.7,<4"
 __plugin_name__ = "Timelapse+"
@@ -392,5 +407,6 @@ def __plugin_load__():
     __plugin_hooks__ = {
         "octoprint.server.http.bodysize": __plugin_implementation__.increaseBodyUploadSize,
         "octoprint.comm.protocol.atcommand.sending": __plugin_implementation__.atCommand,
-        "octoprint.comm.protocol.action": __plugin_implementation__.atAction
+        "octoprint.comm.protocol.action": __plugin_implementation__.atAction,
+        "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.getUpdateInformation
     }
