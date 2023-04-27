@@ -100,11 +100,13 @@ class PrintJob:
 
         timePart = datetime.now().strftime("%Y%m%d%H%M%S")
         zipFileName = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.zip'
-        with zipfile.ZipFile(zipFileName, 'w') as zipMe:
+        tmpZipFile = self.FOLDER + '/out.zip'
+        with zipfile.ZipFile(tmpZipFile, 'w') as zipMe:
             for file in finishedFiles:
                 baseName = os.path.basename(file)
                 zipMe.write(file, baseName, compress_type=zipfile.ZIP_STORED)
 
+        shutil.move(tmpZipFile, zipFileName)
         shutil.rmtree(self.FOLDER)
         return zipFileName
 
