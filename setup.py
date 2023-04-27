@@ -33,7 +33,7 @@ plugin_url = "https://github.com/cmuche/octoprint-timelapseplus"
 plugin_license = "CC BY-ND"
 
 # Any additional requirements besides OctoPrint should be listed here
-plugin_requires = ["pillow>=6.2.0,<7.0.0"]
+plugin_requires = ["pillow>=6.2.0,<7.0.0", "deepdiff>=6.3.0,<7.0.0"]
 
 ### --------------------------------------------------------------------------------------------------------------------
 ### More advanced options that you usually shouldn't have to touch follow after this point
