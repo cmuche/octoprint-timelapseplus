@@ -16,8 +16,7 @@ class CleanupController:
 
         self.SECONDS_1_HOUR = 60 * 60
         self.SECONDS_5_MINUTES = 5 * 60
-        self.SECONDS_12_HOURS = 12 * 60 * 60
-        self.SECONDS_1_DAY = 12 * 60 * 60
+        self.SECONDS_1_DAY = 24 * 60 * 60
 
         self.CRON_TIMER_INTERVAL = self.SECONDS_5_MINUTES
 
