@@ -161,6 +161,35 @@
 
 }
 
+#tlp-modal-video .video-error {
+    color: #AA2222;
+    width: 640px;
+    height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(127, 127, 127, 0.05);
+    border: 1px solid rgba(127, 127, 127, 0.25);
+}
+
+#tlp-modal-video .gif-wrapper {
+    width: 640px;
+    height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#tlp-modal-video .gif {
+    max-width: 640px;
+    max-height: 360px;
+}
+
+#tlp-modal-video video {
+    width: 640px;
+    height: 360px;
+}
+
 #tlp-modal-render .startRender h4:first-child {
     margin-top: 0;
 }

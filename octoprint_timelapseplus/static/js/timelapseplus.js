@@ -42,6 +42,9 @@ $(function() {
         self.error = ko.observable(null);
         self.hasError = ko.observable(false);
 
+        self.hasVideoPlaybackError = ko.observable(false);
+        self.videoPreviewIsGif = ko.observable(false);
+
         self.snapshotCommand = ko.observable();
         self.captureMode = ko.observable();
         self.captureTimerInterval = ko.observable();
@@ -67,6 +70,10 @@ $(function() {
             self.api("getRenderPresetVideoLength", {preset: data, frameZipId: self.selectedFrameZip().id}, function(res) {
                 self.selectedRenderPresetVideoLength(res.length);
             });
+        });
+
+        $("div#tlp-modal-video video source")[0].addEventListener("error", function(e) {
+            self.hasVideoPlaybackError(true);
         });
 
         // https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
@@ -195,10 +202,18 @@ $(function() {
                 width: "auto"
             });
 
-            $("div#tlp-modal-video video source")[0].src = video.url;
-            $("div#tlp-modal-video video")[0].load();
-            $("div#tlp-modal-video video")[0].currentTime = 0;
-            $("div#tlp-modal-video video").trigger("play");
+
+            if (video.extension == "gif") {
+                $("div#tlp-modal-video img.gif").attr("src", video.url);
+                self.videoPreviewIsGif(true);
+            } else {
+                self.videoPreviewIsGif(false);
+                self.hasVideoPlaybackError(false);
+                $("div#tlp-modal-video video source")[0].src = video.url;
+                $("div#tlp-modal-video video")[0].load();
+                $("div#tlp-modal-video video")[0].currentTime = 0;
+                $("div#tlp-modal-video video").trigger("play");
+            }
         };
 
         self.openEnhancementPresetPreview = function(preset) {

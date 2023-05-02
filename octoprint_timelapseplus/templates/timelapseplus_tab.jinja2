@@ -259,7 +259,13 @@
     </div>
     <div class="modal-body">
         <div class="row-fluid">
-            <video width="640" height="360" controls>
+            <div class="video-error" data-bind="visible: hasVideoPlaybackError() && !videoPreviewIsGif()">
+                Your browser is not able to play this video.
+            </div>
+            <div class="gif-wrapper" data-bind="visible: videoPreviewIsGif()">
+                <img class="gif" />
+            </div>
+            <video data-bind="visible: !hasVideoPlaybackError() && !videoPreviewIsGif()" controls>
                 <source />
                 Your browser does not support the video tag.
             </video>
