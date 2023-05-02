@@ -18,7 +18,7 @@ class Video:
         self.MIMETYPE = 'video/mp4'
         self.ID = self.getId()
         self.LENGTH = self.getVideoLength()
-        self.EXTENSION = os.path.splitext(path)[1][1:]
+        self.EXTENSION = os.path.splitext(path)[1][1:].lower()
 
     def getVideoLength(self):
         cacheId = ['video', 'length', self.ID]

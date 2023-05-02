@@ -173,7 +173,7 @@ class TimelapsePlusPlugin(
         files = []
         allFiles = glob.glob(self._settings.getBaseFolder('timelapse') + '/*')
         for f in allFiles:
-            ext = os.path.splitext(f)[1][1:]
+            ext = os.path.splitext(f)[1][1:].lower()
             if ext in videoExtensions:
                 files.append(f)
 
