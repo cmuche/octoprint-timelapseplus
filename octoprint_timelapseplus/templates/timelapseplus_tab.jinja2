@@ -113,6 +113,7 @@
     <div data-bind="foreach: videos.paginatedItems">
         <div class="file video">
             <div class="preview">
+                <div class="overlay" data-bind="text: $data.extension"></div>
                 <img data-bind="attr: {src: $data.thumbnail}" />
             </div>
             <div class="info">
