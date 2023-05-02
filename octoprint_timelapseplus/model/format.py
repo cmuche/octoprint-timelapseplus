@@ -11,7 +11,7 @@ class Format:
 
     def getJSON(self):
         return dict(
-            id=ID,
+            id=self.ID,
             name=self.NAME,
             title=self.TITLE,
             extension=self.EXTENSION,
