@@ -60,6 +60,8 @@ $(function() {
         self.selectedPresetRender = ko.observable();
         self.selectedFrameZip = ko.observable();
         self.selectedRenderPresetVideoLength = ko.observable(0);
+        self.videoFormats = ko.observable([]);
+        self.selectedVideoFormat = ko.observable();
 
         self.selectedPresetRender.subscribe(function(data) {
             self.api("getRenderPresetVideoLength", {preset: data, frameZipId: self.selectedFrameZip().id}, function(res) {
@@ -300,15 +302,23 @@ $(function() {
                 self.selectedPresetEnhancement(data.enhancementPresets[0]);
                 self.selectedPresetRender(data.renderPresets[0]);
 
-                $("div#tlp-modal-render").modal({
-                    width: "auto"
+                self.api("listVideoFormats", {}, function(data) {
+                    self.videoFormats(data.formats);
+                    self.selectedVideoFormat(data.formats[0]);
+                    //TODO pre-select default
+
+                    $("div#tlp-modal-render").modal({
+                        width: "auto"
+                    });
                 });
+
             });
         };
 
         self.startRender = function() {
             self.api("render", {
                 frameZipId: self.selectedFrameZip().id,
+                formatId: self.selectedVideoFormat().id,
                 presetEnhancement: self.selectedPresetEnhancement(),
                 presetRender: self.selectedPresetRender()
             });

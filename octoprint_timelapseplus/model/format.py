@@ -14,6 +14,7 @@ class Format:
             id=self.ID,
             name=self.NAME,
             title=self.TITLE,
+            fullName=self.getFullName(),
             extension=self.EXTENSION,
             mimeType=self.MIME_TYPE,
             codecName=self.CODEC_NAME
@@ -21,8 +22,13 @@ class Format:
 
     def getFullName(self):
         ret = self.NAME
+
+        if self.TITLE is not None:
+            ret += ' - ' + self.TITLE
+
         if self.CODEC_NAME is not None:
-            ret += '(' + self.CODEC_NAME + ')'
+            ret += ' (' + self.CODEC_NAME + ')'
+
         return ret
 
     def getRenderArgs(self):

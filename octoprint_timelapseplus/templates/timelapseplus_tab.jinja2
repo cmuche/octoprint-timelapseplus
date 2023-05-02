@@ -229,10 +229,14 @@
                     <select data-bind="options: presetsRender, optionsText: function(x) { return x.name }, value: selectedPresetRender">
                     </select>
 
-                    <div style="margin-top: 1em">
-                        <span style="font-weight: bold">Length:</span>
+                    <div style="margin-bottom: 2em">
+                        <span style="font-weight: bold">Video Length:</span>
                         <span data-bind="text: timeSpan(selectedRenderPresetVideoLength())"></span>
                     </div>
+
+                    <h4>Output Format</h4>
+                    <select data-bind="options: videoFormats, optionsText: function(x) { return x.fullName }, value: selectedVideoFormat">
+                    </select>
                 </div>
                 <div class="preview">
                     <h4>Enhancement Preview</h4>

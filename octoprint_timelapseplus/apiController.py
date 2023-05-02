@@ -148,8 +148,9 @@ class ApiController:
 
         enhancementPreset = EnhancementPreset(self.PARENT, data['presetEnhancement'])
         renderPreset = RenderPreset(data['presetRender'])
+        videoFormat = FormatHelper.getVideoFormatById(data['formatId'])
 
-        self.PARENT.render(frameZip, enhancementPreset, renderPreset)
+        self.PARENT.render(frameZip, enhancementPreset, renderPreset, videoFormat)
 
     def listPresets(self):
         epRaw = self._settings.get(["enhancementPresets"])
