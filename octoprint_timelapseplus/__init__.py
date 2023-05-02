@@ -164,7 +164,14 @@ class TimelapsePlusPlugin(
         return frameZips
 
     def listVideos(self):
-        files = glob.glob(self._settings.getBaseFolder('timelapse') + '/*.mp4')
+        videoExtensions = FormatHelper.getVideoFormatExtensions()
+        files = []
+        allFiles = glob.glob(self._settings.getBaseFolder('timelapse') + '/*')
+        for f in allFiles:
+            ext = os.path.splitext(f)[1][1:]
+            if ext in videoExtensions:
+                files.append(f)
+
         videos = list(map(lambda x: Video(x, self, self._logger, self._settings), files))
         videos.sort(key=lambda x: x.TIMESTAMP)
         videos.reverse()
