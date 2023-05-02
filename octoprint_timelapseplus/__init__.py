@@ -11,6 +11,7 @@ from octoprint.events import Events
 from .apiController import ApiController
 from .cacheController import CacheController
 from .cleanupController import CleanupController
+from .helpers.formatHelper import FormatHelper
 from .model.captureMode import CaptureMode
 from .model.enhancementPreset import EnhancementPreset
 from .model.frameZip import FrameZip
@@ -92,6 +93,10 @@ class TimelapsePlusPlugin(
     @octoprint.plugin.BlueprintPlugin.route("/enhancementPreviewSettings", methods=["POST"])
     def apiEnhancementPreviewSettings(self):
         return self.API_CONTROLLER.enhancementPreviewSettings()
+
+    @octoprint.plugin.BlueprintPlugin.route("/listVideoFormats", methods=["POST"])
+    def apiEnhancementPreviewSettings(self):
+        return self.API_CONTROLLER.listVideoFormats()
 
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)

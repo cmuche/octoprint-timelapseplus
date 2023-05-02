@@ -6,6 +6,7 @@ import re
 from PIL import Image
 from flask import make_response, send_file
 
+from .helpers.formatHelper import FormatHelper
 from .model.enhancementPreset import EnhancementPreset
 from .model.renderPreset import RenderPreset
 from .model.mask import Mask
@@ -184,3 +185,7 @@ class ApiController:
 
         length = preset.calculateVideoLength(frameZip)
         return dict(length=length)
+
+    def listVideoFormats(self):
+        formats = list(map(lambda x: x.getJSON(), FormatHelper.getVideoFormats()))
+        return dict(formats=formats)
