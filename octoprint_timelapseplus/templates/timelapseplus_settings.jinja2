@@ -5,6 +5,7 @@
         <label class="control-label">FFmpeg Path</label>
         <div class="controls">
             <input type="text" data-bind="value: settings.plugins.timelapseplus.ffmpegPath">
+            <span class="help-block">The path to the FFmpeg binary. You need to install it manually on your host machine.</span>
         </div>
     </div>
 
@@ -20,6 +21,7 @@
         <label class="control-label">Webcam Snapshot URL</label>
         <div class="controls">
             <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamUrl">
+            <span class="help-block">The URL must be reachable for OctoPrint and return a still JPG image of the webcam stream.</span>
         </div>
     </div>
 
@@ -38,7 +40,15 @@
         <label class="control-label">Snapshot Command</label>
         <div class="controls">
             <input type="text" data-bind="value: settings.plugins.timelapseplus.snapshotCommand">
-            <span class="help-block">Action Command or @-Command that will trigger a snapshot capture</span>
+            <span class="help-block">Action Command or @-Command that will trigger a snapshot capture. You'll have to include it in your GCODE where you want a snapshot to be triggered.</span>
+            <code>; Example GCODE
+
+                ; @-Command like this:
+                @<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>
+
+                ; Or Action Command like this:
+                M118 A1 action:<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>
+            </code>
         </div>
     </div>
 
@@ -128,6 +138,7 @@
                         <div data-bind="visible: $data.blur">
                             <label class="sub">Blur Radius</label>
                             <input type="number" step='1' placeholder='0' min="1" max="500" width="5" data-bind="value: $data.blurRadius">
+                            <span class="help-block">The Blur Radius (in Pixels) defines how blurry the masked areas will be.</span>
                         </div>
 
                         <div data-bind="visible: $data.blur">
@@ -139,6 +150,7 @@
                                 </div>
                             </div>
                             <button style="margin-top: 1em" class="btn" data-bind="click: $parent.parent.openBlurMask">Import Blur Mask</button>
+                            <span class="help-block">Requires a grayscale image, ideally the same resolution as your webcam image. White areas define where the blur is applied on the frames , black areas mean no blur.</span>
                         </div>
                     </div>
 

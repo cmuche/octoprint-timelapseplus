@@ -214,6 +214,12 @@
     box-shadow: 0.2em 0.2em 0.35em rgba(0, 0, 0, 0.5);
 }
 
+#timelapseplus-settings code {
+    display: block;
+    white-space: pre-line;
+    margin-top: 1em;
+}
+
 #timelapseplus-settings .preset {
     border: 1px dashed rgba(127, 127, 127, 0.75);
     padding: 1em;
