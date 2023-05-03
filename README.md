@@ -6,7 +6,7 @@ Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render y
 |------------------------------------------------------------------------------------------------------------------------------------------------|
 | Click the image to see the video                                                                                                               |                                                                                                               |
 
-## Features
+# Features
 - Trigger snapshots via __commands__ in your GCODE (e.g. on layer change)
   - __@-Commands__ like ``@SNAPSHOT``
   - __Action Commands__ like ``//action:SNAPSHOT`` (on Marlin via ``M118``)
@@ -35,7 +35,46 @@ Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render y
   - Legacy __AVI__ and __MPG__
 - Timelapse+ __doesn't modify your GCODE__ and __doesn't affect your printer's movements__!
 
-## Screenshots
+# Documentation
+
+## Getting Started
+Before you can use Timelapse+ you will have to configure some basic settings. Open the Timelapse+ plugin settings page in OctoPrint.
+
+### Setup FFmpeg, FFprobe and the Webcam URL
+In order to render your videos and get information about previously rendered videos, Timelapse+ requires FFmpeg and FFprobe.
+You need to install this on your host machine and ensure that OctoPrint is able to access the FFmpeg and FFprobe binaries.
+FFprobe is usually bundled with FFmpeg. So when your FFmpeg path is `/usr/bin/ffmpeg` your FFprobe path is probably `/usr/bin/ffprobe`.
+
+### Webcam Snapshot URL
+This is the URL which Timelapse+ calls to receive a snapshot.
+It has to be callable via HTTP and needs to return a valid JPG/JPEG image.
+This is a still image of your live webcam stream.
+Currently, Timelapse+ doesn't support other video or image sources, but it is planned for future relaeses.
+
+### Capture Mode and GCODE Preparation
+Timelapse+ has two modes to trigger snapshots.
+The first is the good old time-based mode, which captures a frame every x seconds.
+If you select this mode you can set a timer interval in seconds.
+
+The second option is the command-based mode. With this you can control the snapshot capturing directly from your GCODE.
+Whenever a special line (command) is sent to the printer, Timelapse+ will capture a snapshot.
+This is powerful if you set up your slicer so that it generates a snapshot command when a layer change occurs.
+
+Timelapse+ supports two types of commands: @-Commands like `@SNAPSHOT` and Action Commands like `M118 //action:SNAPSHOT` or `M118 A1 action:SNAPSHOT`.
+A snapshot will be captured when any of these is sent to the printer.
+You can read more about Action Commands [here](https://docs.octoprint.org/en/master/features/action_commands.html) and [here](https://marlinfw.org/docs/gcode/M118.html).
+The Snapshot Command is customizable so when you enter for examle `CAPTUREFRAME` as the Snapshot Command, Timelapse+ will be triggered whenever it sees `@CAMTUREFRAME` in your GCODE. 
+
+### Concepts
+... will follow
+
+### Enhancement Presets
+... will follow
+
+### Render Presets
+... will follow
+
+# Screenshots
 
 ### File Manager
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/files.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/files.png)
