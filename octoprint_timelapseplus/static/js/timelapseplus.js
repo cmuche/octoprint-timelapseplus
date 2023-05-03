@@ -87,6 +87,11 @@ $(function() {
             self.hasVideoPlaybackError(true);
         });
 
+        self.openSettingsPage = function() {
+            $("a#navbar_show_settings").click();
+            $("li#settings_plugin_timelapseplus_link a").click();
+        };
+
         // https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
         self.humanFileSize = function(size) {
             let i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
