@@ -63,6 +63,7 @@
         <div class="controls">
             <select data-bind="valueAllowUnset: true, options: parent.videoFormats, optionsText: function(x) { return x.fullName }, optionsValue: function(x) { return x.id }, value: settings.plugins.timelapseplus.defaultVideoFormat">
             </select>
+            <span class="help-block">Maybe not all formats are available on your system or your used FFmpeg version. Please consider changing the Video Format if a Render Job is not successful.</span>
         </div>
     </div>
 

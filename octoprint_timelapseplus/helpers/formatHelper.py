@@ -5,20 +5,26 @@ class FormatHelper:
     @staticmethod
     def getDefaultVideoFormat():
         formats = FormatHelper.getVideoFormats()
-        return next(x for x in formats if x.ID == 'mp4-h264-nq')
+        return next(x for x in formats if x.ID == 'mp4-h264-hq')
 
     @staticmethod
     def getVideoFormats():
         return [
-            Format('mp4-h264-lq', 'MP4', 'Low Quality', 'mp4', 'video/mp4', 'H264', 'libx264', {'-crf': '28', '-preset': 'medium'}),
-            Format('mp4-h264-nq', 'MP4', 'Normal Quality', 'mp4', 'video/mp4', 'H264', 'libx264', {'-crf': '23', '-preset': 'slow'}),
-            Format('mp4-h264-hq', 'MP4', 'High Quality', 'mp4', 'video/mp4', 'H264', 'libx264', {'-crf': '18', '-preset': 'slower'}),
+            Format('mp4-h264-prevq', 'MP4', 'Draft Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-crf': '45', '-preset': 'veryfast'}),
+            Format('mp4-h264-lq', 'MP4', 'Low Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-crf': '35', '-preset': 'fast'}),
+            Format('mp4-h264-nq', 'MP4', 'Normal Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-crf': '30', '-preset': 'medium'}),
+            Format('mp4-h264-hq', 'MP4', 'High Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-crf': '25', '-preset': 'slow'}),
+            Format('mp4-h264-uq', 'MP4', 'Ultra Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-crf': '20', '-preset': 'slower'}),
 
-            Format('mp4-h265-lq', 'MP4', 'Low Quality', 'mp4', 'video/mp4', 'H265', 'libx265', {'-crf': '28', '-preset': 'medium'}),
-            Format('mp4-h265-nq', 'MP4', 'Normal Quality', 'mp4', 'video/mp4', 'H265', 'libx265', {'-crf': '23', '-preset': 'slow'}),
-            Format('mp4-h265-hq', 'MP4', 'High Quality', 'mp4', 'video/mp4', 'H265', 'libx265', {'-crf': '18', '-preset': 'slower'}),
+            Format('mp4-h265-lq', 'MP4', 'Low Quality', 'mp4', 'video/mp4', 'H.265', 'libx265', {'-crf': '35', '-preset': 'fast'}),
+            Format('mp4-h265-nq', 'MP4', 'Normal Quality', 'mp4', 'video/mp4', 'H.265', 'libx265', {'-crf': '30', '-preset': 'medium'}),
+            Format('mp4-h265-hq', 'MP4', 'High Quality', 'mp4', 'video/mp4', 'H.265', 'libx265', {'-crf': '25', '-preset': 'slow'}),
+            Format('mp4-h265-uq', 'MP4', 'Ultra Quality', 'mp4', 'video/mp4', 'H.265', 'libx265', {'-crf': '20', '-preset': 'slower'}),
 
-            Format('webm', 'WEBM', None, 'webm', 'video/webm', 'VP9', 'libvpx-vp9', {'-crf': '31', '-b:v': '0'}),
+            Format('webm-vp9-prevq', 'WEBM', 'Draft Quality', 'webm', 'video/webm', 'VP9', 'libvpx-vp9', {'-crf': '50', '-b:v': '0'}),
+            Format('webm-vp9-lq', 'WEBM', 'Low Quality', 'webm', 'video/webm', 'VP9', 'libvpx-vp9', {'-crf': '40', '-b:v': '0'}),
+            Format('webm-vp9-nq', 'WEBM', 'Normal Quality', 'webm', 'video/webm', 'VP9', 'libvpx-vp9', {'-crf': '30', '-b:v': '0'}),
+            Format('webm-vp9-hq', 'WEBM', 'High Quality', 'webm', 'video/webm', 'VP9', 'libvpx-vp9', {'-crf': '20', '-b:v': '0'}),
 
             Format('avi-mpeg4', 'AVI', None, 'avi', 'video/x-msvideo', 'MPEG-4', 'mpeg4', {'-qscale:v': '10'}),
 
