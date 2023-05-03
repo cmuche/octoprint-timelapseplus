@@ -95,7 +95,7 @@ class TimelapsePlusPlugin(
         return self.API_CONTROLLER.enhancementPreviewSettings()
 
     @octoprint.plugin.BlueprintPlugin.route("/listVideoFormats", methods=["POST"])
-    def apiEnhancementPreviewSettings(self):
+    def apiListVideoFormats(self):
         return self.API_CONTROLLER.listVideoFormats()
 
     def makeThumbnail(self, img, size=(320, 180)):
