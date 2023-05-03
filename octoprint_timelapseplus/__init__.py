@@ -137,7 +137,8 @@ class TimelapsePlusPlugin(
             snapshotCommand="SNAPSHOT",
             renderAfterPrint=True,
             enhancementPresets=[EnhancementPreset(self).getJSON()],
-            renderPresets=[RenderPreset().getJSON()]
+            renderPresets=[RenderPreset().getJSON()],
+            defaultVideoFormat=FormatHelper.getDefaultVideoFormat().ID
         )
 
     def get_template_vars(self):
@@ -158,7 +159,8 @@ class TimelapsePlusPlugin(
             snapshotCommand=self._settings.get(["snapshotCommand"]),
             renderAfterPrint=self._settings.get(["renderAfterPrint"]),
             enhancementPresets=epNew,
-            renderPresets=rpNew
+            renderPresets=rpNew,
+            defaultVideoFormat=self._settings.get(["defaultVideoFormat"])
         )
 
     def listFrameZips(self):

@@ -13,6 +13,7 @@ from PIL import Image
 from .enhancementPreset import EnhancementPreset
 from .renderJobState import RenderJobState
 from .renderPreset import RenderPreset
+from ..helpers.formatHelper import FormatHelper
 from ..helpers.imageCombineHelper import ImageCombineHelper
 from ..helpers.listHelper import ListHelper
 
@@ -50,6 +51,10 @@ class RenderJob:
             rpRaw = self._settings.get(["renderPresets"])
             rpList = list(map(lambda x: RenderPreset(x), rpRaw))
             self.RENDER_PRESET = rpList[0]
+
+        if self.VIDEO_FORMAT is None:
+            defaultFormatId = self._settings.get(["defaultVideoFormat"])
+            self.VIDEO_FORMAT = FormatHelper.getVideoFormatById(defaultFormatId)
 
         self.createFolder(dataFolder)
 

@@ -189,4 +189,5 @@ class ApiController:
 
     def listVideoFormats(self):
         formats = list(map(lambda x: x.getJSON(), FormatHelper.getVideoFormats()))
-        return dict(formats=formats)
+        defaultId = self._settings.get(["defaultVideoFormat"])
+        return dict(formats=formats, defaultId=defaultId)

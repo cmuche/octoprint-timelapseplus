@@ -240,6 +240,10 @@ $(function() {
 
         self.onAllBound = function(allViewModels) {
             self.triggerGetData();
+
+            self.api("listVideoFormats", {}, function(data) {
+                self.videoFormats(data.formats);
+            });
         };
 
         self.formatPercent = function(percent) {
@@ -319,8 +323,9 @@ $(function() {
 
                 self.api("listVideoFormats", {}, function(data) {
                     self.videoFormats(data.formats);
-                    self.selectedVideoFormat(data.formats[0]);
-                    //TODO pre-select default
+
+                    let selectedFormat = data.formats.find(x => x.id == data.defaultId);
+                    self.selectedVideoFormat(selectedFormat);
 
                     $("div#tlp-modal-render").modal({
                         width: "auto"
