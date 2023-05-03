@@ -18,6 +18,7 @@ class Video:
         self.MIMETYPE = 'video/mp4'
         self.ID = self.getId()
         self.LENGTH = self.getVideoLength()
+        self.EXTENSION = os.path.splitext(path)[1][1:].lower()
 
     def getVideoLength(self):
         cacheId = ['video', 'length', self.ID]
@@ -56,6 +57,7 @@ class Video:
             size=self.SIZE,
             length=self.LENGTH,
             timestamp=self.TIMESTAMP,
+            extension=self.EXTENSION,
             thumbnail='/plugin/timelapseplus/thumbnail?type=video&id=' + self.ID,
             url='/plugin/timelapseplus/download?type=video&id=' + self.ID
         )

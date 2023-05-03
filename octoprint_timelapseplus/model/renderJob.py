@@ -13,12 +13,13 @@ from PIL import Image
 from .enhancementPreset import EnhancementPreset
 from .renderJobState import RenderJobState
 from .renderPreset import RenderPreset
+from ..helpers.formatHelper import FormatHelper
 from ..helpers.imageCombineHelper import ImageCombineHelper
 from ..helpers.listHelper import ListHelper
 
 
 class RenderJob:
-    def __init__(self, frameZip, parent, logger, settings, dataFolder, enhancementPreset=None, renderPreset=None):
+    def __init__(self, frameZip, parent, logger, settings, dataFolder, enhancementPreset=None, renderPreset=None, videoFormat=None):
         self.ID = parent.getRandomString(8)
         self.PARENT = parent
         self._settings = settings
@@ -39,6 +40,7 @@ class RenderJob:
 
         self.ENHANCEMENT_PRESET = enhancementPreset
         self.RENDER_PRESET = renderPreset
+        self.VIDEO_FORMAT = videoFormat
 
         if self.ENHANCEMENT_PRESET is None:
             epRaw = self._settings.get(["enhancementPresets"])
@@ -49,6 +51,10 @@ class RenderJob:
             rpRaw = self._settings.get(["renderPresets"])
             rpList = list(map(lambda x: RenderPreset(x), rpRaw))
             self.RENDER_PRESET = rpList[0]
+
+        if self.VIDEO_FORMAT is None:
+            defaultFormatId = self._settings.get(["defaultVideoFormat"])
+            self.VIDEO_FORMAT = FormatHelper.getVideoFormatById(defaultFormatId)
 
         self.createFolder(dataFolder)
 
@@ -158,7 +164,7 @@ class RenderJob:
         self.setState(RenderJobState.RENDERING)
 
         timePart = datetime.now().strftime("%Y%m%d%H%M%S")
-        videoFile = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.mp4'
+        videoFile = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.'+self.VIDEO_FORMAT.EXTENSION
         totalFrames = preset.calculateTotalFrames(self.FRAMEZIP)
 
         framePattern = '%05d.jpg'
@@ -196,7 +202,9 @@ class RenderJob:
         if len(videoFilters):
             cmd += ['-vf', ','.join(videoFilters)]
 
-        cmd += ['-c:v', 'libx264', '-movflags', '+faststart', 'out.mp4']
+        outFileName = 'out.' + self.VIDEO_FORMAT.EXTENSION
+        cmd += self.VIDEO_FORMAT.getRenderArgs()
+        cmd += [outFileName]
         cmd += ["-hide_banner", "-loglevel", 'verbose', "-progress", "pipe:1", "-nostats"]
         process = subprocess.Popen(cmd, cwd=self.FOLDER, stdout=subprocess.PIPE)
 
@@ -211,7 +219,7 @@ class RenderJob:
         if process.returncode != 0:
             raise Exception("FFMPEG Return Code != 0")
 
-        shutil.move(self.FOLDER + '/out.mp4', videoFile)
+        shutil.move(self.FOLDER + '/' + outFileName, videoFile)
 
         frameFiles = glob.glob(self.FOLDER + '/*.jpg')
         thumbImg = Image.open(frameFiles[-1])

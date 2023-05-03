@@ -113,6 +113,7 @@
     <div data-bind="foreach: videos.paginatedItems">
         <div class="file video">
             <div class="preview">
+                <div class="overlay" data-bind="text: $data.extension"></div>
                 <img data-bind="attr: {src: $data.thumbnail}" />
             </div>
             <div class="info">
@@ -228,10 +229,17 @@
                     <select data-bind="options: presetsRender, optionsText: function(x) { return x.name }, value: selectedPresetRender">
                     </select>
 
-                    <div style="margin-top: 1em">
-                        <span style="font-weight: bold">Length:</span>
+                    <div style="margin-bottom: 2em">
+                        <span style="font-weight: bold">Video Length:</span>
                         <span data-bind="text: timeSpan(selectedRenderPresetVideoLength())"></span>
                     </div>
+
+                    <h4>Output Format</h4>
+                    <select data-bind="foreach: videoFormatsGrouped, value: selectedVideoFormat">
+                        <optgroup data-bind="attr: {label: name}, foreach: children">
+                            <option data-bind="text: fullName, value: $data"></option>
+                        </optgroup>
+                    </select>
                 </div>
                 <div class="preview">
                     <h4>Enhancement Preview</h4>
@@ -254,7 +262,13 @@
     </div>
     <div class="modal-body">
         <div class="row-fluid">
-            <video width="640" height="360" controls>
+            <div class="video-error" data-bind="visible: hasVideoPlaybackError() && !videoPreviewIsGif()">
+                Your browser is not able to play this video.
+            </div>
+            <div class="gif-wrapper" data-bind="visible: videoPreviewIsGif()">
+                <img class="gif" />
+            </div>
+            <video data-bind="visible: !hasVideoPlaybackError() && !videoPreviewIsGif()" controls>
                 <source />
                 Your browser does not support the video tag.
             </video>

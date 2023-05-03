@@ -54,7 +54,19 @@
         <label class="control-label">Render Video after Print</label>
         <div class="controls">
             <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.renderAfterPrint">
-            <span class="help-block">When a Print has finished a Render Job will be started with the first Enhancement Preset and the first Render Preset defined below.</span>
+            <span class="help-block">When a Print has finished a Render Job will be started with the default Video Format, the first Enhancement Preset and the first Render Preset defined below.</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Default Video Output Format</label>
+        <div class="controls">
+            <select data-bind="valueAllowUnset: true, foreach: parent.videoFormatsGrouped, value: settings.plugins.timelapseplus.defaultVideoFormat">
+                <optgroup data-bind="attr: {label: name}, foreach: children">
+                    <option data-bind="text: fullName, value: $data.id"></option>
+                </optgroup>
+            </select>
+            <span class="help-block">Maybe not all formats are available on your system or your used FFmpeg version. Please consider changing the Video Format if a Render Job is not successful.</span>
         </div>
     </div>
 

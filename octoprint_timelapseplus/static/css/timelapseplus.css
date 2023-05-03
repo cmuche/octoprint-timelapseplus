@@ -102,6 +102,7 @@
 
 #timelapseplus .file .preview {
     margin-right: 1em;
+    position: relative;
 }
 
 #timelapseplus .file .preview img {
@@ -109,6 +110,24 @@
     min-width: 8em;
     margin-top: 0.3em;
     box-shadow: 0.2em 0.2em 0.35em rgba(0, 0, 0, 0.5);
+}
+
+#timelapseplus .file .preview .overlay {
+    box-shadow: 0.2em 0.2em 0.35em rgba(0, 0, 0, 0.25);
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1em;
+    right: -0.5em;
+    bottom: -0.5em;
+    font-weight: bold;
+    color: #333;
+    background: #EEE;
+    font-size: 0.75em;
+    height: 1em;
+    padding: 0.5em;
+    text-transform: uppercase;
 }
 
 #timelapseplus .file .info {
@@ -140,6 +159,35 @@
 
 #timelapseplus .file .buttons {
 
+}
+
+#tlp-modal-video .video-error {
+    color: #AA2222;
+    width: 640px;
+    height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(127, 127, 127, 0.05);
+    border: 1px solid rgba(127, 127, 127, 0.25);
+}
+
+#tlp-modal-video .gif-wrapper {
+    width: 640px;
+    height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#tlp-modal-video .gif {
+    max-width: 640px;
+    max-height: 360px;
+}
+
+#tlp-modal-video video {
+    width: 640px;
+    height: 360px;
 }
 
 #tlp-modal-render .startRender h4:first-child {
