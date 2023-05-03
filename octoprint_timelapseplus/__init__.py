@@ -246,6 +246,10 @@ class TimelapsePlusPlugin(
         rpNew = list(map(lambda x: x.getJSON(), rpList))
         self._settings.set(["renderPresets"], rpNew)
 
+        defaultVideoFormatId = self._settings.get(["defaultVideoFormat"])
+        defaultVideoFormat = FormatHelper.getVideoFormatById(defaultVideoFormatId)
+        self._settings.set(["defaultVideoFormat"], defaultVideoFormat.ID)
+
         self.checkPrerequisites()
 
     def on_settings_save(self, data):

@@ -34,4 +34,4 @@ class FormatHelper:
     @staticmethod
     def getVideoFormatById(id):
         formats = FormatHelper.getVideoFormats()
-        return next(x for x in formats if x.ID == id)
+        return next((x for x in formats if x.ID == id), FormatHelper.getDefaultVideoFormat())
