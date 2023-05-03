@@ -235,7 +235,10 @@
                     </div>
 
                     <h4>Output Format</h4>
-                    <select data-bind="options: videoFormats, optionsText: function(x) { return x.fullName }, value: selectedVideoFormat">
+                    <select data-bind="foreach: videoFormatsGrouped, value: selectedVideoFormat">
+                        <optgroup data-bind="attr: {label: name}, foreach: children">
+                            <option data-bind="text: fullName, value: $data"></option>
+                        </optgroup>
                     </select>
                 </div>
                 <div class="preview">

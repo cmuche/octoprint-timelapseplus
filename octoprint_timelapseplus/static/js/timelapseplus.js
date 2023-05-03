@@ -64,7 +64,18 @@ $(function() {
         self.selectedFrameZip = ko.observable();
         self.selectedRenderPresetVideoLength = ko.observable(0);
         self.videoFormats = ko.observable([]);
+        self.videoFormatsGrouped = ko.observable([]);
         self.selectedVideoFormat = ko.observable();
+
+        self.videoFormats.subscribe(function(data) {
+            const groups = {};
+            for (const obj of data) {
+                const name = obj.name;
+                if (!groups[name]) groups[name] = {name, children: []};
+                groups[name].children.push(obj);
+            }
+            self.videoFormatsGrouped(Object.values(groups));
+        });
 
         self.selectedPresetRender.subscribe(function(data) {
             self.api("getRenderPresetVideoLength", {preset: data, frameZipId: self.selectedFrameZip().id}, function(res) {
