@@ -217,7 +217,7 @@ class RenderJob:
                 self.setProgress(p)
 
         if process.returncode != 0:
-            raise Exception("FFMPEG Return Code != 0")
+            raise Exception("FFmpeg failed to render (Return Code " + str(process.returncode) + " )")
 
         shutil.move(self.FOLDER + '/' + outFileName, videoFile)
 
