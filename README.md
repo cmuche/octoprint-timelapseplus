@@ -66,13 +66,41 @@ You can read more about Action Commands [here](https://docs.octoprint.org/en/mas
 The Snapshot Command is customizable so when you enter for examle `CAPTUREFRAME` as the Snapshot Command, Timelapse+ will be triggered whenever it sees `@CAPTUREFRAME` in your GCODE or your printer sends the Action Command `//action:CAPTUREFRAME`. 
 
 ### Concepts
-... will follow
+When a print is started (and Timelapse+ is configured correctly), Timelapse+ will start its capturing and you can see the current Print Job on the top of the page.
+You can see some details like how many frames were captured so far. When the print is finished or failed, Timelapse+ will store the captured frames in a Frame Collection which contain all the raw frame images taken of the print. These Frame Collections can be used to render a timelapse video. You can always re-render a timelapse with different settings. All your captured Frame Collections are listed on the Timelapse+ main page and with a click on the 'Render' button you will open the window for starting a Render Job. A Render job contains 3 main options to choose from: The Enhancement Preset, the Render Preset and the Output Format. You can define a list of customized presets in the settings page and re-use them for a Render Job. After you click on 'Start' a new Render Job with your chosen settings will be started and you can see it and track its status on the Timelapse+ main page.
 
 ### Enhancement Presets
-... will follow
+Enhancement presets define how the single frames stored in a Frame Collection are preprocessed and enhanced before the rendering starts.
+
+#### Name
+...t.b.d.
+
+#### Enhancing
+...t.b.d.
+
+#### Blur
+...t.b.d.
+
+#### Resize
+...t.b.d.
 
 ### Render Presets
-... will follow
+A Render preset defines how the timelapse should be rendered.
+
+#### Name
+...t.b.d.
+
+#### Framerate
+...t.b.d.
+
+#### Combine Frames
+...t.b.d.
+
+#### Fade
+...t.b.d.
+
+#### Frame Interpolation
+...t.b.d.
 
 # Screenshots
 
