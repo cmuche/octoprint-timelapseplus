@@ -73,10 +73,11 @@ You can see some details like how many frames were captured so far. When the pri
 Enhancement presets define how the single frames stored in a Frame Collection are preprocessed and enhanced before the rendering starts.
 
 #### Name
-...t.b.d.
+A recognizable name for your Enhancement Preset
 
 #### Enhancing
-...t.b.d.
+Brightness and contrast settings can be adjusted. The values are usually around `1.00`.
+Histogram Equalization tries to optimize the image histogram. See [this link](https://pillow.readthedocs.io/en/stable/reference/ImageOps.html#PIL.ImageOps.equalize) for more information. This can help with Frame Collections captured in low light conditions.
 
 #### Blur
 ...t.b.d.
@@ -88,7 +89,7 @@ Enhancement presets define how the single frames stored in a Frame Collection ar
 A Render preset defines how the timelapse should be rendered.
 
 #### Name
-...t.b.d.
+A recognizable name for your Render Preset
 
 #### Framerate
 ...t.b.d.
