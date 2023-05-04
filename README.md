@@ -63,7 +63,7 @@ This is powerful if you set up your slicer so that it generates a snapshot comma
 Timelapse+ supports two types of commands: @-Commands like `@SNAPSHOT` and Action Commands like `M118 //action:SNAPSHOT` or `M118 A1 action:SNAPSHOT`.
 A snapshot will be captured when any of these is sent to the printer.
 You can read more about Action Commands [here](https://docs.octoprint.org/en/master/features/action_commands.html) and [here](https://marlinfw.org/docs/gcode/M118.html).
-The Snapshot Command is customizable so when you enter for examle `CAPTUREFRAME` as the Snapshot Command, Timelapse+ will be triggered whenever it sees `@CAMTUREFRAME` in your GCODE. 
+The Snapshot Command is customizable so when you enter for examle `CAPTUREFRAME` as the Snapshot Command, Timelapse+ will be triggered whenever it sees `@CAPTUREFRAME` in your GCODE or your printer sends the Action Command `//action:CAPTUREFRAME`. 
 
 ### Concepts
 ... will follow
