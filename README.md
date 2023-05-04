@@ -80,7 +80,7 @@ Brightness and contrast settings can be adjusted. The values are usually around 
 Histogram Equalization tries to optimize the image histogram. See [this link](https://pillow.readthedocs.io/en/stable/reference/ImageOps.html#PIL.ImageOps.equalize) for more information. This can help with Frame Collections captured in low light conditions.
 
 #### Blur
-You can blur parts of your video. This is helpful if your webcam not only captures your pritnbed but also sensitive things next to your printer and you want to share the video with others.
+You can blur parts of your video. This is helpful if your webcam not only captures your printbed but also sensitive things next to your printer and you want to share the video with others.
 
 For this you can change the blur radius (higher values mean blurrier areas). You need to upload a greyscale blur mask image. Keep in mind that it should have the same dimensions as your webcam image (at least the same aspect ratio). Otherwise Timelapse+ has to resize it every time you render a video.
 White areas in your mask define on which areas of vour video the blur effect applies, black means no blur. Grayscale images represent values in between, e.g. for smooth masks.
