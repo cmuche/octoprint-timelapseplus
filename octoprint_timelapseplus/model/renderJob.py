@@ -170,7 +170,7 @@ class RenderJob:
         if preset.COMBINE:
             framePattern = 'C_%05d.jpg'
 
-        cmd = [self._settings.get(["ffmpegPath"]), '-y', '-i', framePattern, '-filter_complex', '[0:v]palettegen', 'palette.gif']
+        cmd = [self._settings.get(["ffmpegPath"]), '-y', '-i', framePattern, '-filter_complex', '[0:v]palettegen', 'palette.png']
         result = subprocess.run(cmd, cwd=self.FOLDER, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=False)
 
         if result.returncode != 0:
