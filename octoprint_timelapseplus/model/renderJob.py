@@ -160,11 +160,27 @@ class RenderJob:
             imgRes.save(frame, quality=100, subsampling=0)
             self.setProgress((i + 1) / len(frameFiles))
 
+    def createPalette(self, preset):
+        if not self.VIDEO_FORMAT.CREATE_PALETTE:
+            return
+
+        self.setState(RenderJobState.CREATE_PALETTE)
+
+        framePattern = '%05d.jpg'
+        if preset.COMBINE:
+            framePattern = 'C_%05d.jpg'
+
+        cmd = [self._settings.get(["ffmpegPath"]), '-y', '-i', framePattern, '-filter_complex', '[0:v]palettegen', 'palette.gif']
+        result = subprocess.run(cmd, cwd=self.FOLDER, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=False)
+
+        if result.returncode != 0:
+            raise Exception('Could not create color palette')
+
     def createVideo(self, preset):
         self.setState(RenderJobState.RENDERING)
 
         timePart = datetime.now().strftime("%Y%m%d%H%M%S")
-        videoFile = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.'+self.VIDEO_FORMAT.EXTENSION
+        videoFile = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.' + self.VIDEO_FORMAT.EXTENSION
         totalFrames = preset.calculateTotalFrames(self.FRAMEZIP)
 
         framePattern = '%05d.jpg'
@@ -232,6 +248,7 @@ class RenderJob:
             self.blurImages(self.ENHANCEMENT_PRESET)
             self.resizeImages(self.ENHANCEMENT_PRESET)
             self.combineImages(self.RENDER_PRESET)
+            self.createPalette(self.RENDER_PRESET)
             self.createVideo(self.RENDER_PRESET)
 
             self.setState(RenderJobState.FINISHED)

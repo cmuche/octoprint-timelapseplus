@@ -281,7 +281,8 @@ $(function() {
                 "ENHANCING": {title: "Enhancing Images", showProgress: true, icon: "fas fa-magic"},
                 "BLURRING": {title: "Blurring Areas", showProgress: true, icon: "fas fa-eraser"},
                 "RESIZING": {title: "Resizing Frames", showProgress: true, icon: "fas fa-arrows-alt"},
-                "COMBINING": {title: "Combining Frames", showProgress: true, icon: "fas fa-clone"}
+                "COMBINING": {title: "Combining Frames", showProgress: true, icon: "fas fa-clone"},
+                "CREATE_PALETTE": {title: "Generating Color Palette", showProgress: false, icon: "fas fa-paint-brush"}
             };
 
             if (job.state in stateVms)
