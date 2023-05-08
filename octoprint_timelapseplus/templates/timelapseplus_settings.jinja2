@@ -48,6 +48,10 @@
         <div class="controls">
             <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamUrl">
             <span class="help-block">The URL must be reachable for OctoPrint and return a still image or the stream in the format specified above.</span>
+            <button style="margin-top: 1em" class="btn btn-mini" data-bind="click: function(){parent.openWebcamCapturePreview(settings.plugins.timelapseplus.ffmpegPath, settings.plugins.timelapseplus.webcamType, settings.plugins.timelapseplus.webcamUrl)}">
+                <i class="fa fa-check"></i>
+                Test Paths and Webcam Capture
+            </button>
         </div>
     </div>
 
@@ -518,6 +522,44 @@
 </form>
 
 <!------------------------------------------------------->
+
+<div id="tlp-modal-webcam-preview" class="modal hide fade">
+    <div class="modal-header">
+        <a href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+        <h3>Webcam Capture</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row-fluid">
+            <div class="error"></div>
+            <img class="preview" />
+            <div class="info">
+                <div class="kv-width">
+                    <span class="k">Width:</span>
+                    <span class="v"></span>
+                </div>
+
+                <div class="kv-height">
+                    <span class="k">Height:</span>
+                    <span class="v"></span>
+                </div>
+
+                <div class="kv-size">
+                    <span class="k">Size:</span>
+                    <span class="v"></span>
+                </div>
+
+                <div class="kv-time">
+                    <span class="k">Capture Time:</span>
+                    <span class="v"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary pull-right" data-dismiss="modal">Close</button>
+    </div>
+</div>
 
 <div id="tlp-modal-enhancement-live-preview" class="modal hide fade">
     <div class="modal-header">

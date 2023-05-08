@@ -84,10 +84,13 @@ class WebcamController:
                     os.remove(path)
                 raise Exception('Webcam Snapshot Endpoint took too long sending Data')
 
-    def getSnapshot(self):
-        ffmpegPath = self._settings.get(["ffmpegPath"])
-        webcamUrl = self._settings.get(["webcamUrl"])
-        webcamType = WebcamType[self._settings.get(["webcamType"])]
+    def getSnapshot(self, ffmpegPath=None, webcamType=None, webcamUrl=None):
+        if ffmpegPath is None:
+            ffmpegPath = self._settings.get(["ffmpegPath"])
+        if webcamType is None:
+            webcamType = WebcamType[self._settings.get(["webcamType"])]
+        if webcamUrl is None:
+            webcamUrl = self._settings.get(["webcamUrl"])
 
         fileName = self.TMP_FOLDER + '/' + self.PARENT.getRandomString(32) + ".jpg"
 

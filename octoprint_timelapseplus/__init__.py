@@ -41,6 +41,10 @@ class TimelapsePlusPlugin(
         self.RENDERJOBS = []
         self.ERROR = None
 
+    @octoprint.plugin.BlueprintPlugin.route("/webcamCapturePreview", methods=["POST"])
+    def apiWebcamCapturePreview(self):
+        return self.API_CONTROLLER.webcamCapturePreview()
+
     @octoprint.plugin.BlueprintPlugin.route("/reCheckPrerequisites", methods=["POST"])
     def apiReCheckPrerequisites(self):
         self.API_CONTROLLER.reCheckPrerequisites()

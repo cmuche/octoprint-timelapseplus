@@ -93,8 +93,8 @@ $(function() {
         };
 
         self.reCheckPrerequisites = function() {
-            self.api("reCheckPrerequisites",{}, function() {
-                self.showPopupSuccess('Re-Checked for Errors')
+            self.api("reCheckPrerequisites", {}, function() {
+                self.showPopupSuccess("Re-Checked for Errors");
             });
         };
 
@@ -217,6 +217,33 @@ $(function() {
                     console.log("Error", error);
                 };
             }).click();
+        };
+
+        self.openWebcamCapturePreview = function(ffmpegPath, webcamType, webcamUrl) {
+            self.api("webcamCapturePreview", {ffmpegPath: ffmpegPath(), webcamType: webcamType(), webcamUrl: webcamUrl()}, function(data) {
+
+                if ("error" in data) {
+                    $("div#tlp-modal-webcam-preview .error").show();
+                    $("div#tlp-modal-webcam-preview img.preview").hide();
+                    $("div#tlp-modal-webcam-preview .info").hide();
+
+                    $("div#tlp-modal-webcam-preview .error").text(data.error);
+                } else {
+                    $("div#tlp-modal-webcam-preview .error").hide();
+                    $("div#tlp-modal-webcam-preview img.preview").show();
+                    $("div#tlp-modal-webcam-preview .info").show();
+
+                    $("div#tlp-modal-webcam-preview .info .kv-width .v").text(data.width);
+                    $("div#tlp-modal-webcam-preview .info .kv-height .v").text(data.height);
+                    $("div#tlp-modal-webcam-preview .info .kv-size .v").text(self.humanFileSize(data.size));
+                    $("div#tlp-modal-webcam-preview .info .kv-time .v").text(data.time + " ms");
+                    $("div#tlp-modal-webcam-preview img.preview").attr("src", "data:image/png;base64," + data.result);
+                }
+
+                $("div#tlp-modal-webcam-preview").modal({
+                    width: "auto"
+                });
+            });
         };
 
         self.showPopupSuccess = function(msg) {
