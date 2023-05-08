@@ -92,6 +92,12 @@ $(function() {
             $("li#settings_plugin_timelapseplus_link a").click();
         };
 
+        self.reCheckPrerequisites = function() {
+            self.api("reCheckPrerequisites",{}, function() {
+                self.showPopupSuccess('Re-Checked for Errors')
+            });
+        };
+
         // https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
         self.humanFileSize = function(size) {
             let i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
@@ -211,6 +217,15 @@ $(function() {
                     console.log("Error", error);
                 };
             }).click();
+        };
+
+        self.showPopupSuccess = function(msg) {
+            new PNotify({
+                title: "Timelapse+",
+                text: msg,
+                type: "success",
+                hide: true
+            });
         };
 
         self.openVideo = function(video) {
