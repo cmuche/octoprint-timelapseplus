@@ -191,3 +191,6 @@ class ApiController:
         formats = list(map(lambda x: x.getJSON(), FormatHelper.getVideoFormats()))
         defaultId = self._settings.get(["defaultVideoFormat"])
         return dict(formats=formats, defaultId=defaultId)
+
+    def reCheckPrerequisites(self):
+        self.PARENT.checkPrerequisites()
