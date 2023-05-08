@@ -92,7 +92,7 @@ class RenderJob:
 
     def start(self):
         self.RUNNING = True
-        self.THREAD = Thread(target=self.renderTimelapse, daemon=True)
+        self.THREAD = Thread(target=self.startPipeline, daemon=True)
         self.THREAD.start()
 
     def createFolder(self, dataFolder):
@@ -160,35 +160,26 @@ class RenderJob:
             imgRes.save(frame, quality=100, subsampling=0)
             self.setProgress((i + 1) / len(frameFiles))
 
-    def createPalette(self, preset):
-        if not self.VIDEO_FORMAT.CREATE_PALETTE:
+    def createPalette(self, format):
+        if not format.CREATE_PALETTE:
             return
 
         self.setState(RenderJobState.CREATE_PALETTE)
 
+        framePattern = 'F_%05d.jpg'
+        cmd = ['-i', framePattern, '-filter_complex', '[0:v]palettegen', 'palette.png']
+        self.runFfmpegWithProgress(cmd)
+
+    def render(self, preset):
         framePattern = '%05d.jpg'
         if preset.COMBINE:
             framePattern = 'C_%05d.jpg'
 
-        cmd = [self._settings.get(["ffmpegPath"]), '-y', '-i', framePattern, '-filter_complex', '[0:v]palettegen', 'palette.png']
-        result = subprocess.run(cmd, cwd=self.FOLDER, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=False)
+        # TODO Skip Rendering if there are no effects or interpolation
 
-        if result.returncode != 0:
-            raise Exception('Could not create color palette')
-
-    def createVideo(self, preset):
         self.setState(RenderJobState.RENDERING)
 
-        timePart = datetime.now().strftime("%Y%m%d%H%M%S")
-        videoFile = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.' + self.VIDEO_FORMAT.EXTENSION
-        totalFrames = preset.calculateTotalFrames(self.FRAMEZIP)
-
-        framePattern = '%05d.jpg'
-        if preset.COMBINE:
-            framePattern = 'C_%05d.jpg'
-
-        cmd = [self._settings.get(["ffmpegPath"]), '-y']
-        cmd += ['-framerate', str(preset.FRAMERATE), '-i', framePattern]
+        cmd = ['-framerate', str(preset.FRAMERATE), '-i', framePattern]
 
         videoFilters = []
 
@@ -218,38 +209,54 @@ class RenderJob:
         if len(videoFilters):
             cmd += ['-vf', ','.join(videoFilters)]
 
+        cmd += ['-qscale:v', '1', 'F_%05d.jpg']
+        self.runFfmpegWithProgress(cmd, preset.calculateTotalFrames(self.FRAMEZIP))
+
+    def encode(self, preset):
+        self.setState(RenderJobState.ENCODING)
+
+        timePart = datetime.now().strftime("%Y%m%d%H%M%S")
+        videoFile = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.' + self.VIDEO_FORMAT.EXTENSION
         outFileName = 'out.' + self.VIDEO_FORMAT.EXTENSION
+
+        cmd = ['-framerate', str(self.RENDER_PRESET.getFinalFramerate()), '-i', 'F_%05d.jpg']
+
         cmd += self.VIDEO_FORMAT.getRenderArgs()
         cmd += [outFileName]
-        cmd += ["-hide_banner", "-loglevel", 'verbose', "-progress", "pipe:1", "-nostats"]
-        process = subprocess.Popen(cmd, cwd=self.FOLDER, stdout=subprocess.PIPE)
 
+        self.runFfmpegWithProgress(cmd, preset.calculateTotalFrames(self.FRAMEZIP))
+
+        shutil.move(self.FOLDER + '/' + outFileName, videoFile)
+        frameFiles = glob.glob(self.FOLDER + '/F_*.jpg')
+        thumbImg = Image.open(frameFiles[-1])
+        thumbImg.save(videoFile + '.thumb.jpg', quality=75)
+
+    def runFfmpegWithProgress(self, params, totalFrames=0):
+        cmd = [self._settings.get(["ffmpegPath"]), '-y']
+        cmd += params
+        cmd += ['-hide_banner', '-loglevel', 'verbose', '-progress', 'pipe:1', '-nostats']
+        process = subprocess.Popen(cmd, cwd=self.FOLDER, stdout=subprocess.PIPE)
         while process.poll() is None:
             line = process.stdout.readline().decode()
             m = re.search('^frame=([0-9]+)', line)
-            if m:
+            if m and totalFrames > 0:
                 frame = int(m.groups()[0])
                 p = frame / totalFrames
                 self.setProgress(p)
 
         if process.returncode != 0:
-            raise Exception("FFmpeg failed to render (Return Code " + str(process.returncode) + " )")
+            raise Exception("Failed to run FFmpeg (Return Code " + str(process.returncode) + " )")
 
-        shutil.move(self.FOLDER + '/' + outFileName, videoFile)
-
-        frameFiles = glob.glob(self.FOLDER + '/*.jpg')
-        thumbImg = Image.open(frameFiles[-1])
-        thumbImg.save(videoFile + '.thumb.jpg', quality=75)
-
-    def renderTimelapse(self):
+    def startPipeline(self):
         try:
             self.extractZip()
             self.enhanceImages(self.ENHANCEMENT_PRESET)
             self.blurImages(self.ENHANCEMENT_PRESET)
             self.resizeImages(self.ENHANCEMENT_PRESET)
             self.combineImages(self.RENDER_PRESET)
-            self.createPalette(self.RENDER_PRESET)
-            self.createVideo(self.RENDER_PRESET)
+            self.render(self.RENDER_PRESET)
+            self.createPalette(self.VIDEO_FORMAT)
+            self.encode(self.RENDER_PRESET)
 
             self.setState(RenderJobState.FINISHED)
         except Exception as e:

@@ -275,14 +275,15 @@ $(function() {
             let stateVms = {
                 "WAITING": {title: "Waiting", showProgress: false, icon: "fas fa-hourglass-half"},
                 "EXTRACTING": {title: "Extracting Frame Collection", showProgress: false, icon: "fas fa-box-open"},
-                "RENDERING": {title: "Rendering Video", showProgress: true, icon: "fas fa-file-export"},
+                "RENDERING": {title: "Rendering Video", showProgress: true, icon: "fas fa-photo-video"},
                 "FINISHED": {title: "Finished", showProgress: false, icon: "fas fa-check"},
                 "FAILED": {title: "Failed", showProgress: false, icon: "fas fa-exclamation-triangle"},
                 "ENHANCING": {title: "Enhancing Images", showProgress: true, icon: "fas fa-magic"},
                 "BLURRING": {title: "Blurring Areas", showProgress: true, icon: "fas fa-eraser"},
                 "RESIZING": {title: "Resizing Frames", showProgress: true, icon: "fas fa-arrows-alt"},
                 "COMBINING": {title: "Combining Frames", showProgress: true, icon: "fas fa-clone"},
-                "CREATE_PALETTE": {title: "Generating Color Palette", showProgress: false, icon: "fas fa-paint-brush"}
+                "CREATE_PALETTE": {title: "Generating Color Palette", showProgress: false, icon: "fas fa-paint-brush"},
+                "ENCODING": {title: "Encoding Video File", showProgress: true, icon: "fas fa-box"}
             };
 
             if (job.state in stateVms)
