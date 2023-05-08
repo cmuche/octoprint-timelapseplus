@@ -59,7 +59,6 @@ class WebcamController:
         image = Image.open(imageBytes)
         image.save(path, 'JPEG', quality=100, subsampling=0)
 
-
     def getSnapshotJpeg(self, path, webcamUrl):
         res = requests.get(webcamUrl, stream=True, timeout=1)
 
