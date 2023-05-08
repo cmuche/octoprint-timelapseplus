@@ -41,20 +41,29 @@ class WebcamController:
         if response.status_code != 200:
             raise Exception('Webcam Snapshot URL returned HTTP status code ' + str(response.status_code))
 
-        while True:
-            chunk = response.raw.read(1024)
-            start = chunk.find(b'\xff\xd8')
-            if start != -1:
-                imageData = chunk[start:]
-                while True:
-                    chunk = response.raw.read(1024)
-                    end = chunk.find(b'\xff\xd9')
-                    if end != -1:
-                        imageData += chunk[:end + 2]
-                        break
-                    else:
-                        imageData += chunk
-                break
+        startTime = time.time()
+        try:
+            while True:
+                if time.time() - startTime >= self.TIMEOUT:
+                    raise TimeoutError("Copy operation timed out")
+
+                chunk = response.raw.read(1024)
+                start = chunk.find(b'\xff\xd8')
+                if start != -1:
+                    imageData = chunk[start:]
+                    while True:
+                        chunk = response.raw.read(1024)
+                        end = chunk.find(b'\xff\xd9')
+                        if end != -1:
+                            imageData += chunk[:end + 2]
+                            break
+                        else:
+                            imageData += chunk
+                    break
+        except TimeoutError:
+            if os.path.isfile(path):
+                os.remove(path)
+            raise Exception('Webcam Stream took too long to send Data')
 
         imageBytes = io.BytesIO(imageData)
         image = Image.open(imageBytes)
