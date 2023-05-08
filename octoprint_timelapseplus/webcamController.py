@@ -63,7 +63,7 @@ class WebcamController:
         except TimeoutError:
             if os.path.isfile(path):
                 os.remove(path)
-            raise Exception('Webcam Stream took too long to send Data')
+            raise Exception('Webcam Stream took too long sending Data')
 
         imageBytes = io.BytesIO(imageData)
         image = Image.open(imageBytes)
@@ -82,7 +82,7 @@ class WebcamController:
             except TimeoutError:
                 if os.path.isfile(path):
                     os.remove(path)
-                raise Exception('Webcam Snapshot Endpoint took too long to send Data')
+                raise Exception('Webcam Snapshot Endpoint took too long sending Data')
 
     def getSnapshot(self):
         ffmpegPath = self._settings.get(["ffmpegPath"])
