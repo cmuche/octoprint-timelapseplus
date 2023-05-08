@@ -21,7 +21,7 @@ class WebcamController:
 
     def getSnapshot(self):
         try:
-            res = requests.get(self._settings.get(["webcamUrl"]), stream=True)
+            res = requests.get(self._settings.get(["webcamUrl"]), stream=True, timeout=1)
 
             if res.status_code == 200:
                 fileName = self.TMP_FOLDER + '/' + self.PARENT.getRandomString(32) + ".jpg"
