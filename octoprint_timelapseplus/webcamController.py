@@ -31,7 +31,7 @@ class WebcamController:
         if error or proc.returncode != 0:
             raise Exception('Could not capture Webcam: ' + error)
         image = Image.open(BytesIO(output))
-        image.save(path, quality=100, subsampling=0)
+        image.save(path, format='JPEG', quality=100, subsampling=0)
 
     def getSnapshotStreamMjpeg(self, path, webcamUrl):
         response = requests.get(webcamUrl, stream=True, timeout=1)
