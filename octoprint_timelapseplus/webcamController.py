@@ -9,6 +9,8 @@ from PIL import Image
 
 import requests
 
+from .model.webcamType import WebcamType
+
 
 class WebcamController:
     def __init__(self, parent, logger, dataFolder, settings):
@@ -71,11 +73,17 @@ class WebcamController:
     def getSnapshot(self):
         ffmpegPath = self._settings.get(["ffmpegPath"])
         webcamUrl = self._settings.get(["webcamUrl"])
+        webcamType = WebcamType[self._settings.get(["webcamType"])]
 
         fileName = self.TMP_FOLDER + '/' + self.PARENT.getRandomString(32) + ".jpg"
 
         try:
-            self.getSnapshotJpeg(fileName, webcamUrl)
+            if webcamType == WebcamType.IMAGE_JPEG:
+                self.getSnapshotJpeg(fileName, webcamUrl)
+            if webcamType == WebcamType.STREAM_MJPEG:
+                self.getSnapshotStreamMjpeg(fileName, webcamUrl)
+            if webcamType == WebcamType.STREAM_MP4 or webcamType == WebcamType.STREAM_HLS:
+                self.getSnapshotStreamMp4OrHls(fileName, ffmpegPath, webcamUrl)
 
             if not os.path.isfile(fileName):
                 raise Exception('An Error occured during Snapshot Capturing')

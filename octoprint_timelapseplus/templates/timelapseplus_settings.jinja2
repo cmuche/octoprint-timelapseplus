@@ -26,11 +26,24 @@
         </div>
     </div>
 
+    <h3>Webcam</h3>
     <div class="control-group">
-        <label class="control-label">Webcam Snapshot URL</label>
+        <label class="control-label">Webcam Type</label>
+        <div class="controls">
+            <select data-bind="value: settings.plugins.timelapseplus.webcamType">
+                <option value="IMAGE_JPEG">JPEG Image</option>
+                <option value="STREAM_MJPEG">MJPEG Stream</option>
+                <option value="STREAM_MP4">MP4 Stream</option>
+                <option value="STREAM_HLS">HLS Stream</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Webcam URL</label>
         <div class="controls">
             <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamUrl">
-            <span class="help-block">The URL must be reachable for OctoPrint and return a still JPG image of the webcam stream.</span>
+            <span class="help-block">The URL must be reachable for OctoPrint and return a still JPG image or the stream in the format specified above.</span>
         </div>
     </div>
 
