@@ -11,6 +11,7 @@ from octoprint.events import Events
 from .apiController import ApiController
 from .cacheController import CacheController
 from .cleanupController import CleanupController
+from .helpers.formatHelper import FormatHelper
 from .clientController import ClientController
 from .model.captureMode import CaptureMode
 from .model.enhancementPreset import EnhancementPreset
@@ -94,6 +95,10 @@ class TimelapsePlusPlugin(
     def apiEnhancementPreviewSettings(self):
         return self.API_CONTROLLER.enhancementPreviewSettings()
 
+    @octoprint.plugin.BlueprintPlugin.route("/listVideoFormats", methods=["POST"])
+    def apiListVideoFormats(self):
+        return self.API_CONTROLLER.listVideoFormats()
+
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
         buf = io.BytesIO()
@@ -133,7 +138,8 @@ class TimelapsePlusPlugin(
             snapshotCommand="SNAPSHOT",
             renderAfterPrint=True,
             enhancementPresets=[EnhancementPreset(self).getJSON()],
-            renderPresets=[RenderPreset().getJSON()]
+            renderPresets=[RenderPreset().getJSON()],
+            defaultVideoFormat=FormatHelper.getDefaultVideoFormat().ID
         )
 
     def get_template_vars(self):
@@ -154,7 +160,8 @@ class TimelapsePlusPlugin(
             snapshotCommand=self._settings.get(["snapshotCommand"]),
             renderAfterPrint=self._settings.get(["renderAfterPrint"]),
             enhancementPresets=epNew,
-            renderPresets=rpNew
+            renderPresets=rpNew,
+            defaultVideoFormat=self._settings.get(["defaultVideoFormat"])
         )
 
     def listFrameZips(self):
@@ -165,7 +172,14 @@ class TimelapsePlusPlugin(
         return frameZips
 
     def listVideos(self):
-        files = glob.glob(self._settings.getBaseFolder('timelapse') + '/*.mp4')
+        videoExtensions = FormatHelper.getVideoFormatExtensions()
+        files = []
+        allFiles = glob.glob(self._settings.getBaseFolder('timelapse') + '/*')
+        for f in allFiles:
+            ext = os.path.splitext(f)[1][1:].lower()
+            if ext in videoExtensions:
+                files.append(f)
+
         videos = list(map(lambda x: Video(x, self, self._logger, self._settings), files))
         videos.sort(key=lambda x: x.TIMESTAMP)
         videos.reverse()
@@ -233,6 +247,10 @@ class TimelapsePlusPlugin(
         rpNew = list(map(lambda x: x.getJSON(), rpList))
         self._settings.set(["renderPresets"], rpNew)
 
+        defaultVideoFormatId = self._settings.get(["defaultVideoFormat"])
+        defaultVideoFormat = FormatHelper.getVideoFormatById(defaultVideoFormatId)
+        self._settings.set(["defaultVideoFormat"], defaultVideoFormat.ID)
+
         self.checkPrerequisites()
 
     def on_settings_save(self, data):
@@ -298,8 +316,8 @@ class TimelapsePlusPlugin(
 
         self.PRINTJOB.doSnapshot()
 
-    def render(self, frameZip, enhancementPreset=None, renderPreset=None):
-        job = RenderJob(frameZip, self, self._logger, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset)
+    def render(self, frameZip, enhancementPreset=None, renderPreset=None, videoFormat=None):
+        job = RenderJob(frameZip, self, self._logger, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset, videoFormat)
         job.start()
         self.RENDERJOBS.append(job)
 

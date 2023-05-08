@@ -6,6 +6,7 @@ import re
 from PIL import Image
 from flask import make_response, send_file
 
+from .helpers.formatHelper import FormatHelper
 from .model.enhancementPreset import EnhancementPreset
 from .model.renderPreset import RenderPreset
 from .model.mask import Mask
@@ -94,11 +95,11 @@ class ApiController:
         if data['type'] == 'video':
             allVideos = self.PARENT.listVideos()
             video = next(x for x in allVideos if x.ID == id)
-            return send_file(video.PATH, mimetype=video.MIMETYPE, as_attachment=True, attachment_filename=os.path.basename(video.PATH))
+            return send_file(video.PATH, as_attachment=True, download_name=os.path.basename(video.PATH))
         if data['type'] == 'frameZip':
             allFrameZips = self.PARENT.listFrameZips()
             frameZip = next(x for x in allFrameZips if x.ID == id)
-            return send_file(frameZip.PATH, mimetype=frameZip.MIMETYPE, as_attachment=True, attachment_filename=os.path.basename(frameZip.PATH))
+            return send_file(frameZip.PATH, as_attachment=True, download_name=os.path.basename(frameZip.PATH))
 
     def enhancementPreview(self):
         import flask
@@ -147,8 +148,9 @@ class ApiController:
 
         enhancementPreset = EnhancementPreset(self.PARENT, data['presetEnhancement'])
         renderPreset = RenderPreset(data['presetRender'])
+        videoFormat = FormatHelper.getVideoFormatById(data['formatId'])
 
-        self.PARENT.render(frameZip, enhancementPreset, renderPreset)
+        self.PARENT.render(frameZip, enhancementPreset, renderPreset, videoFormat)
 
     def listPresets(self):
         epRaw = self._settings.get(["enhancementPresets"])
@@ -184,3 +186,8 @@ class ApiController:
 
         length = preset.calculateVideoLength(frameZip)
         return dict(length=length)
+
+    def listVideoFormats(self):
+        formats = list(map(lambda x: x.getJSON(), FormatHelper.getVideoFormats()))
+        defaultId = self._settings.get(["defaultVideoFormat"])
+        return dict(formats=formats, defaultId=defaultId)

@@ -42,6 +42,9 @@ $(function() {
         self.error = ko.observable(null);
         self.hasError = ko.observable(false);
 
+        self.hasVideoPlaybackError = ko.observable(false);
+        self.videoPreviewIsGif = ko.observable(false);
+
         self.snapshotCommand = ko.observable();
         self.captureMode = ko.observable();
         self.captureTimerInterval = ko.observable();
@@ -60,12 +63,34 @@ $(function() {
         self.selectedPresetRender = ko.observable();
         self.selectedFrameZip = ko.observable();
         self.selectedRenderPresetVideoLength = ko.observable(0);
+        self.videoFormats = ko.observable([]);
+        self.videoFormatsGrouped = ko.observable([]);
+        self.selectedVideoFormat = ko.observable();
+
+        self.videoFormats.subscribe(function(data) {
+            const groups = {};
+            for (const obj of data) {
+                const name = obj.name;
+                if (!groups[name]) groups[name] = {name, children: []};
+                groups[name].children.push(obj);
+            }
+            self.videoFormatsGrouped(Object.values(groups));
+        });
 
         self.selectedPresetRender.subscribe(function(data) {
             self.api("getRenderPresetVideoLength", {preset: data, frameZipId: self.selectedFrameZip().id}, function(res) {
                 self.selectedRenderPresetVideoLength(res.length);
             });
         });
+
+        $("div#tlp-modal-video video source")[0].addEventListener("error", function(e) {
+            self.hasVideoPlaybackError(true);
+        });
+
+        self.openSettingsPage = function() {
+            $("a#navbar_show_settings").click();
+            $("li#settings_plugin_timelapseplus_link a").click();
+        };
 
         // https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
         self.humanFileSize = function(size) {
@@ -193,10 +218,18 @@ $(function() {
                 width: "auto"
             });
 
-            $("div#tlp-modal-video video source")[0].src = video.url;
-            $("div#tlp-modal-video video")[0].load();
-            $("div#tlp-modal-video video")[0].currentTime = 0;
-            $("div#tlp-modal-video video").trigger("play");
+
+            if (video.extension == "gif") {
+                $("div#tlp-modal-video img.gif").attr("src", video.url);
+                self.videoPreviewIsGif(true);
+            } else {
+                self.videoPreviewIsGif(false);
+                self.hasVideoPlaybackError(false);
+                $("div#tlp-modal-video video source")[0].src = video.url;
+                $("div#tlp-modal-video video")[0].load();
+                $("div#tlp-modal-video video")[0].currentTime = 0;
+                $("div#tlp-modal-video video").trigger("play");
+            }
         };
 
         self.openEnhancementPresetPreview = function(preset) {
@@ -223,6 +256,10 @@ $(function() {
 
         self.onAllBound = function(allViewModels) {
             self.triggerGetData();
+
+            self.api("listVideoFormats", {}, function(data) {
+                self.videoFormats(data.formats);
+            });
         };
 
         self.formatPercent = function(percent) {
@@ -238,13 +275,15 @@ $(function() {
             let stateVms = {
                 "WAITING": {title: "Waiting", showProgress: false, icon: "fas fa-hourglass-half"},
                 "EXTRACTING": {title: "Extracting Frame Collection", showProgress: false, icon: "fas fa-box-open"},
-                "RENDERING": {title: "Rendering Video", showProgress: true, icon: "fas fa-file-export"},
+                "RENDERING": {title: "Rendering Video", showProgress: true, icon: "fas fa-photo-video"},
                 "FINISHED": {title: "Finished", showProgress: false, icon: "fas fa-check"},
                 "FAILED": {title: "Failed", showProgress: false, icon: "fas fa-exclamation-triangle"},
                 "ENHANCING": {title: "Enhancing Images", showProgress: true, icon: "fas fa-magic"},
                 "BLURRING": {title: "Blurring Areas", showProgress: true, icon: "fas fa-eraser"},
                 "RESIZING": {title: "Resizing Frames", showProgress: true, icon: "fas fa-arrows-alt"},
-                "COMBINING": {title: "Combining Frames", showProgress: true, icon: "fas fa-clone"}
+                "COMBINING": {title: "Combining Frames", showProgress: true, icon: "fas fa-clone"},
+                "CREATE_PALETTE": {title: "Generating Color Palette", showProgress: false, icon: "fas fa-paint-brush"},
+                "ENCODING": {title: "Encoding Video File", showProgress: true, icon: "fas fa-box"}
             };
 
             if (job.state in stateVms)
@@ -300,15 +339,24 @@ $(function() {
                 self.selectedPresetEnhancement(data.enhancementPresets[0]);
                 self.selectedPresetRender(data.renderPresets[0]);
 
-                $("div#tlp-modal-render").modal({
-                    width: "auto"
+                self.api("listVideoFormats", {}, function(data) {
+                    self.videoFormats(data.formats);
+
+                    let selectedFormat = data.formats.find(x => x.id == data.defaultId);
+                    self.selectedVideoFormat(selectedFormat);
+
+                    $("div#tlp-modal-render").modal({
+                        width: "auto"
+                    });
                 });
+
             });
         };
 
         self.startRender = function() {
             self.api("render", {
                 frameZipId: self.selectedFrameZip().id,
+                formatId: self.selectedVideoFormat().id,
                 presetEnhancement: self.selectedPresetEnhancement(),
                 presetRender: self.selectedPresetRender()
             });
