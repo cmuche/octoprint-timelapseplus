@@ -1,5 +1,5 @@
 class Format:
-    def __init__(self, id, name, title, extension, mimeType, codecName, codecId, additionalArgs=dict()):
+    def __init__(self, id, name, title, extension, mimeType, codecName, codecId, additionalArgs=dict(), createPalette=False):
         self.ID = id
         self.NAME = name
         self.TITLE = title
@@ -8,6 +8,7 @@ class Format:
         self.CODEC_NAME = codecName
         self.CODEC_ID = codecId
         self.ADDITIONAL_ARGS = additionalArgs
+        self.CREATE_PALETTE = createPalette
 
     def getJSON(self):
         return dict(

@@ -10,4 +10,6 @@ class RenderJobState(Enum):
     ENHANCING = 6
     BLURRING = 7
     RESIZING = 8,
-    COMBINING = 9
+    COMBINING = 9,
+    CREATE_PALETTE = 10,
+    ENCODING = 11
