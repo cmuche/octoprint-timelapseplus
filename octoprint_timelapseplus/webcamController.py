@@ -1,13 +1,12 @@
 import glob
 import io
 import os
-import shutil
 import subprocess
+import time
 from io import BytesIO
 
-from PIL import Image
-
 import requests
+from PIL import Image
 
 from .model.webcamType import WebcamType
 
@@ -19,6 +18,8 @@ class WebcamController:
         self._settings = settings
         self.TMP_FOLDER = dataFolder + '/webcam-tmp'
         self.prepareFolder()
+
+        self.TIMEOUT = 2
 
     def prepareFolder(self):
         os.makedirs(self.TMP_FOLDER, exist_ok=True)
@@ -36,7 +37,7 @@ class WebcamController:
         image.save(path, format='JPEG', quality=100, subsampling=0)
 
     def getSnapshotStreamMjpeg(self, path, webcamUrl):
-        response = requests.get(webcamUrl, stream=True, timeout=1)
+        response = requests.get(webcamUrl, stream=True, timeout=self.TIMEOUT)
         if response.status_code != 200:
             raise Exception('Webcam Snapshot URL returned HTTP status code ' + str(response.status_code))
 
@@ -60,14 +61,19 @@ class WebcamController:
         image.save(path, 'JPEG', quality=100, subsampling=0)
 
     def getSnapshotJpeg(self, path, webcamUrl):
-        res = requests.get(webcamUrl, stream=True, timeout=1)
+        res = requests.get(webcamUrl, stream=True, timeout=self.TIMEOUT)
 
-        if res.status_code == 200:
-            with open(path, 'wb') as f:
-                shutil.copyfileobj(res.raw, f)
-        else:
+        if res.status_code != 200:
             self._logger.error('Could not load image')
             raise Exception('Webcam Snapshot URL returned HTTP status code ' + str(res.status_code))
+        else:
+            try:
+                with open(path, 'wb') as f:
+                    WebcamController.copyHttpResponseToFile(res, f, self.TIMEOUT)
+            except TimeoutError:
+                if os.path.isfile(path):
+                    os.remove(path)
+                raise Exception('Webcam Snapshot Endpoint took too long to send Data')
 
     def getSnapshot(self):
         ffmpegPath = self._settings.get(["ffmpegPath"])
@@ -92,3 +98,14 @@ class WebcamController:
         except Exception as e:
             self.PARENT.errorSnapshot(e)
             raise e
+
+    @staticmethod
+    def copyHttpResponseToFile(src, dst, timeout, chunkSize=1024):
+        startTime = time.time()
+        for chunk in src.iter_content(chunk_size=chunkSize):
+            if time.time() - startTime >= timeout:
+                raise TimeoutError("Copy operation timed out")
+            if chunk:
+                dst.write(chunk)
+            else:
+                break
