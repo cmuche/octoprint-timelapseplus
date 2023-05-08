@@ -42,7 +42,8 @@ class TimelapsePlusPlugin(
 
     @octoprint.plugin.BlueprintPlugin.route("/reCheckPrerequisites", methods=["POST"])
     def apiReCheckPrerequisites(self):
-        return self.API_CONTROLLER.reCheckPrerequisites()
+        self.API_CONTROLLER.reCheckPrerequisites()
+        return self.API_CONTROLLER.emptyResponse()
 
     @octoprint.plugin.BlueprintPlugin.route("/createBlurMask", methods=["POST"])
     def apiCreateBlurMask(self):
