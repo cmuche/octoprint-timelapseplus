@@ -93,7 +93,9 @@ $(function() {
         };
 
         self.reCheckPrerequisites = function() {
-            self.api("reCheckPrerequisites");
+            self.api("reCheckPrerequisites",{}, function() {
+                self.showPopupSuccess('Re-Checked for Errors')
+            });
         };
 
         // https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
@@ -215,6 +217,15 @@ $(function() {
                     console.log("Error", error);
                 };
             }).click();
+        };
+
+        self.showPopupSuccess = function(msg) {
+            new PNotify({
+                title: "Timelapse+",
+                text: msg,
+                type: "success",
+                hide: true
+            });
         };
 
         self.openVideo = function(video) {
