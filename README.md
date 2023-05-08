@@ -33,6 +33,11 @@ Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render y
   - __GIF__
   - __WebM__ (VP8 and VP9)
   - Legacy __AVI__ and __MPG__
+- Supports __Webcam Snapshot Endpoints__ as well as __Webcam Streams__
+  - __JPEG Snapshots__
+  - __MJPEG__ Streams
+  - __MP4__ Streams
+  - __HLS__ Streams
 - Timelapse+ __doesn't modify your GCODE__ and __doesn't affect your printer's movements__!
 
 # Documentation
