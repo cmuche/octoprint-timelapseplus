@@ -200,6 +200,9 @@ class TimelapsePlusPlugin(
         self._plugin_manager.send_plugin_message(self._identifier, data)
 
     def sendClientData(self, force=False):
+        Thread(target=self.sendClientDataInner, args=(force,), daemon=True).start()
+
+    def sendClientDataInner(self, force):
         allFrameZips = self.listFrameZips()
         allVideos = self.listVideos()
         data = dict(
