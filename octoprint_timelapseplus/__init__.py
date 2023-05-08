@@ -12,6 +12,7 @@ from .apiController import ApiController
 from .cacheController import CacheController
 from .cleanupController import CleanupController
 from .helpers.formatHelper import FormatHelper
+from .clientController import ClientController
 from .model.captureMode import CaptureMode
 from .model.enhancementPreset import EnhancementPreset
 from .model.frameZip import FrameZip
@@ -45,7 +46,7 @@ class TimelapsePlusPlugin(
 
     @octoprint.plugin.BlueprintPlugin.route("/getData", methods=["POST"])
     def apiGetData(self):
-        self.sendClientData()
+        self.sendClientData(True)
         return self.API_CONTROLLER.emptyResponse()
 
     @octoprint.plugin.BlueprintPlugin.route("/defaultEnhancementPreset", methods=["POST"])
@@ -193,11 +194,10 @@ class TimelapsePlusPlugin(
         )
         self._plugin_manager.send_plugin_message(self._identifier, data)
 
-    def sendClientData(self):
+    def sendClientData(self, force=False):
         allFrameZips = self.listFrameZips()
         allVideos = self.listVideos()
         data = dict(
-            type='data',
             error=self.ERROR,
             isRunning=False,
             isCapturing=False,
@@ -223,7 +223,7 @@ class TimelapsePlusPlugin(
             data['isCapturing'] = self.PRINTJOB.isCapturing()
             data['snapshotCount'] = len(self.PRINTJOB.FRAMES)
 
-        self._plugin_manager.send_plugin_message(self._identifier, data)
+        self.CLIENT_CONTROLLER.enqueueData(data, force)
 
     def getRandomString(self, length):
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
@@ -233,6 +233,7 @@ class TimelapsePlusPlugin(
         self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self.get_plugin_data_folder(), self._settings)
         self.API_CONTROLLER = ApiController(self, self.get_plugin_data_folder(), self._basefolder, self._settings, self.CACHE_CONTROLLER, self.WEBCAM_CONTROLLER)
         self.CLEANUP_CONTROLLER = CleanupController(self, self.get_plugin_data_folder(), self._settings)
+        self.CLIENT_CONTROLLER = ClientController(self, self._identifier, self._plugin_manager)
 
         self.CLEANUP_CONTROLLER.init()
 

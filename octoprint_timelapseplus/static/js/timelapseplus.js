@@ -369,7 +369,7 @@ $(function() {
 
             console.log(data);
 
-            if (data.type == "popup") {
+            if ("type" in data && data.type == "popup") {
                 new PNotify({
                     title: data.title,
                     text: data.message,
@@ -379,23 +379,49 @@ $(function() {
                 return;
             }
 
-            self.videos.updateItems(data.videos);
-            self.frameCollections.updateItems(data.frameCollections);
+            if ("videos" in data)
+                self.videos.updateItems(data.videos);
 
-            self.error(data.error);
-            self.hasError(data.error != null);
+            if ("frameCollections" in data)
+                self.frameCollections.updateItems(data.frameCollections);
 
-            self.snapshotCommand(data.snapshotCommand);
-            self.captureMode(data.captureMode);
-            self.captureTimerInterval(data.captureTimerInterval);
-            self.isRunning(data.isRunning);
-            self.isCapturing(data.isCapturing);
-            self.currentFileSize(data.currentFileSize);
-            self.snapshotCount(data.snapshotCount);
-            self.previewImage(data.previewImage == null ? null : "data:image/jpeg;base64," + data.previewImage);
-            self.renderJobs(data.renderJobs);
-            self.sizeFrameCollections(data.sizeFrameCollections);
-            self.sizeVideos(data.sizeVideos);
+            if ("error" in data) {
+                self.error(data.error);
+                self.hasError(data.error != null);
+            }
+
+            if ("snapshotCommand" in data)
+                self.snapshotCommand(data.snapshotCommand);
+
+            if ("captureMode" in data)
+                self.captureMode(data.captureMode);
+
+            if ("captureTimerInterval" in data)
+                self.captureTimerInterval(data.captureTimerInterval);
+
+            if ("isRunning" in data)
+                self.isRunning(data.isRunning);
+
+            if ("isCapturing" in data)
+                self.isCapturing(data.isCapturing);
+
+            if ("currentFileSize" in data)
+                self.currentFileSize(data.currentFileSize);
+
+            if ("snapshotCount" in data)
+                self.snapshotCount(data.snapshotCount);
+
+            if ("previewImage" in data)
+                self.previewImage(data.previewImage == null ? null : "data:image/jpeg;base64," + data.previewImage);
+
+            if ("renderJobs" in data)
+                self.renderJobs(data.renderJobs);
+
+            if ("sizeFrameCollections" in data)
+                self.sizeFrameCollections(data.sizeFrameCollections);
+
+            if ("sizeVideos" in data)
+                self.sizeVideos(data.sizeVideos);
         };
     }
 
