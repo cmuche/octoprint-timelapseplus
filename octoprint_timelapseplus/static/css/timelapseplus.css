@@ -246,3 +246,25 @@
     box-shadow: 0.2em 0.2em 0.35em rgba(0, 0, 0, 0.25);
     margin-left: 1em;
 }
+
+#tlp-modal-webcam-preview .error {
+    color: #AA2222;
+    width: 50em;
+}
+
+#tlp-modal-webcam-preview .info {
+    margin-top: 1em;
+    display: flex;
+}
+
+#tlp-modal-webcam-preview .info > div {
+    margin-left: 1em;
+}
+
+#tlp-modal-webcam-preview .info > div:first-child {
+    margin-left: 0;
+}
+
+#tlp-modal-webcam-preview .info > div .k {
+    font-weight: bold;
+}

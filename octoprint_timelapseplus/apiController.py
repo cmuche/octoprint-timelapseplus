@@ -2,10 +2,13 @@ import base64
 import io
 import os
 import re
+import time
 
 from PIL import Image
 from flask import make_response, send_file
 
+from .prerequisitesController import PrerequisitesController
+from .model.webcamType import WebcamType
 from .helpers.formatHelper import FormatHelper
 from .model.enhancementPreset import EnhancementPreset
 from .model.renderPreset import RenderPreset
@@ -194,3 +197,31 @@ class ApiController:
 
     def reCheckPrerequisites(self):
         self.PARENT.checkPrerequisites()
+
+    def webcamCapturePreview(self):
+        import flask
+        data = flask.request.get_json()
+
+        ffmpegPath = data['ffmpegPath']
+        webcamType = WebcamType[data['webcamType']]
+        webcamUrl = data['webcamUrl']
+
+        snapshot = None
+        try:
+            PrerequisitesController.check(self._settings, self.PARENT.WEBCAM_CONTROLLER, ffmpegPath, webcamType, webcamUrl)
+
+            startTime = time.time()
+            snapshot = self.PARENT.WEBCAM_CONTROLLER.getSnapshot(ffmpegPath, webcamType, webcamUrl)
+            elapsedTime = int((time.time() - startTime) * 1000)
+            size = os.path.getsize(snapshot)
+
+            with Image.open(snapshot) as img:
+                width, height = img.size
+                res = self.PARENT.makeThumbnail(img, (500, 500))
+                resBase64 = base64.b64encode(res)
+                return dict(time=elapsedTime, size=size, width=width, height=height, result=resBase64)
+        except Exception as e:
+            return dict(error=str(e))
+        finally:
+            if snapshot is not None and os.path.isfile(snapshot):
+                os.remove(snapshot)

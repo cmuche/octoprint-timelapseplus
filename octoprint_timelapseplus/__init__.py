@@ -22,6 +22,7 @@ from .model.renderJob import RenderJob
 from .model.renderJobState import RenderJobState
 from .model.renderPreset import RenderPreset
 from .model.video import Video
+from .model.webcamType import WebcamType
 from .prerequisitesController import PrerequisitesController
 from .webcamController import WebcamController
 
@@ -39,6 +40,10 @@ class TimelapsePlusPlugin(
         self.PRINTJOB = None
         self.RENDERJOBS = []
         self.ERROR = None
+
+    @octoprint.plugin.BlueprintPlugin.route("/webcamCapturePreview", methods=["POST"])
+    def apiWebcamCapturePreview(self):
+        return self.API_CONTROLLER.webcamCapturePreview()
 
     @octoprint.plugin.BlueprintPlugin.route("/reCheckPrerequisites", methods=["POST"])
     def apiReCheckPrerequisites(self):
@@ -107,7 +112,7 @@ class TimelapsePlusPlugin(
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
         buf = io.BytesIO()
-        img.save(buf, format='JPEG', quality=50)
+        img.save(buf, format='JPEG', quality=75)
         byteArr = buf.getvalue()
         return byteArr
 
@@ -137,6 +142,7 @@ class TimelapsePlusPlugin(
         return dict(
             ffmpegPath='',
             ffprobePath='',
+            webcamType=WebcamType.IMAGE_JPEG.name,
             webcamUrl='',
             captureMode=CaptureMode.COMMAND.name,
             captureTimerInterval=10,
@@ -159,6 +165,7 @@ class TimelapsePlusPlugin(
         return dict(
             ffmpegPath=self._settings.get(["ffmpegPath"]),
             ffprobePath=self._settings.get(["ffprobePath"]),
+            webcamType=self._settings.get(["webcamType"]),
             webcamUrl=self._settings.get(["webcamUrl"]),
             captureMode=self._settings.get(["captureMode"]),
             captureTimerInterval=self._settings.get(["captureTimerInterval"]),

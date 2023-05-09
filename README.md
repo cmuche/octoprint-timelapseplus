@@ -33,6 +33,11 @@ Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render y
   - __GIF__
   - __WebM__ (VP8 and VP9)
   - Legacy __AVI__ and __MPG__
+- Supports __Webcam Snapshot Endpoints__ as well as __Webcam Streams__
+  - __JPEG Snapshots__
+  - __MJPEG__ Streams
+  - __MP4__ Streams
+  - __HLS__ Streams
 - Timelapse+ __doesn't modify your GCODE__ and __doesn't affect your printer's movements__!
 
 # Documentation
@@ -45,11 +50,14 @@ In order to render your videos and get information about previously rendered vid
 You need to install this on your host machine and ensure that OctoPrint is able to access the FFmpeg and FFprobe binaries.
 FFprobe is usually bundled with FFmpeg. So when your FFmpeg path is `/usr/bin/ffmpeg` your FFprobe path is probably `/usr/bin/ffprobe`.
 
-### Webcam Snapshot URL
-This is the URL which Timelapse+ calls to receive a snapshot.
-It has to be callable via HTTP and needs to return a valid JPG/JPEG image.
-This is a still image of your live webcam stream.
-Currently, Timelapse+ doesn't support other video or image sources, but it is planned for future relaeses.
+### Webcam Type
+This setting tells Timelapse+ from what kind of webcam source it should capture your snapshots.
+It could either be an endpoint which provides a single still JPG/JPEG image (which should be the preferred method)
+or a stream (MJPEG/MP4/HLS). Keep in mind that Timelapse+ needs to do some extra transcoding when capturing your snapshots from a stream.
+So this could possibly affect your timing, depending on the extra time it needs for the conversion.
+
+### Webcam URL
+This is the URL of the mentioned image endpoint or stream.
 
 ### Capture Mode and GCODE Preparation
 Timelapse+ has two modes to trigger snapshots.
