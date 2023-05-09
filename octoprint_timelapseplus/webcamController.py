@@ -31,8 +31,10 @@ class WebcamController:
         cmd = [ffmpegPath, '-r', '1', '-i', webcamUrl, '-frames:v', '1', '-q:v', '1', '-f', 'image2', '-']
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
         output, error = proc.communicate()
-        if error or proc.returncode != 0:
+        if error:
             raise Exception('Could not capture Webcam: ' + str(error))
+        if proc.returncode != 0:
+            raise Exception('FFmpeg could not capture Webcam (Return Code ' + str(proc.returncode) + ')')
         image = Image.open(BytesIO(output))
         image.save(path, format='JPEG', quality=100, subsampling=0)
 
