@@ -220,8 +220,9 @@ $(function() {
         };
 
         self.openWebcamCapturePreview = function(ffmpegPath, webcamType, webcamUrl) {
-            self.api("webcamCapturePreview", {ffmpegPath: ffmpegPath(), webcamType: webcamType(), webcamUrl: webcamUrl()}, function(data) {
+            $("#tlp-button-webcam-preview").prop("disabled", true);
 
+            self.api("webcamCapturePreview", {ffmpegPath: ffmpegPath(), webcamType: webcamType(), webcamUrl: webcamUrl()}, function(data) {
                 if ("error" in data) {
                     $("div#tlp-modal-webcam-preview .error").show();
                     $("div#tlp-modal-webcam-preview img.preview").hide();
@@ -242,6 +243,8 @@ $(function() {
                 $("div#tlp-modal-webcam-preview").modal({
                     width: "auto"
                 });
+            }, null, function() {
+                $("#tlp-button-webcam-preview").prop("disabled", false);
             });
         };
 
@@ -345,7 +348,7 @@ $(function() {
             return mode;
         };
 
-        self.api = function(command, payload = {}, successFn = null) {
+        self.api = function(command, payload = {}, successFn = null, errorFn = null, completeFn = null) {
             $.ajax({
                 url: "./plugin/timelapseplus/" + command,
                 type: "POST",
@@ -357,9 +360,14 @@ $(function() {
                         successFn(response);
                 },
                 complete: function() {
+                    if (completeFn != null)
+                        completeFn();
                 },
                 error: function(err) {
                     console.log("Error (Command=" + command + ")", err);
+
+                    if (errorFn != null)
+                        errorFn(err);
                 }
             });
         };

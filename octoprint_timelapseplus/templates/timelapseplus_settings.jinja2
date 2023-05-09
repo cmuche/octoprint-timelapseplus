@@ -15,7 +15,7 @@
         </a>
     </div>
 
-    <h3>Paths</h3>
+    <h3>Paths and Webcam</h3>
     <div class="control-group">
         <label class="control-label">FFmpeg Path</label>
         <div class="controls">
@@ -32,7 +32,8 @@
         </div>
     </div>
 
-    <h3>Webcam</h3>
+    <hr>
+
     <div class="control-group">
         <label class="control-label">Webcam Type</label>
         <div class="controls">
@@ -54,9 +55,18 @@
         <div class="controls">
             <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamUrl">
             <span class="help-block">The URL must be reachable for OctoPrint and return a still image or the stream in the format specified above.</span>
-            <button style="margin-top: 1em" class="btn btn-mini" data-bind="click: function(){parent.openWebcamCapturePreview(settings.plugins.timelapseplus.ffmpegPath, settings.plugins.timelapseplus.webcamType, settings.plugins.timelapseplus.webcamUrl)}">
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="control-group">
+        <label class="control-label">Test Settings</label>
+        <div class="controls">
+            <span class="help-block">You can test the FFmpeg and FFprobe paths as well as the snapshot capture here:</span>
+            <button id="tlp-button-webcam-preview" style="margin-top: 1em" class="btn btn-mini" data-bind="click: function(){parent.openWebcamCapturePreview(settings.plugins.timelapseplus.ffmpegPath, settings.plugins.timelapseplus.webcamType, settings.plugins.timelapseplus.webcamUrl)}">
                 <i class="fa fa-check"></i>
-                Test Paths and Webcam Capture
+                Test Paths and Webcam Settings
             </button>
         </div>
     </div>
