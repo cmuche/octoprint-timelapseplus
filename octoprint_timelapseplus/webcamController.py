@@ -32,7 +32,7 @@ class WebcamController:
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
         output, error = proc.communicate()
         if error or proc.returncode != 0:
-            raise Exception('Could not capture Webcam: ' + error)
+            raise Exception('Could not capture Webcam: ' + str(error))
         image = Image.open(BytesIO(output))
         image.save(path, format='JPEG', quality=100, subsampling=0)
 
