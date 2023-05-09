@@ -233,8 +233,7 @@ $(function() {
                     $("div#tlp-modal-webcam-preview img.preview").show();
                     $("div#tlp-modal-webcam-preview .info").show();
 
-                    $("div#tlp-modal-webcam-preview .info .kv-width .v").text(data.width + " px");
-                    $("div#tlp-modal-webcam-preview .info .kv-height .v").text(data.height + " px");
+                    $("div#tlp-modal-webcam-preview .info .kv-dimensions .v").text(data.width + " x " + data.height + " px");
                     $("div#tlp-modal-webcam-preview .info .kv-size .v").text(self.humanFileSize(data.size));
                     $("div#tlp-modal-webcam-preview .info .kv-time .v").text(data.time + " ms");
                     $("div#tlp-modal-webcam-preview img.preview").attr("src", "data:image/png;base64," + data.result);
