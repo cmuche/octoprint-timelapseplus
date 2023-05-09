@@ -10,11 +10,11 @@ class FormatHelper:
     @staticmethod
     def getVideoFormats():
         return [
-            Format('mp4-h264-prevq', 'MP4', 'Draft Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-crf': '45', '-preset': 'ultrafast'}),
-            Format('mp4-h264-lq', 'MP4', 'Low Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-crf': '35', '-preset': 'veryfast'}),
-            Format('mp4-h264-nq', 'MP4', 'Normal Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-crf': '30', '-preset': 'veryfast'}),
-            Format('mp4-h264-hq', 'MP4', 'High Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-crf': '25', '-preset': 'veryfast'}),
-            Format('mp4-h264-uq', 'MP4', 'Ultra Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-crf': '20', '-preset': 'veryfast'}),
+            Format('mp4-h264-prevq', 'MP4', 'Draft Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-movflags': '+faststart', '-crf': '45', '-preset': 'ultrafast'}),
+            Format('mp4-h264-lq', 'MP4', 'Low Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-movflags': '+faststart', '-crf': '35', '-preset': 'veryfast'}),
+            Format('mp4-h264-nq', 'MP4', 'Normal Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-movflags': '+faststart', '-crf': '30', '-preset': 'veryfast'}),
+            Format('mp4-h264-hq', 'MP4', 'High Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-movflags': '+faststart', '-crf': '25', '-preset': 'veryfast'}),
+            Format('mp4-h264-uq', 'MP4', 'Ultra Quality', 'mp4', 'video/mp4', 'H.264', 'libx264', {'-movflags': '+faststart', '-crf': '20', '-preset': 'veryfast'}),
 
             Format('mp4-h265-lq', 'MP4', 'Low Quality', 'mp4', 'video/mp4', 'H.265', 'libx265', {'-crf': '35', '-preset': 'veryfast'}),
             Format('mp4-h265-nq', 'MP4', 'Normal Quality', 'mp4', 'video/mp4', 'H.265', 'libx265', {'-crf': '30', '-preset': 'veryfast'}),
