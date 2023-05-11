@@ -67,6 +67,8 @@ $(function() {
         self.videoFormatsGrouped = ko.observable([]);
         self.selectedVideoFormat = ko.observable();
 
+        self.isUploadingFrameZip = ko.observable(false);
+
         self.videoFormats.subscribe(function(data) {
             const groups = {};
             for (const obj of data) {
@@ -250,9 +252,13 @@ $(function() {
 
         self.openUploadFrameCollection = function() {
             $("<input name=\"file\" type=\"file\" accept=\"application/zip\">").on("change", function() {
+                self.isUploadingFrameZip(true);
+
                 let f = this.files[0];
                 console.log(f);
-                self.apiFileUpload("uploadFrameZip", f, null, null, null);
+                self.apiFileUpload("uploadFrameZip", f, null, null, function() {
+                    self.isUploadingFrameZip(false);
+                });
             }).click();
         };
 

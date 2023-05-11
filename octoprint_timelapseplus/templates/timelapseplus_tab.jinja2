@@ -168,7 +168,9 @@
         Frame Collections
         <span class="h-info" data-bind="text: 'Total: ' + frameCollections.allSize()"></span>
         <span class="h-info" data-bind="text: 'Size: ' + humanFileSize(sizeFrameCollections())"></span>
-        <a class="h-info" href="javascript:void(0)" data-bind="click: openUploadFrameCollection">Upload</a>
+
+        <a class="h-info" href="javascript:void(0)" data-bind="visible: !isUploadingFrameZip(),click: openUploadFrameCollection">Upload</a>
+        <span class="h-info" data-bind="visible: isUploadingFrameZip()">Uploading...</span>
     </h1>
 
     <div data-bind="visible: frameCollections.allSize() == 0">
