@@ -72,10 +72,14 @@ class ApiController:
             if self.CACHE_CONTROLLER.isCached(cacheId):
                 thumb = self.CACHE_CONTROLLER.getBytes(cacheId)
             else:
-                allFrameZips = self.PARENT.listFrameZips()
-                frameZip = next(x for x in allFrameZips if x.ID == id)
-                imgBytes = frameZip.getThumbnail()
-                img = Image.open(io.BytesIO(imgBytes))
+                try:
+                    allFrameZips = self.PARENT.listFrameZips()
+                    frameZip = next(x for x in allFrameZips if x.ID == id)
+                    imgBytes = frameZip.getThumbnail()
+                    img = Image.open(io.BytesIO(imgBytes))
+                except Exception as e:
+                    img = Image.open(self._basefolder + '/static/assets/no-thumbnail.jpg')
+
                 thumb = self.PARENT.makeThumbnail(img)
                 self.CACHE_CONTROLLER.storeBytes(cacheId, thumb)
 
