@@ -4,6 +4,8 @@ import os
 import re
 import shutil
 import time
+from contextlib import closing
+from zipfile import ZipFile
 
 from PIL import Image
 from flask import make_response, send_file
@@ -242,6 +244,11 @@ class ApiController:
 
         if fileExt != 'zip':
             raise Exception('Not a ZIP File')
+
+        with closing(ZipFile(fileTemp)) as archive:
+            testRes = archive.testzip()
+            if testRes is not None:
+                raise Exception('ZIP File is corrupt')
 
         newFileName = self._settings.getBaseFolder('timelapse') + '/' + fileName
         newFileName = FileHelper.getUniqueFileName(newFileName)
