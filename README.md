@@ -1,4 +1,4 @@
-![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/logo.png)
+![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/logo-small.png)
 
 Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render your print timelapses.
 
