@@ -10,16 +10,16 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="71.360405mm"
-   height="16.899504mm"
-   viewBox="0 0 71.360405 16.899504"
+   width="73.182373mm"
+   height="18.703766mm"
+   viewBox="0 0 73.182373 18.703766"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.1 r15371"
    sodipodi:docname="logo.svg"
-   inkscape:export-filename="Y:\octoprint-timelapseplus\assets\logo-small.png"
-   inkscape:export-xdpi="177.97"
-   inkscape:export-ydpi="177.97">
+   inkscape:export-filename="Y:\octoprint-timelapseplus\assets\logo.png"
+   inkscape:export-xdpi="694.15997"
+   inkscape:export-ydpi="694.15997">
   <defs
      id="defs2">
     <linearGradient
@@ -94,6 +94,46 @@
        x2="-294.91495"
        y2="112.94167"
        gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4516"
+       id="linearGradient4610"
+       gradientUnits="userSpaceOnUse"
+       x1="-326.12637"
+       y1="113.89878"
+       x2="-326.19601"
+       y2="105.51412" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4524"
+       id="linearGradient4614"
+       gradientUnits="userSpaceOnUse"
+       x1="-294.92215"
+       y1="110.36671"
+       x2="-294.91495"
+       y2="112.94167" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4524"
+       id="linearGradient4616"
+       gradientUnits="userSpaceOnUse"
+       x1="-350.80698"
+       y1="119.35378"
+       x2="-350.82608"
+       y2="116.6607" />
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter4622"
+       x="-0.014802467"
+       width="1.0296049"
+       y="-0.063383304"
+       height="1.1267666">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.43838808"
+         id="feGaussianBlur4624" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -103,8 +143,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
-     inkscape:cx="137.28067"
-     inkscape:cy="10.572727"
+     inkscape:cx="134.50724"
+     inkscape:cy="33.268061"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -139,7 +179,60 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(353.62416,-103.19253)">
+     transform="translate(354.26052,-102.57388)">
+    <g
+       id="g4551-2"
+       style="opacity:0.3;fill:#000000;stroke:#000000;stroke-opacity:1;filter:url(#filter4622)"
+       transform="translate(0.28348215,0.28348215)">
+      <text
+         inkscape:export-ydpi="357.35001"
+         inkscape:export-xdpi="357.35001"
+         inkscape:export-filename="Y:\octoprint-timelapseplus\assets\logo.png"
+         id="text4487-3"
+         y="114.14202"
+         x="-327.01804"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:125%;font-family:'Segoe WP Black';-inkscape-font-specification:'Segoe WP Black, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Segoe WP Black';-inkscape-font-specification:'Segoe WP Black, ';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.26458332px;stroke-opacity:1"
+           y="114.14202"
+           x="-327.01804"
+           id="tspan4485-6"
+           sodipodi:role="line">Timelapse</tspan></text>
+      <path
+         id="rect4511-4"
+         transform="scale(0.26458333)"
+         d="m -1109.957,390.58594 v 20.17383 h -20.1739 v 22.39062 h 20.1739 v 20.17383 h 22.3925 v -20.17383 h 20.1739 v -22.39062 h -20.1739 v -20.17383 z"
+         style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.13385832;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+         inkscape:connector-curvature="0" />
+      <text
+         inkscape:export-ydpi="357.35001"
+         inkscape:export-xdpi="357.35001"
+         inkscape:export-filename="Y:\octoprint-timelapseplus\assets\logo.png"
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.74682879px;line-height:125%;font-family:'Segoe WP Black';-inkscape-font-specification:'Segoe WP Black, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         x="-293.25092"
+         y="112.95322"
+         id="text4499-0"><tspan
+           sodipodi:role="line"
+           id="tspan4497-7"
+           x="-293.25092"
+           y="112.95322"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Segoe WP Black';-inkscape-font-specification:'Segoe WP Black, ';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">PLUS</tspan></text>
+      <text
+         inkscape:export-ydpi="357.35001"
+         inkscape:export-xdpi="357.35001"
+         inkscape:export-filename="Y:\octoprint-timelapseplus\assets\logo.png"
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.68411732px;line-height:125%;font-family:'Segoe WP Black';-inkscape-font-specification:'Segoe WP Black, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.09210294px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="-339.58176"
+         y="119.34627"
+         id="text4519-5"><tspan
+           sodipodi:role="line"
+           id="tspan4517-0"
+           x="-339.58176"
+           y="119.34627"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Segoe WP Black';-inkscape-font-specification:'Segoe WP Black, ';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.09210294px;stroke-opacity:1">for OctoPrint</tspan></text>
+    </g>
     <g
        id="g4551">
       <text
