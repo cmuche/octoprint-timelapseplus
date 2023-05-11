@@ -248,6 +248,14 @@ $(function() {
             });
         };
 
+        self.openUploadFrameCollection = function() {
+            $("<input name=\"file\" type=\"file\" accept=\"application/zip\">").on("change", function() {
+                let f = this.files[0];
+                console.log(f);
+                self.apiFileUpload("uploadFrameZip", f, null, null, null);
+            }).click();
+        };
+
         self.showPopupSuccess = function(msg) {
             new PNotify({
                 title: "Timelapse+",
@@ -355,6 +363,35 @@ $(function() {
                 dataType: "json",
                 data: JSON.stringify(payload),
                 contentType: "application/json; charset=UTF-8",
+                success: function(response) {
+                    if (successFn !== null)
+                        successFn(response);
+                },
+                complete: function() {
+                    if (completeFn != null)
+                        completeFn();
+                },
+                error: function(err) {
+                    console.log("Error (Command=" + command + ")", err);
+
+                    if (errorFn != null)
+                        errorFn(err);
+                }
+            });
+        };
+
+        self.apiFileUpload = function(command, file, successFn = null, errorFn = null, completeFn = null) {
+            let data = new FormData();
+            data.append("file", file);
+
+            console.log(data);
+
+            $.ajax({
+                url: "./plugin/timelapseplus/" + command,
+                type: "POST",
+                data: data,
+                contentType: false,
+                processData: false,
                 success: function(response) {
                     if (successFn !== null)
                         successFn(response);
