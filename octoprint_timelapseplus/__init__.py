@@ -153,6 +153,7 @@ class TimelapsePlusPlugin(
             captureTimerInterval=10,
             snapshotCommand="SNAPSHOT",
             renderAfterPrint=True,
+            forceCapturing=False,
             enhancementPresets=[EnhancementPreset(self).getJSON()],
             renderPresets=[RenderPreset().getJSON()],
             defaultVideoFormat=FormatHelper.getDefaultVideoFormat().ID
@@ -176,6 +177,7 @@ class TimelapsePlusPlugin(
             captureTimerInterval=self._settings.get(["captureTimerInterval"]),
             snapshotCommand=self._settings.get(["snapshotCommand"]),
             renderAfterPrint=self._settings.get(["renderAfterPrint"]),
+            forceCapturing=self._settings.get(["forceCapturing"]),
             enhancementPresets=epNew,
             renderPresets=rpNew,
             defaultVideoFormat=self._settings.get(["defaultVideoFormat"])
@@ -345,7 +347,7 @@ class TimelapsePlusPlugin(
         if self.PRINTJOB is not None and self.PRINTJOB.RUNNING:
             return
 
-        if self.ERROR is not None:
+        if self.ERROR is not None and not self._settings.get(["forceCapturing"]):
             return
 
         printerFile = self._printer.get_current_job()['file']['path']
