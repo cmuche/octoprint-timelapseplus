@@ -43,6 +43,9 @@ class FrameZip:
         )
 
     def countFrames(self):
-        with closing(ZipFile(self.PATH)) as archive:
-            count = len(archive.infolist())
-        return count
+        try:
+            with closing(ZipFile(self.PATH)) as archive:
+                count = len(archive.infolist())
+                return count
+        except:
+            return 0
