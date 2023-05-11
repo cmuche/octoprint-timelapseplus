@@ -31,9 +31,35 @@ class CleanupController:
     def onCron(self):
         self.cleanUnusedMasks()
 
+        self.purgeFiles()
+
         self.CRON_TIMER.cancel()
         self.CRON_TIMER = ResettableTimer(self.CRON_TIMER_INTERVAL, self.onCron)
         self.CRON_TIMER.start()
+
+    def purgeFiles(self):
+        hasDeleted = False
+
+        if self._settings.get(["purgeVideos"]):
+            days = int(self._settings.get(["purgeVideosDays"]))
+            seconds = days * self.SECONDS_1_DAY
+            videos = self.PARENT.listVideos()
+            for x in videos:
+                if self.fileIsOlderThan(x.PATH, seconds):
+                    x.delete()
+                    hasDeleted = True
+
+        if self._settings.get(["purgeFrameCollections"]):
+            days = int(self._settings.get(["purgeFrameCollectionsDays"]))
+            seconds = days * self.SECONDS_1_DAY
+            frameZips = self.PARENT.listFrameZips()
+            for x in frameZips:
+                if self.fileIsOlderThan(x.PATH, seconds):
+                    x.delete()
+                    hasDeleted = True
+
+        if hasDeleted:
+            self.PARENT.sendClientData()
 
     def fileIsOlderThan(self, filePath, seconds):
         modificationTime = os.path.getmtime(filePath)
