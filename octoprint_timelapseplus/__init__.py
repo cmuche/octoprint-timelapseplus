@@ -342,7 +342,7 @@ class TimelapsePlusPlugin(
         if self.PRINTJOB is not None and self.PRINTJOB.RUNNING:
             return
 
-        if self.ERROR is not None:
+        if self.ERROR is not None and not self._settings.get(["forceCapturing"]):
             return
 
         printerFile = self._printer.get_current_job()['file']['path']
