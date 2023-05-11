@@ -109,10 +109,15 @@ class TimelapsePlusPlugin(
     def apiListVideoFormats(self):
         return self.API_CONTROLLER.listVideoFormats()
 
+    @octoprint.plugin.BlueprintPlugin.route("/uploadFrameZip", methods=["POST"])
+    def apiUploadFrameZip(self):
+        self.API_CONTROLLER.uploadFrameZip()
+        return self.API_CONTROLLER.emptyResponse()
+
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
         buf = io.BytesIO()
-        img.save(buf, format='JPEG', quality=75)
+        img.convert('RGB').save(buf, format='JPEG', quality=75)
         byteArr = buf.getvalue()
         return byteArr
 
@@ -410,7 +415,7 @@ class TimelapsePlusPlugin(
             self.printFinished(False)
 
     def increaseBodyUploadSize(self, current_max_body_sizes, *args, **kwargs):
-        return [("POST", '/createBlurMask', 50 * 1024 * 1024)]
+        return [('POST', '/createBlurMask', 50 * 1024 * 1024), ('POST', '/uploadFrameZip', 5 * 1024 * 1024 * 1024)]
 
     def getUpdateInformation(self, *args, **kwargs):
         return dict(
