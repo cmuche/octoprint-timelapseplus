@@ -134,6 +134,43 @@
         </div>
     </div>
 
+    <h3>Purging</h3>
+    <div class="control-group">
+        <label class="control-label">Delete Videos</label>
+        <div class="controls">
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.purgeVideos">
+        </div>
+    </div>
+    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.purgeVideos">
+        <label class="control-label">Days</label>
+        <div class="controls">
+            <input type="number" step='1' min="1" max="300" width="5" data-bind="value: settings.plugins.timelapseplus.purgeVideosDays">
+            <span class="help-block">
+                <span>Rendered Videos older than</span>
+                <strong data-bind="text: settings.plugins.timelapseplus.purgeVideosDays"></strong>
+                <span>days will be automatically removed.</span>
+            </span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Delete Frame Collections</label>
+        <div class="controls">
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.purgeFrameCollections">
+        </div>
+    </div>
+    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.purgeFrameCollections">
+        <label class="control-label">Days</label>
+        <div class="controls">
+            <input type="number" step='1' min="1" max="300" width="5" data-bind="value: settings.plugins.timelapseplus.purgeFrameCollectionsDays">
+            <span class="help-block">
+                <span>Captured Frame Collections older than</span>
+                <strong data-bind="text: settings.plugins.timelapseplus.purgeFrameCollectionsDays"></strong>
+                <span>days will be automatically removed.</span>
+            </span>
+        </div>
+    </div>
+
     <h3>Enhancement</h3>
     <div class="control-group">
         <label class="control-label">Enhancement Presets</label>
