@@ -8,15 +8,16 @@ from zipfile import ZipFile
 class FrameZip:
     def __init__(self, path, parent, logger):
         self.PARENT = parent
+        self.CACHE_CONTROLLER = parent.CACHE_CONTROLLER
         self._logger = logger
 
         self.FILE = os.path.splitext(os.path.basename(path))[0]
         self.PATH = path
-        self.FRAMES = self.countFrames()
         self.TIMESTAMP = os.path.getmtime(path)
         self.SIZE = os.path.getsize(path)
         self.MIMETYPE = 'application/zip'
         self.ID = self.getId()
+        self.FRAMES = self.countFrames()
 
     def delete(self):
         os.remove(self.PATH)
@@ -43,9 +44,18 @@ class FrameZip:
         )
 
     def countFrames(self):
+        cacheId = ['frameZip', 'countFrames', self.ID]
+        if self.CACHE_CONTROLLER.isCached(cacheId):
+            cv = self.CACHE_CONTROLLER.getString(cacheId)
+            return int(cv)
+
         try:
             with closing(ZipFile(self.PATH)) as archive:
                 count = len(archive.infolist())
-                return count
-        except:
+
+            self.CACHE_CONTROLLER.storeString(cacheId, str(count))
+
+            return count
+
+        except Exception as e:
             return 0
