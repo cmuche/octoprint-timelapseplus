@@ -38,6 +38,7 @@ Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render y
   - __MJPEG__ Streams
   - __MP4__ Streams
   - __HLS__ Streams
+- __Purge__ Videos and Frame Collections after `n` days
 - Timelapse+ __doesn't modify your GCODE__ and __doesn't affect your printer's movements__!
 
 # Wiki
