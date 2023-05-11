@@ -2,11 +2,13 @@ import base64
 import io
 import os
 import re
+import shutil
 import time
 
 from PIL import Image
 from flask import make_response, send_file
 
+from .helpers.FileHelper import FileHelper
 from .prerequisitesController import PrerequisitesController
 from .model.webcamType import WebcamType
 from .helpers.formatHelper import FormatHelper
@@ -225,3 +227,20 @@ class ApiController:
         finally:
             if snapshot is not None and os.path.isfile(snapshot):
                 os.remove(snapshot)
+
+    def uploadFrameZip(self):
+        import flask
+        data = flask.request
+
+        fileName = os.path.basename(data.form['file.name'])
+        fileExt = os.path.splitext(fileName)[1][1:].lower()
+        fileTemp = data.form['file.path']
+
+        if fileExt != 'zip':
+            raise Exception('Not a ZIP File')
+
+        newFileName = self._settings.getBaseFolder('timelapse') + '/' + fileName
+        newFileName = FileHelper.getUniqueFileName(newFileName)
+
+        shutil.move(fileTemp, newFileName)
+        self.PARENT.sendClientData()
