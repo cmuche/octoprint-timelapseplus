@@ -156,7 +156,11 @@ class TimelapsePlusPlugin(
             forceCapturing=False,
             enhancementPresets=[EnhancementPreset(self).getJSON()],
             renderPresets=[RenderPreset().getJSON()],
-            defaultVideoFormat=FormatHelper.getDefaultVideoFormat().ID
+            defaultVideoFormat=FormatHelper.getDefaultVideoFormat().ID,
+            purgeFrameCollections=False,
+            purgeFrameCollectionsDays=90,
+            purgeVideos=False,
+            purgeVideosDays=90
         )
 
     def get_template_vars(self):
@@ -180,7 +184,11 @@ class TimelapsePlusPlugin(
             forceCapturing=self._settings.get(["forceCapturing"]),
             enhancementPresets=epNew,
             renderPresets=rpNew,
-            defaultVideoFormat=self._settings.get(["defaultVideoFormat"])
+            defaultVideoFormat=self._settings.get(["defaultVideoFormat"]),
+            purgeFrameCollections=self._settings.get(["purgeFrameCollections"]),
+            purgeFrameCollectionsDays=self._settings.get(["purgeFrameCollectionsDays"]),
+            purgeVideos=self._settings.get(["purgeVideos"]),
+            purgeVideosDays=self._settings.get(["purgeVideosDays"])
         )
 
     def listFrameZips(self):
