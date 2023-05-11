@@ -347,6 +347,7 @@ class TimelapsePlusPlugin(
         if self.PRINTJOB is not None and self.PRINTJOB.RUNNING:
             return
 
+        self.checkPrerequisites()
         if self.ERROR is not None and not self._settings.get(["forceCapturing"]):
             return
 
