@@ -101,10 +101,15 @@ class PrintJob:
         timePart = datetime.now().strftime("%Y%m%d%H%M%S")
         zipFileName = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.zip'
         tmpZipFile = self.FOLDER + '/out.zip'
+
+        compressType = zipfile.ZIP_STORED
+        if self._settings.get(["compressFrameZips"]):
+            compressType = zipfile.ZIP_DEFLATED
+
         with zipfile.ZipFile(tmpZipFile, 'w') as zipMe:
             for file in finishedFiles:
                 baseName = os.path.basename(file)
-                zipMe.write(file, baseName, compress_type=zipfile.ZIP_STORED)
+                zipMe.write(file, baseName, compress_type=compressType)
 
         shutil.move(tmpZipFile, zipFileName)
         shutil.rmtree(self.FOLDER)
