@@ -12,6 +12,7 @@ from .apiController import ApiController
 from .cacheController import CacheController
 from .cleanupController import CleanupController
 from .helpers.formatHelper import FormatHelper
+from .clientController import ClientController
 from .model.captureMode import CaptureMode
 from .model.enhancementPreset import EnhancementPreset
 from .model.frameZip import FrameZip
@@ -21,6 +22,7 @@ from .model.renderJob import RenderJob
 from .model.renderJobState import RenderJobState
 from .model.renderPreset import RenderPreset
 from .model.video import Video
+from .model.webcamType import WebcamType
 from .prerequisitesController import PrerequisitesController
 from .webcamController import WebcamController
 
@@ -39,13 +41,22 @@ class TimelapsePlusPlugin(
         self.RENDERJOBS = []
         self.ERROR = None
 
+    @octoprint.plugin.BlueprintPlugin.route("/webcamCapturePreview", methods=["POST"])
+    def apiWebcamCapturePreview(self):
+        return self.API_CONTROLLER.webcamCapturePreview()
+
+    @octoprint.plugin.BlueprintPlugin.route("/reCheckPrerequisites", methods=["POST"])
+    def apiReCheckPrerequisites(self):
+        self.API_CONTROLLER.reCheckPrerequisites()
+        return self.API_CONTROLLER.emptyResponse()
+
     @octoprint.plugin.BlueprintPlugin.route("/createBlurMask", methods=["POST"])
     def apiCreateBlurMask(self):
         return self.API_CONTROLLER.createBlurMask()
 
     @octoprint.plugin.BlueprintPlugin.route("/getData", methods=["POST"])
     def apiGetData(self):
-        self.sendClientData()
+        self.sendClientData(True)
         return self.API_CONTROLLER.emptyResponse()
 
     @octoprint.plugin.BlueprintPlugin.route("/defaultEnhancementPreset", methods=["POST"])
@@ -98,10 +109,15 @@ class TimelapsePlusPlugin(
     def apiListVideoFormats(self):
         return self.API_CONTROLLER.listVideoFormats()
 
+    @octoprint.plugin.BlueprintPlugin.route("/uploadFrameZip", methods=["POST"])
+    def apiUploadFrameZip(self):
+        self.API_CONTROLLER.uploadFrameZip()
+        return self.API_CONTROLLER.emptyResponse()
+
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
         buf = io.BytesIO()
-        img.save(buf, format='JPEG', quality=50)
+        img.convert('RGB').save(buf, format='JPEG', quality=75)
         byteArr = buf.getvalue()
         return byteArr
 
@@ -131,14 +147,21 @@ class TimelapsePlusPlugin(
         return dict(
             ffmpegPath='',
             ffprobePath='',
+            webcamType=WebcamType.IMAGE_JPEG.name,
             webcamUrl='',
             captureMode=CaptureMode.COMMAND.name,
             captureTimerInterval=10,
             snapshotCommand="SNAPSHOT",
             renderAfterPrint=True,
+            forceCapturing=False,
+            compressFrameZips=False,
             enhancementPresets=[EnhancementPreset(self).getJSON()],
             renderPresets=[RenderPreset().getJSON()],
-            defaultVideoFormat=FormatHelper.getDefaultVideoFormat().ID
+            defaultVideoFormat=FormatHelper.getDefaultVideoFormat().ID,
+            purgeFrameCollections=False,
+            purgeFrameCollectionsDays=90,
+            purgeVideos=False,
+            purgeVideosDays=90
         )
 
     def get_template_vars(self):
@@ -153,14 +176,21 @@ class TimelapsePlusPlugin(
         return dict(
             ffmpegPath=self._settings.get(["ffmpegPath"]),
             ffprobePath=self._settings.get(["ffprobePath"]),
+            webcamType=self._settings.get(["webcamType"]),
             webcamUrl=self._settings.get(["webcamUrl"]),
             captureMode=self._settings.get(["captureMode"]),
             captureTimerInterval=self._settings.get(["captureTimerInterval"]),
             snapshotCommand=self._settings.get(["snapshotCommand"]),
             renderAfterPrint=self._settings.get(["renderAfterPrint"]),
+            forceCapturing=self._settings.get(["forceCapturing"]),
+            compressFrameZips=self._settings.get(["compressFrameZips"]),
             enhancementPresets=epNew,
             renderPresets=rpNew,
-            defaultVideoFormat=self._settings.get(["defaultVideoFormat"])
+            defaultVideoFormat=self._settings.get(["defaultVideoFormat"]),
+            purgeFrameCollections=self._settings.get(["purgeFrameCollections"]),
+            purgeFrameCollectionsDays=self._settings.get(["purgeFrameCollectionsDays"]),
+            purgeVideos=self._settings.get(["purgeVideos"]),
+            purgeVideosDays=self._settings.get(["purgeVideosDays"])
         )
 
     def listFrameZips(self):
@@ -193,11 +223,13 @@ class TimelapsePlusPlugin(
         )
         self._plugin_manager.send_plugin_message(self._identifier, data)
 
-    def sendClientData(self):
+    def sendClientData(self, force=False):
+        Thread(target=self.sendClientDataInner, args=(force,), daemon=True).start()
+
+    def sendClientDataInner(self, force):
         allFrameZips = self.listFrameZips()
         allVideos = self.listVideos()
         data = dict(
-            type='data',
             error=self.ERROR,
             isRunning=False,
             isCapturing=False,
@@ -223,7 +255,7 @@ class TimelapsePlusPlugin(
             data['isCapturing'] = self.PRINTJOB.isCapturing()
             data['snapshotCount'] = len(self.PRINTJOB.FRAMES)
 
-        self._plugin_manager.send_plugin_message(self._identifier, data)
+        self.CLIENT_CONTROLLER.enqueueData(data, force)
 
     def getRandomString(self, length):
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
@@ -233,6 +265,7 @@ class TimelapsePlusPlugin(
         self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self.get_plugin_data_folder(), self._settings)
         self.API_CONTROLLER = ApiController(self, self.get_plugin_data_folder(), self._basefolder, self._settings, self.CACHE_CONTROLLER, self.WEBCAM_CONTROLLER)
         self.CLEANUP_CONTROLLER = CleanupController(self, self.get_plugin_data_folder(), self._settings)
+        self.CLIENT_CONTROLLER = ClientController(self, self._identifier, self._plugin_manager)
 
         self.CLEANUP_CONTROLLER.init()
 
@@ -324,7 +357,8 @@ class TimelapsePlusPlugin(
         if self.PRINTJOB is not None and self.PRINTJOB.RUNNING:
             return
 
-        if self.ERROR is not None:
+        self.checkPrerequisites()
+        if self.ERROR is not None and not self._settings.get(["forceCapturing"]):
             return
 
         printerFile = self._printer.get_current_job()['file']['path']
@@ -394,7 +428,7 @@ class TimelapsePlusPlugin(
             self.printFinished(False)
 
     def increaseBodyUploadSize(self, current_max_body_sizes, *args, **kwargs):
-        return [("POST", '/createBlurMask', 50 * 1024 * 1024)]
+        return [('POST', '/createBlurMask', 50 * 1024 * 1024), ('POST', '/uploadFrameZip', 5 * 1024 * 1024 * 1024)]
 
     def getUpdateInformation(self, *args, **kwargs):
         return dict(

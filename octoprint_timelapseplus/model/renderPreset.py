@@ -25,6 +25,10 @@ class RenderPreset:
         if d is not None:
             self.setJSON(d)
 
+    def getFinalFramerate(self):
+        if self.INTERPOLATE:
+            return self.INTERPOLATE_FRAMERATE
+        return self.FRAMERATE
     def calculateVideoLength(self, frameZip):
         totalFrames = frameZip.FRAMES
 

@@ -2,10 +2,17 @@ import base64
 import io
 import os
 import re
+import shutil
+import time
+from contextlib import closing
+from zipfile import ZipFile
 
 from PIL import Image
 from flask import make_response, send_file
 
+from .helpers.FileHelper import FileHelper
+from .prerequisitesController import PrerequisitesController
+from .model.webcamType import WebcamType
 from .helpers.formatHelper import FormatHelper
 from .model.enhancementPreset import EnhancementPreset
 from .model.renderPreset import RenderPreset
@@ -67,10 +74,14 @@ class ApiController:
             if self.CACHE_CONTROLLER.isCached(cacheId):
                 thumb = self.CACHE_CONTROLLER.getBytes(cacheId)
             else:
-                allFrameZips = self.PARENT.listFrameZips()
-                frameZip = next(x for x in allFrameZips if x.ID == id)
-                imgBytes = frameZip.getThumbnail()
-                img = Image.open(io.BytesIO(imgBytes))
+                try:
+                    allFrameZips = self.PARENT.listFrameZips()
+                    frameZip = next(x for x in allFrameZips if x.ID == id)
+                    imgBytes = frameZip.getThumbnail()
+                    img = Image.open(io.BytesIO(imgBytes))
+                except Exception as e:
+                    img = Image.open(self._basefolder + '/static/assets/no-thumbnail.jpg')
+
                 thumb = self.PARENT.makeThumbnail(img)
                 self.CACHE_CONTROLLER.storeBytes(cacheId, thumb)
 
@@ -191,3 +202,56 @@ class ApiController:
         formats = list(map(lambda x: x.getJSON(), FormatHelper.getVideoFormats()))
         defaultId = self._settings.get(["defaultVideoFormat"])
         return dict(formats=formats, defaultId=defaultId)
+
+    def reCheckPrerequisites(self):
+        self.PARENT.checkPrerequisites()
+
+    def webcamCapturePreview(self):
+        import flask
+        data = flask.request.get_json()
+
+        ffmpegPath = data['ffmpegPath']
+        webcamType = WebcamType[data['webcamType']]
+        webcamUrl = data['webcamUrl']
+
+        snapshot = None
+        try:
+            PrerequisitesController.check(self._settings, self.PARENT.WEBCAM_CONTROLLER, ffmpegPath, webcamType, webcamUrl)
+
+            startTime = time.time()
+            snapshot = self.PARENT.WEBCAM_CONTROLLER.getSnapshot(ffmpegPath, webcamType, webcamUrl)
+            elapsedTime = int((time.time() - startTime) * 1000)
+            size = os.path.getsize(snapshot)
+
+            with Image.open(snapshot) as img:
+                width, height = img.size
+                res = self.PARENT.makeThumbnail(img, (500, 500))
+                resBase64 = base64.b64encode(res)
+                return dict(time=elapsedTime, size=size, width=width, height=height, result=resBase64)
+        except Exception as e:
+            return dict(error=str(e))
+        finally:
+            if snapshot is not None and os.path.isfile(snapshot):
+                os.remove(snapshot)
+
+    def uploadFrameZip(self):
+        import flask
+        data = flask.request
+
+        fileName = os.path.basename(data.form['file.name'])
+        fileExt = os.path.splitext(fileName)[1][1:].lower()
+        fileTemp = data.form['file.path']
+
+        if fileExt != 'zip':
+            raise Exception('Not a ZIP File')
+
+        with closing(ZipFile(fileTemp)) as archive:
+            testRes = archive.testzip()
+            if testRes is not None:
+                raise Exception('ZIP File is corrupt')
+
+        newFileName = self._settings.getBaseFolder('timelapse') + '/' + fileName
+        newFileName = FileHelper.getUniqueFileName(newFileName)
+
+        shutil.move(fileTemp, newFileName)
+        self.PARENT.sendClientData()

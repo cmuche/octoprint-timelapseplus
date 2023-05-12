@@ -67,6 +67,8 @@ $(function() {
         self.videoFormatsGrouped = ko.observable([]);
         self.selectedVideoFormat = ko.observable();
 
+        self.isUploadingFrameZip = ko.observable(false);
+
         self.videoFormats.subscribe(function(data) {
             const groups = {};
             for (const obj of data) {
@@ -90,6 +92,12 @@ $(function() {
         self.openSettingsPage = function() {
             $("a#navbar_show_settings").click();
             $("li#settings_plugin_timelapseplus_link a").click();
+        };
+
+        self.reCheckPrerequisites = function() {
+            self.api("reCheckPrerequisites", {}, function() {
+                self.showPopupSuccess("Re-Checked for Errors");
+            });
         };
 
         // https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
@@ -213,6 +221,56 @@ $(function() {
             }).click();
         };
 
+        self.openWebcamCapturePreview = function(ffmpegPath, webcamType, webcamUrl) {
+            $("#tlp-button-webcam-preview").prop("disabled", true);
+
+            self.api("webcamCapturePreview", {ffmpegPath: ffmpegPath(), webcamType: webcamType(), webcamUrl: webcamUrl()}, function(data) {
+                if ("error" in data) {
+                    $("div#tlp-modal-webcam-preview .error").show();
+                    $("div#tlp-modal-webcam-preview img.preview").hide();
+                    $("div#tlp-modal-webcam-preview .info").hide();
+
+                    $("div#tlp-modal-webcam-preview .error").text(data.error);
+                } else {
+                    $("div#tlp-modal-webcam-preview .error").hide();
+                    $("div#tlp-modal-webcam-preview img.preview").show();
+                    $("div#tlp-modal-webcam-preview .info").show();
+
+                    $("div#tlp-modal-webcam-preview .info .kv-dimensions .v").text(data.width + " x " + data.height + " px");
+                    $("div#tlp-modal-webcam-preview .info .kv-size .v").text(self.humanFileSize(data.size));
+                    $("div#tlp-modal-webcam-preview .info .kv-time .v").text(data.time + " ms");
+                    $("div#tlp-modal-webcam-preview img.preview").attr("src", "data:image/png;base64," + data.result);
+                }
+
+                $("div#tlp-modal-webcam-preview").modal({
+                    width: "auto"
+                });
+            }, null, function() {
+                $("#tlp-button-webcam-preview").prop("disabled", false);
+            });
+        };
+
+        self.openUploadFrameCollection = function() {
+            $("<input name=\"file\" type=\"file\" accept=\"application/zip\">").on("change", function() {
+                self.isUploadingFrameZip(true);
+
+                let f = this.files[0];
+                console.log(f);
+                self.apiFileUpload("uploadFrameZip", f, null, null, function() {
+                    self.isUploadingFrameZip(false);
+                });
+            }).click();
+        };
+
+        self.showPopupSuccess = function(msg) {
+            new PNotify({
+                title: "Timelapse+",
+                text: msg,
+                type: "success",
+                hide: true
+            });
+        };
+
         self.openVideo = function(video) {
             $("div#tlp-modal-video").modal({
                 width: "auto"
@@ -275,13 +333,15 @@ $(function() {
             let stateVms = {
                 "WAITING": {title: "Waiting", showProgress: false, icon: "fas fa-hourglass-half"},
                 "EXTRACTING": {title: "Extracting Frame Collection", showProgress: false, icon: "fas fa-box-open"},
-                "RENDERING": {title: "Rendering Video", showProgress: true, icon: "fas fa-file-export"},
+                "RENDERING": {title: "Rendering Video", showProgress: true, icon: "fas fa-photo-video"},
                 "FINISHED": {title: "Finished", showProgress: false, icon: "fas fa-check"},
                 "FAILED": {title: "Failed", showProgress: false, icon: "fas fa-exclamation-triangle"},
                 "ENHANCING": {title: "Enhancing Images", showProgress: true, icon: "fas fa-magic"},
                 "BLURRING": {title: "Blurring Areas", showProgress: true, icon: "fas fa-eraser"},
                 "RESIZING": {title: "Resizing Frames", showProgress: true, icon: "fas fa-arrows-alt"},
-                "COMBINING": {title: "Combining Frames", showProgress: true, icon: "fas fa-clone"}
+                "COMBINING": {title: "Combining Frames", showProgress: true, icon: "fas fa-clone"},
+                "CREATE_PALETTE": {title: "Generating Color Palette", showProgress: false, icon: "fas fa-paint-brush"},
+                "ENCODING": {title: "Encoding Video File", showProgress: true, icon: "fas fa-box"}
             };
 
             if (job.state in stateVms)
@@ -302,7 +362,7 @@ $(function() {
             return mode;
         };
 
-        self.api = function(command, payload = {}, successFn = null) {
+        self.api = function(command, payload = {}, successFn = null, errorFn = null, completeFn = null) {
             $.ajax({
                 url: "./plugin/timelapseplus/" + command,
                 type: "POST",
@@ -314,9 +374,43 @@ $(function() {
                         successFn(response);
                 },
                 complete: function() {
+                    if (completeFn != null)
+                        completeFn();
                 },
                 error: function(err) {
                     console.log("Error (Command=" + command + ")", err);
+
+                    if (errorFn != null)
+                        errorFn(err);
+                }
+            });
+        };
+
+        self.apiFileUpload = function(command, file, successFn = null, errorFn = null, completeFn = null) {
+            let data = new FormData();
+            data.append("file", file);
+
+            console.log(data);
+
+            $.ajax({
+                url: "./plugin/timelapseplus/" + command,
+                type: "POST",
+                data: data,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (successFn !== null)
+                        successFn(response);
+                },
+                complete: function() {
+                    if (completeFn != null)
+                        completeFn();
+                },
+                error: function(err) {
+                    console.log("Error (Command=" + command + ")", err);
+
+                    if (errorFn != null)
+                        errorFn(err);
                 }
             });
         };
@@ -367,7 +461,7 @@ $(function() {
 
             console.log(data);
 
-            if (data.type == "popup") {
+            if ("type" in data && data.type == "popup") {
                 new PNotify({
                     title: data.title,
                     text: data.message,
@@ -377,23 +471,49 @@ $(function() {
                 return;
             }
 
-            self.videos.updateItems(data.videos);
-            self.frameCollections.updateItems(data.frameCollections);
+            if ("videos" in data)
+                self.videos.updateItems(data.videos);
 
-            self.error(data.error);
-            self.hasError(data.error != null);
+            if ("frameCollections" in data)
+                self.frameCollections.updateItems(data.frameCollections);
 
-            self.snapshotCommand(data.snapshotCommand);
-            self.captureMode(data.captureMode);
-            self.captureTimerInterval(data.captureTimerInterval);
-            self.isRunning(data.isRunning);
-            self.isCapturing(data.isCapturing);
-            self.currentFileSize(data.currentFileSize);
-            self.snapshotCount(data.snapshotCount);
-            self.previewImage(data.previewImage == null ? null : "data:image/jpeg;base64," + data.previewImage);
-            self.renderJobs(data.renderJobs);
-            self.sizeFrameCollections(data.sizeFrameCollections);
-            self.sizeVideos(data.sizeVideos);
+            if ("error" in data) {
+                self.error(data.error);
+                self.hasError(data.error != null);
+            }
+
+            if ("snapshotCommand" in data)
+                self.snapshotCommand(data.snapshotCommand);
+
+            if ("captureMode" in data)
+                self.captureMode(data.captureMode);
+
+            if ("captureTimerInterval" in data)
+                self.captureTimerInterval(data.captureTimerInterval);
+
+            if ("isRunning" in data)
+                self.isRunning(data.isRunning);
+
+            if ("isCapturing" in data)
+                self.isCapturing(data.isCapturing);
+
+            if ("currentFileSize" in data)
+                self.currentFileSize(data.currentFileSize);
+
+            if ("snapshotCount" in data)
+                self.snapshotCount(data.snapshotCount);
+
+            if ("previewImage" in data)
+                self.previewImage(data.previewImage == null ? null : "data:image/jpeg;base64," + data.previewImage);
+
+            if ("renderJobs" in data)
+                self.renderJobs(data.renderJobs);
+
+            if ("sizeFrameCollections" in data)
+                self.sizeFrameCollections(data.sizeFrameCollections);
+
+            if ("sizeVideos" in data)
+                self.sizeVideos(data.sizeVideos);
         };
     }
 

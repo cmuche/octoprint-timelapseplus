@@ -2,14 +2,20 @@
 
     <div class="alert alert-block">
         <strong>Need Help?</strong>
-        If you are unsure which options to choose or how to start, you can visit the Documentation which also includes a 'Getting Started Guide'.
+        If you are unsure which options to choose or how to start, you can visit the Wiki which also includes a 'Getting Started Guide'.
         You are always welcome to open an issue on GitHub when you might find a bug, want a feature to be added to Timelapse+, need help or just have a question about this plugin.
         <br><br>
-        <a href="https://github.com/cmuche/octoprint-timelapseplus#Documentation" target="_blank" class="btn btn-mini">Read the Documentation</a>
-        <a href="https://github.com/cmuche/octoprint-timelapseplus/issues/new" target="_blank" class="btn btn-mini">Open an Issue</a>
+        <a href="https://github.com/cmuche/octoprint-timelapseplus/wiki" target="_blank" class="btn btn-mini">
+            <i class="fa fa-book"></i>
+            Read the Wiki
+        </a>
+        <a href="https://github.com/cmuche/octoprint-timelapseplus/issues/new" target="_blank" class="btn btn-mini">
+            <i class="fa fa-exclamation-triangle"></i>
+            Open an Issue
+        </a>
     </div>
 
-    <h3>Paths</h3>
+    <h3>Paths and Webcam</h3>
     <div class="control-group">
         <label class="control-label">FFmpeg Path</label>
         <div class="controls">
@@ -26,11 +32,42 @@
         </div>
     </div>
 
+    <hr>
+
     <div class="control-group">
-        <label class="control-label">Webcam Snapshot URL</label>
+        <label class="control-label">Webcam Type</label>
+        <div class="controls">
+            <select data-bind="value: settings.plugins.timelapseplus.webcamType">
+                <option value="IMAGE_JPEG">JPEG Image</option>
+                <option value="STREAM_MJPEG">MJPEG Stream</option>
+                <option value="STREAM_MP4">MP4 Stream (via FFmpeg)</option>
+                <option value="STREAM_HLS">HLS Stream (Via FFmpeg)</option>
+            </select>
+            <span class="help-block">
+                Stream-based capturing might take some extra time to be processed and converted which could have an impact on your snapshot timing.<br>
+                <strong>The image snapshot type should therefore be your first choice (if possible) since it doesn't require any transcoding by Timelapse+.</strong>
+            </span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Webcam URL</label>
         <div class="controls">
             <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamUrl">
-            <span class="help-block">The URL must be reachable for OctoPrint and return a still JPG image of the webcam stream.</span>
+            <span class="help-block">The URL must be reachable for OctoPrint and return a still image or the stream in the format specified above.</span>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="control-group">
+        <label class="control-label">Test Settings</label>
+        <div class="controls">
+            <span class="help-block">You can test the FFmpeg and FFprobe paths as well as the snapshot capture here:</span>
+            <button id="tlp-button-webcam-preview" style="margin-top: 1em" class="btn btn-mini" data-bind="click: function(){parent.openWebcamCapturePreview(settings.plugins.timelapseplus.ffmpegPath, settings.plugins.timelapseplus.webcamType, settings.plugins.timelapseplus.webcamUrl)}">
+                <i class="fa fa-check"></i>
+                Test Paths and Webcam Settings
+            </button>
         </div>
     </div>
 
@@ -78,6 +115,14 @@
     </div>
 
     <div class="control-group">
+        <label class="control-label">Compress Frame Collections</label>
+        <div class="controls">
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.compressFrameZips">
+            <span class="help-block">Generated Frame Collections won't be compressed by default. Checking this option compresses the Frame Collections after a print has finished. This means lower disk space consumption but adds some time compressing at the end of a print and OctoPrint will stay in the 'Finishing' state during that.</span>
+        </div>
+    </div>
+
+    <div class="control-group">
         <label class="control-label">Default Video Output Format</label>
         <div class="controls">
             <select data-bind="valueAllowUnset: true, foreach: parent.videoFormatsGrouped, value: settings.plugins.timelapseplus.defaultVideoFormat">
@@ -86,6 +131,51 @@
                 </optgroup>
             </select>
             <span class="help-block">Maybe not all formats are available on your system or your used FFmpeg version. Please consider changing the Video Format if a Render Job is not successful.</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Force Capturing</label>
+        <div class="controls">
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.forceCapturing">
+            <span class="help-block">Start the Capturing Process when a Print Job starts even if there are errors. <strong>Use this option unless you really need to.</strong></span>
+        </div>
+    </div>
+
+    <h3>Purging</h3>
+    <div class="control-group">
+        <label class="control-label">Delete Videos</label>
+        <div class="controls">
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.purgeVideos">
+        </div>
+    </div>
+    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.purgeVideos">
+        <label class="control-label">Days</label>
+        <div class="controls">
+            <input type="number" step='1' min="1" max="300" width="5" data-bind="value: settings.plugins.timelapseplus.purgeVideosDays">
+            <span class="help-block">
+                <span>Rendered Videos older than</span>
+                <strong data-bind="text: settings.plugins.timelapseplus.purgeVideosDays"></strong>
+                <span>days will be automatically removed.</span>
+            </span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Delete Frame Collections</label>
+        <div class="controls">
+            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.purgeFrameCollections">
+        </div>
+    </div>
+    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.purgeFrameCollections">
+        <label class="control-label">Days</label>
+        <div class="controls">
+            <input type="number" step='1' min="1" max="300" width="5" data-bind="value: settings.plugins.timelapseplus.purgeFrameCollectionsDays">
+            <span class="help-block">
+                <span>Captured Frame Collections older than</span>
+                <strong data-bind="text: settings.plugins.timelapseplus.purgeFrameCollectionsDays"></strong>
+                <span>days will be automatically removed.</span>
+            </span>
         </div>
     </div>
 
@@ -501,6 +591,39 @@
 </form>
 
 <!------------------------------------------------------->
+
+<div id="tlp-modal-webcam-preview" class="modal hide fade">
+    <div class="modal-header">
+        <a href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+        <h3>Webcam Capture</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row-fluid">
+            <div class="error"></div>
+            <img class="preview" />
+            <div class="info">
+                <div class="kv-dimensions">
+                    <span class="k">Dimensions:</span>
+                    <span class="v"></span>
+                </div>
+
+                <div class="kv-size">
+                    <span class="k">Size:</span>
+                    <span class="v"></span>
+                </div>
+
+                <div class="kv-time">
+                    <span class="k">Capture Time:</span>
+                    <span class="v"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary pull-right" data-dismiss="modal">Close</button>
+    </div>
+</div>
 
 <div id="tlp-modal-enhancement-live-preview" class="modal hide fade">
     <div class="modal-header">

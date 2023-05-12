@@ -9,7 +9,14 @@
             </div>
             <strong data-bind="text: error"></strong>
             <br><br>
-            <button data-bind="click: openSettingsPage" class="btn btn-mini">Open the Timelapse+ Settings Page</button>
+            <button data-bind="click: reCheckPrerequisites" class="btn btn-mini">
+                <i class="fa fa-sync"></i>
+                Check again
+            </button>
+            <button data-bind="click: openSettingsPage" class="btn btn-mini">
+                <i class="fa fa-tools"></i>
+                Open the Timelapse+ Settings Page
+            </button>
         </div>
     </div>
 
@@ -161,6 +168,9 @@
         Frame Collections
         <span class="h-info" data-bind="text: 'Total: ' + frameCollections.allSize()"></span>
         <span class="h-info" data-bind="text: 'Size: ' + humanFileSize(sizeFrameCollections())"></span>
+
+        <a class="h-info" href="javascript:void(0)" data-bind="visible: !isUploadingFrameZip(),click: openUploadFrameCollection">Upload</a>
+        <span class="h-info" data-bind="visible: isUploadingFrameZip()">Uploading...</span>
     </h1>
 
     <div data-bind="visible: frameCollections.allSize() == 0">
@@ -192,6 +202,7 @@
             <div class="buttons">
                 <div class="btn-group action-buttons">
                     <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: $parent.openRenderDialog"><i class="fas fa-file-video"></i></div>
+                    <a class="btn btn-mini" data-bind="attr: {href: $data.url}"><i class="fas fa-download"></i></a>
                     <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('frameZip', $data.id) }"><i class="fas fa-trash"></i></div>
                 </div>
             </div>
