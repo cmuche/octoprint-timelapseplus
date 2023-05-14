@@ -2,6 +2,7 @@ import os
 
 
 class FileHelper:
+    METADATA_FILE_NAME = 'metadata.json'
 
     @staticmethod
     def getUniqueFileName(filePath):
