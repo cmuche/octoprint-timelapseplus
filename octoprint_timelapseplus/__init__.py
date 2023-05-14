@@ -37,6 +37,7 @@ class TimelapsePlusPlugin(
 ):
     def __init__(self):
         super().__init__()
+        self.PLUGIN_VERSION = None
         self.PRINTJOB = None
         self.RENDERJOBS = []
         self.ERROR = None
@@ -261,6 +262,10 @@ class TimelapsePlusPlugin(
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
 
     def on_after_startup(self):
+        self.PLUGIN_VERSION = self._plugin_version
+        if self.PLUGIN_VERSION is None:
+            self.PLUGIN_VERSION = 'UNKNOWN'
+
         self.CACHE_CONTROLLER = CacheController(self, self.get_plugin_data_folder(), self._settings)
         self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self.get_plugin_data_folder(), self._settings)
         self.API_CONTROLLER = ApiController(self, self.get_plugin_data_folder(), self._basefolder, self._settings, self.CACHE_CONTROLLER, self.WEBCAM_CONTROLLER)
@@ -365,7 +370,7 @@ class TimelapsePlusPlugin(
         baseName = os.path.splitext(os.path.basename(printerFile))[0]
         id = self.getRandomString(32)
 
-        self.PRINTJOB = PrintJob(self._plugin_version, id, baseName, self, self._logger, self._settings, self.get_plugin_data_folder(), self.WEBCAM_CONTROLLER)
+        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self.get_plugin_data_folder(), self.WEBCAM_CONTROLLER)
         self.PRINTJOB.start()
         self.sendClientData()
 
