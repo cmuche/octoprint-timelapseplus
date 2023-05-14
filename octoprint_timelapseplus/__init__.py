@@ -37,6 +37,7 @@ class TimelapsePlusPlugin(
 ):
     def __init__(self):
         super().__init__()
+        self.PLUGIN_VERSION = None
         self.PRINTJOB = None
         self.RENDERJOBS = []
         self.ERROR = None
@@ -261,6 +262,7 @@ class TimelapsePlusPlugin(
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
 
     def on_after_startup(self):
+        self.PLUGIN_VERSION = self._plugin_version
         self.CACHE_CONTROLLER = CacheController(self, self.get_plugin_data_folder(), self._settings)
         self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self.get_plugin_data_folder(), self._settings)
         self.API_CONTROLLER = ApiController(self, self.get_plugin_data_folder(), self._basefolder, self._settings, self.CACHE_CONTROLLER, self.WEBCAM_CONTROLLER)
@@ -373,7 +375,7 @@ class TimelapsePlusPlugin(
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
 
-        zipFileName = self.PRINTJOB.finish()
+        zipFileName = self.PRINTJOB.finish(success)
         self.sendClientData()
 
         if self._settings.get(["renderAfterPrint"]):
