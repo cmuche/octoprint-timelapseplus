@@ -16,7 +16,7 @@ from ..helpers.timeHelper import TimeHelper
 
 
 class PrintJob:
-    def __init__(self, id, baseName, parent, logger, settings, dataFolder, webcamController):
+    def __init__(self, pluginVersion, id, baseName, parent, logger, settings, dataFolder, webcamController):
         self.PARENT = parent
         self.ID = id
         self.WEBCAM_CONTROLLER = webcamController
@@ -24,7 +24,7 @@ class PrintJob:
         self._settings = settings
         self._logger = logger
 
-        self.METADATA = {'timestamps': {}, 'started': None, 'ended': None, 'success': False, 'baseName': baseName}
+        self.METADATA = {'timestamps': {}, 'started': None, 'ended': None, 'success': False, 'baseName': baseName, 'pluginVersion': pluginVersion}
         self.BASE_NAME = baseName
         self.CURRENT_INDEX = 1
         self.FOLDER = ''
