@@ -4,6 +4,8 @@ import zipfile
 from contextlib import closing
 from zipfile import ZipFile
 
+from ..helpers.fileHelper import FileHelper
+
 
 class FrameZip:
     def __init__(self, path, parent, logger):
@@ -50,8 +52,11 @@ class FrameZip:
             return int(cv)
 
         try:
+            count = 0
             with closing(ZipFile(self.PATH)) as archive:
-                count = len(archive.infolist())
+                for aFile in archive.namelist():
+                    if os.path.basename(aFile) != FileHelper.METADATA_FILE_NAME:
+                        count += 1
 
             self.CACHE_CONTROLLER.storeString(cacheId, str(count))
 
