@@ -24,7 +24,7 @@ class PrintJob:
         self._settings = settings
         self._logger = logger
 
-        self.METADATA = {'timestamps': {}, 'started': None, 'ended': None, 'success': False}
+        self.METADATA = {'timestamps': {}, 'started': None, 'ended': None, 'success': False, 'baseName': baseName}
         self.BASE_NAME = baseName
         self.CURRENT_INDEX = 1
         self.FOLDER = ''
