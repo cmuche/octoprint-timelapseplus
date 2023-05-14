@@ -11,7 +11,7 @@ from PIL import Image
 
 from octoprint.util import ResettableTimer
 from .captureMode import CaptureMode
-from ..helpers.FileHelper import FileHelper
+from ..helpers.fileHelper import FileHelper
 from ..helpers.timeHelper import TimeHelper
 
 

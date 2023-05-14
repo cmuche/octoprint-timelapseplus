@@ -10,7 +10,7 @@ from zipfile import ZipFile
 from PIL import Image
 from flask import make_response, send_file
 
-from .helpers.FileHelper import FileHelper
+from .helpers.fileHelper import FileHelper
 from .prerequisitesController import PrerequisitesController
 from .model.webcamType import WebcamType
 from .helpers.formatHelper import FormatHelper
