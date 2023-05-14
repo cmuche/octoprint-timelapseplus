@@ -14,7 +14,7 @@ plugin_package = "octoprint_timelapseplus"
 plugin_name = "TimelapsePlus"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
-plugin_version = "1.2.0"
+plugin_version = "1.2.1"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
@@ -33,7 +33,7 @@ plugin_url = "https://github.com/cmuche/octoprint-timelapseplus"
 plugin_license = "CC BY-ND"
 
 # Any additional requirements besides OctoPrint should be listed here
-plugin_requires = ["pillow>=6.2.0,<7.0.0", "deepdiff>=6.3.0,<7.0.0"]
+plugin_requires = ["pillow>=9.5.0,<10.0.0", "deepdiff>=6.3.0,<7.0.0"]
 
 ### --------------------------------------------------------------------------------------------------------------------
 ### More advanced options that you usually shouldn't have to touch follow after this point

@@ -1,5 +1,6 @@
 import base64
 import io
+import json
 import os
 import shutil
 import zipfile
@@ -10,6 +11,8 @@ from PIL import Image
 
 from octoprint.util import ResettableTimer
 from .captureMode import CaptureMode
+from ..helpers.fileHelper import FileHelper
+from ..helpers.timeHelper import TimeHelper
 
 
 class PrintJob:
@@ -21,6 +24,7 @@ class PrintJob:
         self._settings = settings
         self._logger = logger
 
+        self.METADATA = {'timestamps': {}, 'started': None, 'ended': None, 'success': False, 'baseName': baseName, 'pluginVersion': parent.PLUGIN_VERSION}
         self.BASE_NAME = baseName
         self.CURRENT_INDEX = 1
         self.FOLDER = ''
@@ -62,6 +66,7 @@ class PrintJob:
         self.CURRENT_INDEX = 1
         self.FRAMES = []
         self.CAPTURE_THREADS = []
+        self.METADATA['started'] = TimeHelper.getUnixTimestamp()
         self.RUNNING = True
 
         if self.CAPTURE_MODE == CaptureMode.TIMED:
@@ -73,8 +78,10 @@ class PrintJob:
             t += os.path.getsize(file)
         return t
 
-    def finish(self):
+    def finish(self, success):
         self._logger.info('Finished Print!')
+
+        self.METADATA['success'] = success
 
         if self.CAPTURE_MODE == CaptureMode.TIMED:
             self.CAPTURE_TIMER.cancel()
@@ -92,8 +99,12 @@ class PrintJob:
         self.FRAMES = []
         self.CAPTURE_THREADS = []
 
+        self.METADATA['ended'] = TimeHelper.getUnixTimestamp()
+
         if len(finishedFiles) < 1:
             return None
+
+        metadataFile = self.createMetadata()
 
         self._logger.info('Zipping Frames...')
         self._logger.info(self.FRAMES)
@@ -107,6 +118,7 @@ class PrintJob:
             compressType = zipfile.ZIP_DEFLATED
 
         with zipfile.ZipFile(tmpZipFile, 'w') as zipMe:
+            zipMe.write(metadataFile, os.path.basename(metadataFile), compress_type=zipfile.ZIP_STORED)
             for file in finishedFiles:
                 baseName = os.path.basename(file)
                 zipMe.write(file, baseName, compress_type=compressType)
@@ -114,6 +126,13 @@ class PrintJob:
         shutil.move(tmpZipFile, zipFileName)
         shutil.rmtree(self.FOLDER)
         return zipFileName
+
+    def createMetadata(self):
+        mdPath = self.FOLDER + '/' + FileHelper.METADATA_FILE_NAME
+        json_object = json.dumps(self.METADATA)
+        with open(mdPath, 'w') as mdFile:
+            mdFile.write(json_object)
+        return mdPath
 
     def doSnapshot(self):
         if self.PAUSED:
@@ -124,12 +143,17 @@ class PrintJob:
         thread.start()
 
     def doSnapshotInner(self):
+        ssTime = TimeHelper.getUnixTimestamp()
         snapshotFile = self.WEBCAM_CONTROLLER.getSnapshot()
-        fileName = self.FOLDER + '/' + "{:05d}".format(self.CURRENT_INDEX) + ".jpg"
+
+        fileBaseName = "{:05d}".format(self.CURRENT_INDEX) + ".jpg"
+        fileName = self.FOLDER + '/' + fileBaseName
+
         shutil.move(snapshotFile, fileName)
 
-        self.FRAMES.append(fileName)
         self.CURRENT_INDEX += 1
+        self.METADATA['timestamps'][fileBaseName] = ssTime
+        self.FRAMES.append(fileName)
 
         self.generatePreviewImage()
         self.PARENT.doneSnapshot()
