@@ -373,7 +373,7 @@ class TimelapsePlusPlugin(
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
 
-        zipFileName = self.PRINTJOB.finish()
+        zipFileName = self.PRINTJOB.finish(success)
         self.sendClientData()
 
         if self._settings.get(["renderAfterPrint"]):

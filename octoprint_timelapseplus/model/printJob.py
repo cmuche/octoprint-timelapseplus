@@ -73,7 +73,7 @@ class PrintJob:
             t += os.path.getsize(file)
         return t
 
-    def finish(self):
+    def finish(self, success):
         self._logger.info('Finished Print!')
 
         if self.CAPTURE_MODE == CaptureMode.TIMED:
