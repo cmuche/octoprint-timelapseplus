@@ -263,9 +263,6 @@ class TimelapsePlusPlugin(
 
     def on_after_startup(self):
         self.PLUGIN_VERSION = self._plugin_version
-        if self.PLUGIN_VERSION is None:
-            self.PLUGIN_VERSION = 'UNKNOWN'
-
         self.CACHE_CONTROLLER = CacheController(self, self.get_plugin_data_folder(), self._settings)
         self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self.get_plugin_data_folder(), self._settings)
         self.API_CONTROLLER = ApiController(self, self.get_plugin_data_folder(), self._basefolder, self._settings, self.CACHE_CONTROLLER, self.WEBCAM_CONTROLLER)
