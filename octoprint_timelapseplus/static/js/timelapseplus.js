@@ -341,6 +341,7 @@ $(function() {
                 "RESIZING": {title: "Resizing Frames", showProgress: true, icon: "fas fa-arrows-alt"},
                 "COMBINING": {title: "Combining Frames", showProgress: true, icon: "fas fa-clone"},
                 "CREATE_PALETTE": {title: "Generating Color Palette", showProgress: false, icon: "fas fa-paint-brush"},
+                "ADDING_TIMECODES": {title: "Adding Timecodes", showProgress: true, icon: "fas fa-stopwatch"},
                 "ENCODING": {title: "Encoding Video File", showProgress: true, icon: "fas fa-box"}
             };
 
