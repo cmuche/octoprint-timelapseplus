@@ -351,7 +351,7 @@ class TimelapsePlusPlugin(
         self.PRINTJOB.doSnapshot()
 
     def render(self, frameZip, enhancementPreset=None, renderPreset=None, videoFormat=None):
-        job = RenderJob(frameZip, self, self._logger, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset, videoFormat)
+        job = RenderJob(self._basefolder, frameZip, self, self._logger, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset, videoFormat)
         job.start()
         self.RENDERJOBS.append(job)
 

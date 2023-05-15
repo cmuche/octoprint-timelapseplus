@@ -19,7 +19,7 @@ from ..helpers.listHelper import ListHelper
 
 
 class RenderJob:
-    def __init__(self, frameZip, parent, logger, settings, dataFolder, enhancementPreset=None, renderPreset=None, videoFormat=None):
+    def __init__(self, baseFolder, frameZip, parent, logger, settings, dataFolder, enhancementPreset=None, renderPreset=None, videoFormat=None):
         self.ID = parent.getRandomString(8)
         self.PARENT = parent
         self._settings = settings
