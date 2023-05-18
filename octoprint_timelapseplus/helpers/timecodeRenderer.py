@@ -1,3 +1,5 @@
+import math
+
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -47,10 +49,28 @@ class TimecodeRenderer:
 
     def createElement(self, imgW, imgH, preset, frameInfo):
         type = preset.TIMECODE_TYPE
-        height = int(imgH * (preset.TIMECODE_SIZE / 100))
+        height = math.ceil(imgH * (preset.TIMECODE_SIZE / 100))
+
+        if type == TimecodeType.BAR:
+            return self.createElementBar(int(imgW / 2), height, frameInfo.getRatio())
 
         text = self.createText(type, frameInfo)
         return self.createElementText(text, height)
+
+    def createElementBar(self, width, height, ratio):
+        borderW = int(height * 0.15)
+        borderWH = int(borderW * 2)
+        radius = math.floor(height / 2)
+        img = Image.new("RGBA", (width, height))
+        draw = ImageDraw.Draw(img, 'RGBA')
+        draw.rounded_rectangle((1, 1, width, height), fill=(0, 0, 0, 127), radius=radius)
+
+        innerW = int((width - borderWH) * ratio)
+        if innerW > borderWH:
+            draw.rounded_rectangle((borderWH + 1, borderWH + 1, innerW, height - borderWH), fill=(255, 255, 255, 220), radius=radius)
+
+        draw.rounded_rectangle((1, 1, width, height), outline=(255, 255, 255, 220), width=borderW, radius=radius)
+        return img
 
     def createText(self, type, frameInfo):
         pt = frameInfo.getElapsedSeconds()

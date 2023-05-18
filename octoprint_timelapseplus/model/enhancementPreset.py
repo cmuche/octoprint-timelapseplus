@@ -19,10 +19,10 @@ class EnhancementPreset:
         self.RESIZE_W = 1280
         self.RESIZE_H = 720
         self.TIMECODE = True
-        self.TIMECODE_SNAP = BorderSnap.TOP_CENTER
-        self.TIMECODE_SIZE = 15
+        self.TIMECODE_SNAP = BorderSnap.BOTTOM_LEFT
+        self.TIMECODE_SIZE = 3
         self.TIMECODE_MARGIN = 5
-        self.TIMECODE_TYPE = TimecodeType.TIME_HMS_24
+        self.TIMECODE_TYPE = TimecodeType.BAR
 
         if d is not None:
             self.setJSON(parent, d)
