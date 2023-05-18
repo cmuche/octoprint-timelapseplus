@@ -45,6 +45,7 @@ class TimecodeRenderer:
         element = self.createElement(imgW, imgH, preset, frameInfo)
         elementPosition = self.getElementPosition(imgW, imgH, element, elementMargin, preset.TIMECODE_SNAP)
         img.paste(element, elementPosition, element)
+        element.close()
 
         return img
 
