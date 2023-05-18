@@ -2,6 +2,8 @@ from .borderSnap import BorderSnap
 from .mask import Mask
 from PIL import Image, ImageFilter, ImageOps, ImageEnhance
 
+from .timecodeType import TimecodeType
+
 
 class EnhancementPreset:
     def __init__(self, parent, d=None):
@@ -20,6 +22,7 @@ class EnhancementPreset:
         self.TIMECODE_SNAP = BorderSnap.TOP_CENTER
         self.TIMECODE_SIZE = 15
         self.TIMECODE_MARGIN = 5
+        self.TIMECODE_TYPE = TimecodeType.TIME_HMS_24
 
         if d is not None:
             self.setJSON(parent, d)

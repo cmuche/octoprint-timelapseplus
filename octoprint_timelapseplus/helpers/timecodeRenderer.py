@@ -3,18 +3,13 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 from ..model.borderSnap import BorderSnap
+from ..model.timecodeType import TimecodeType
 
 
 class TimecodeRenderer:
     def __init__(self, baseFolder):
         self.__basefolder = baseFolder
         self.TEXT_PADDING = 0.1
-
-    def formatTime(self, seconds):
-        hours = seconds // 3600
-        minutes = (seconds % 3600) // 60
-        seconds = seconds % 60
-        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
     def getElementPosition(self, imgW, imgH, element, margin, snap):
         elemW, elemH = element.size
@@ -46,13 +41,42 @@ class TimecodeRenderer:
         elementHeight = int(imgH * (preset.TIMECODE_SIZE / 100))
         elementMargin = int(imgH * (preset.TIMECODE_MARGIN / 100))
 
-        text = self.formatTime(frameInfo.getElapsedSeconds())
+        text = self.createText(preset.TIMECODE_TYPE, frameInfo)
         tcElement = self.createElementText(text, elementHeight)
 
         elementPosition = self.getElementPosition(imgW, imgH, tcElement, elementMargin, preset.TIMECODE_SNAP)
         img.paste(tcElement, elementPosition, tcElement)
 
         return img
+
+    def createText(self, type, frameInfo):
+        pt = frameInfo.getElapsedSeconds()
+        ptH = pt // 3600
+        ptM = (pt % 3600) // 60
+        ptS = pt % 60
+        t = frameInfo.getDateTime()
+        r = frameInfo.getRatio()
+
+        if type == TimecodeType.PRINTTIME_HMS:
+            return f"{ptH:02d}:{ptM:02d}:{ptS:02d}"
+        if type == TimecodeType.PRINTTIME_HM:
+            return f"{ptH:02d}:{ptM:02d}"
+        if type == TimecodeType.PRINTTIME_HMS_LETTERS:
+            return f"{ptH:02d}h {ptM:02d}m {ptS:02d}s"
+        if type == TimecodeType.PRINTTIME_HM_LETTERS:
+            return f"{ptH:02d}h {ptM:02d}m"
+
+        if type == TimecodeType.PERCENT:
+            return f"{round(r * 100)}%"
+
+        if type == TimecodeType.TIME_HMS_12:
+            return t.strftime("%I:%M:%S")
+        if type == TimecodeType.TIME_HMS_24:
+            return t.strftime("%H:%M:%S")
+        if type == TimecodeType.TIME_HM_12:
+            return t.strftime("%I:%M")
+        if type == TimecodeType.TIME_HM_24:
+            return t.strftime("%H:%M")
 
     def createElementText(self, text, size):
         fnt = ImageFont.truetype(self.__basefolder + '/static/assets/fonts/Inconsolata-Regular.ttf', size)
