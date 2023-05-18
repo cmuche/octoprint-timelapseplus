@@ -59,6 +59,8 @@ class TimecodeRenderer:
             elem = self.createElementBar(elemW, elemH, frameInfo.getRatio())
         elif type == TimecodeType.CLOCK:
             elem = self.createElementClock(elemH, frameInfo.getDateTime())
+        elif type == TimecodeType.CLOCK_NOSECONDS:
+            elem = self.createElementClock(elemH, frameInfo.getDateTime(), False)
         else:
             text = self.createText(type, frameInfo)
             elem = self.createElementText(text, elemH)
@@ -82,7 +84,7 @@ class TimecodeRenderer:
         draw.rounded_rectangle((1, 1, width, height), outline=(255, 255, 255, 220), width=borderW, radius=radius)
         return img
 
-    def createElementClock(self, height, time):
+    def createElementClock(self, height, time, showSeconds=True):
         radius = int(height / 2)
         borderW = int(height * 0.04)
 
@@ -132,12 +134,13 @@ class TimecodeRenderer:
         draw.line([(center_x, center_y), (minuteX, minuteY)], fill=(255, 255, 255, 220), width=handM)
         draw.ellipse([(minuteX - math.floor(handM / 2), minuteY - math.floor(handM / 2)), (minuteX + math.floor(handM / 2), minuteY + math.floor(handM / 2))], fill=(255, 255, 255, 220))
 
-        secondAngle = (360 / 60) * second
-        secondAngleRad = math.radians(secondAngle - 90)
-        secondX = center_x + int(radius * lenS * math.cos(secondAngleRad))
-        secondY = center_y + int(radius * lenS * math.sin(secondAngleRad))
-        draw.line([(center_x, center_y), (secondX, secondY)], fill=(255, 255, 255, 160), width=handS)
-        draw.ellipse([(secondX - math.floor(handS / 2), secondY - math.floor(handS / 2)), (secondX + math.floor(handS / 2), secondY + math.floor(handS / 2))], fill=(255, 255, 255, 200))
+        if showSeconds:
+            secondAngle = (360 / 60) * second
+            secondAngleRad = math.radians(secondAngle - 90)
+            secondX = center_x + int(radius * lenS * math.cos(secondAngleRad))
+            secondY = center_y + int(radius * lenS * math.sin(secondAngleRad))
+            draw.line([(center_x, center_y), (secondX, secondY)], fill=(255, 255, 255, 160), width=handS)
+            draw.ellipse([(secondX - math.floor(handS / 2), secondY - math.floor(handS / 2)), (secondX + math.floor(handS / 2), secondY + math.floor(handS / 2))], fill=(255, 255, 255, 200))
 
         draw.ellipse((center_x - int(handMax / 2), center_y - int(handMax / 2), center_x + int(handMax / 2), center_y + int(handMax / 2)), fill=(255, 255, 255, 220))
 
