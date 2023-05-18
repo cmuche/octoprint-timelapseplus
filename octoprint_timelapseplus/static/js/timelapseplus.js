@@ -221,10 +221,10 @@ $(function() {
             }).click();
         };
 
-        self.openWebcamCapturePreview = function(ffmpegPath, webcamType, webcamUrl) {
+        self.openWebcamCapturePreview = function(ffmpegPath, ffprobePath, webcamType, webcamUrl) {
             $("#tlp-button-webcam-preview").prop("disabled", true);
 
-            self.api("webcamCapturePreview", {ffmpegPath: ffmpegPath(), webcamType: webcamType(), webcamUrl: webcamUrl()}, function(data) {
+            self.api("webcamCapturePreview", {ffmpegPath: ffmpegPath(), ffprobePath: ffprobePath(), webcamType: webcamType(), webcamUrl: webcamUrl()}, function(data) {
                 if ("error" in data) {
                     $("div#tlp-modal-webcam-preview .error").show();
                     $("div#tlp-modal-webcam-preview img.preview").hide();

@@ -8,9 +8,11 @@ from .model.webcamType import WebcamType
 
 class PrerequisitesController:
     @staticmethod
-    def check(settings, webcamController, ffmpegPath=None, webcamType=None, webcamUrl=None):
+    def check(settings, webcamController, ffmpegPath=None, ffprobePath=None, webcamType=None, webcamUrl=None):
         if ffmpegPath is None:
             ffmpegPath = settings.get(["ffmpegPath"])
+        if ffprobePath is None:
+            ffprobePath = settings.get(["ffprobePath"])
         if webcamType is None:
             webcamType = WebcamType[settings.get(["webcamType"])]
         if webcamUrl is None:
@@ -28,7 +30,6 @@ class PrerequisitesController:
         if result.returncode != 0:
             raise Exception('FFmpeg returned status code ' + result.returncode)
 
-        ffprobePath = settings.get(["ffprobePath"])
         if ffprobePath is None or ffprobePath.strip() == '':
             raise Exception('FFprobe Path is not set')
 

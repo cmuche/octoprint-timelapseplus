@@ -211,12 +211,13 @@ class ApiController:
         data = flask.request.get_json()
 
         ffmpegPath = data['ffmpegPath']
+        ffprobePath = data['ffprobePath']
         webcamType = WebcamType[data['webcamType']]
         webcamUrl = data['webcamUrl']
 
         snapshot = None
         try:
-            PrerequisitesController.check(self._settings, self.PARENT.WEBCAM_CONTROLLER, ffmpegPath, webcamType, webcamUrl)
+            PrerequisitesController.check(self._settings, self.PARENT.WEBCAM_CONTROLLER, ffmpegPath, ffprobePath, webcamType, webcamUrl)
 
             startTime = time.time()
             snapshot = self.PARENT.WEBCAM_CONTROLLER.getSnapshot(ffmpegPath, webcamType, webcamUrl)
