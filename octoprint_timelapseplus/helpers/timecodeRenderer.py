@@ -38,16 +38,19 @@ class TimecodeRenderer:
             return img
 
         imgW, imgH = img.size
-        elementHeight = int(imgH * (preset.TIMECODE_SIZE / 100))
         elementMargin = int(imgH * (preset.TIMECODE_MARGIN / 100))
-
-        text = self.createText(preset.TIMECODE_TYPE, frameInfo)
-        tcElement = self.createElementText(text, elementHeight)
-
-        elementPosition = self.getElementPosition(imgW, imgH, tcElement, elementMargin, preset.TIMECODE_SNAP)
-        img.paste(tcElement, elementPosition, tcElement)
+        element = self.createElement(imgW, imgH, preset, frameInfo)
+        elementPosition = self.getElementPosition(imgW, imgH, element, elementMargin, preset.TIMECODE_SNAP)
+        img.paste(element, elementPosition, element)
 
         return img
+
+    def createElement(self, imgW, imgH, preset, frameInfo):
+        type = preset.TIMECODE_TYPE
+        height = int(imgH * (preset.TIMECODE_SIZE / 100))
+
+        text = self.createText(type, frameInfo)
+        return self.createElementText(text, height)
 
     def createText(self, type, frameInfo):
         pt = frameInfo.getElapsedSeconds()
@@ -77,6 +80,8 @@ class TimecodeRenderer:
             return t.strftime("%I:%M")
         if type == TimecodeType.TIME_HM_24:
             return t.strftime("%H:%M")
+
+        return '?'
 
     def createElementText(self, text, size):
         fnt = ImageFont.truetype(self.__basefolder + '/static/assets/fonts/Inconsolata-Regular.ttf', size)
