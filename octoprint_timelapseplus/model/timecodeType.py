@@ -10,7 +10,7 @@ class TimecodeType(Enum):
     TIME_HMS_24 = 6
     TIME_HM_12 = 7
     TIME_HM_24 = 8
-    PERCENT = 9,
-    BAR = 10,
-    CLOCK = 11,
+    PERCENT = 9
+    BAR = 10
+    CLOCK = 11
     CLOCK_NOSECONDS = 12
