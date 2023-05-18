@@ -12,6 +12,7 @@ class TimecodeRenderer:
     def __init__(self, baseFolder):
         self.__basefolder = baseFolder
         self.TEXT_PADDING = 0.1
+        self.AA_FACTOR = 3
 
     def getElementPosition(self, imgW, imgH, element, margin, snap):
         elemW, elemH = element.size
@@ -49,14 +50,18 @@ class TimecodeRenderer:
 
     def createElement(self, imgW, imgH, preset, frameInfo):
         type = preset.TIMECODE_TYPE
-        height = math.ceil(imgH * (preset.TIMECODE_SIZE / 100))
+
+        elemH = math.ceil(imgH * (preset.TIMECODE_SIZE / 100)) * self.AA_FACTOR
 
         if type == TimecodeType.BAR:
-            elem = self.createElementBar(int(imgW / 2), height, frameInfo.getRatio())
+            elemW = int(imgW / 2) * self.AA_FACTOR
+            elem = self.createElementBar(elemW, elemH, frameInfo.getRatio())
         else:
             text = self.createText(type, frameInfo)
-            elem = self.createElementText(text, height)
+            elem = self.createElementText(text, elemH)
 
+        finW, finH = elem.size
+        elem = elem.resize((finW // self.AA_FACTOR, finH // self.AA_FACTOR), resample=Image.LANCZOS)
         return elem
 
     def createElementBar(self, width, height, ratio):
