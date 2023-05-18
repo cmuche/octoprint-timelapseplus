@@ -52,10 +52,12 @@ class TimecodeRenderer:
         height = math.ceil(imgH * (preset.TIMECODE_SIZE / 100))
 
         if type == TimecodeType.BAR:
-            return self.createElementBar(int(imgW / 2), height, frameInfo.getRatio())
+            elem = self.createElementBar(int(imgW / 2), height, frameInfo.getRatio())
+        else:
+            text = self.createText(type, frameInfo)
+            elem = self.createElementText(text, height)
 
-        text = self.createText(type, frameInfo)
-        return self.createElementText(text, height)
+        return elem
 
     def createElementBar(self, width, height, ratio):
         borderW = int(height * 0.15)
