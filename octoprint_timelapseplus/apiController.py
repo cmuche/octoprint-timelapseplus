@@ -11,6 +11,8 @@ from PIL import Image
 from flask import make_response, send_file
 
 from .helpers.fileHelper import FileHelper
+from .helpers.timecodeRenderer import TimecodeRenderer
+from .model.frameTimecodeInfo import FrameTimecodeInfo
 from .prerequisitesController import PrerequisitesController
 from .model.webcamType import WebcamType
 from .helpers.formatHelper import FormatHelper
@@ -126,6 +128,9 @@ class ApiController:
 
         img = preset.applyEnhance(img)
         img = preset.applyBlur(img)
+
+        timecodeRenderer = TimecodeRenderer(self._basefolder)
+        img = timecodeRenderer.applyTimecode(img, preset, FrameTimecodeInfo.getDummy())
 
         res = self.PARENT.makeThumbnail(img, (500, 500))
         response = make_response(res)

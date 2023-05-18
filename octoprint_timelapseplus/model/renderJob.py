@@ -11,6 +11,7 @@ from threading import Thread
 
 from PIL import Image
 
+from .frameTimecodeInfo import FrameTimecodeInfo
 from .enhancementPreset import EnhancementPreset
 from .renderJobState import RenderJobState
 from .renderPreset import RenderPreset
@@ -18,6 +19,7 @@ from ..helpers.fileHelper import FileHelper
 from ..helpers.formatHelper import FormatHelper
 from ..helpers.imageCombineHelper import ImageCombineHelper
 from ..helpers.listHelper import ListHelper
+from ..helpers.timecodeRenderer import TimecodeRenderer
 
 
 class RenderJob:
@@ -173,6 +175,21 @@ class RenderJob:
             imgRes.save(frame, quality=100, subsampling=0)
             self.setProgress((i + 1) / len(frameFiles))
 
+    def addTimecodes(self, preset):
+        if not preset.TIMECODE:
+            return
+
+        self.setState(RenderJobState.ADDING_TIMECODES)
+        timecodeRenderer = TimecodeRenderer(self._basefolder)
+
+        frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
+        for i, frame in enumerate(frameFiles):
+            frameInfo = FrameTimecodeInfo(self.METADATA['timestamps'][os.path.basename(frame)], self.METADATA['started'], self.METADATA['ended'])
+            img = Image.open(frame)
+            imgRes = timecodeRenderer.applyTimecode(img, preset, frameInfo)
+            imgRes.save(frame, quality=100, subsampling=0)
+            self.setProgress((i + 1) / len(frameFiles))
+
     def createPalette(self, format):
         if not format.CREATE_PALETTE:
             return
@@ -267,6 +284,7 @@ class RenderJob:
             self.blurImages(self.ENHANCEMENT_PRESET)
             self.resizeImages(self.ENHANCEMENT_PRESET)
             self.combineImages(self.RENDER_PRESET)
+            self.addTimecodes(self.ENHANCEMENT_PRESET)
             self.render(self.RENDER_PRESET)
             self.createPalette(self.VIDEO_FORMAT)
             self.encode(self.RENDER_PRESET)

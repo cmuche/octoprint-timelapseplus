@@ -2,6 +2,8 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
+from ..model.borderSnap import BorderSnap
+
 
 class TimecodeRenderer:
     def __init__(self, baseFolder):
@@ -14,17 +16,45 @@ class TimecodeRenderer:
         seconds = seconds % 60
         return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
-    def applyTimecode(self, img, frameInfo):
-        size = 10
+    def getElementPosition(self, imgW, imgH, element, margin, snap):
+        elemW, elemH = element.size
+
+        if snap == BorderSnap.TOP_LEFT:
+            return (margin, margin)
+        if snap == BorderSnap.TOP_CENTER:
+            return (int(imgW / 2 - elemW / 2), margin)
+        if snap == BorderSnap.TOP_RIGHT:
+            return (imgW - elemW - margin, margin)
+        if snap == BorderSnap.CENTER_RIGHT:
+            return (imgW - elemW - margin, int(imgH / 2 - elemH / 2))
+        if snap == BorderSnap.BOTTOM_RIGHT:
+            return (imgW - elemW - margin, imgH - elemH - margin)
+        if snap == BorderSnap.BOTTOM_CENTER:
+            return (int(imgW / 2 - elemW / 2), imgH - elemH - margin)
+        if snap == BorderSnap.BOTTOM_LEFT:
+            return (margin, imgH - elemH - margin)
+        if snap == BorderSnap.CENTER_LEFT:
+            return (margin, int(imgH / 2 - elemH / 2))
+
+        return (0, 0)
+
+    def applyTimecode(self, img, preset, frameInfo):
+        if not preset.TIMECODE:
+            return img
+
         imgW, imgH = img.size
-        elementHeight = int(imgH * (size / 100))
+        elementHeight = int(imgH * (preset.TIMECODE_SIZE / 100))
+        elementMargin = int(imgH * (preset.TIMECODE_MARGIN / 100))
 
         text = self.formatTime(frameInfo.getElapsedSeconds())
-        imgText = self.createText(text, elementHeight)
-        img.paste(imgText, (10, 10), imgText)
+        tcElement = self.createElementText(text, elementHeight)
+
+        elementPosition = self.getElementPosition(imgW, imgH, tcElement, elementMargin, preset.TIMECODE_SNAP)
+        img.paste(tcElement, elementPosition, tcElement)
+
         return img
 
-    def createText(self, text, size):
+    def createElementText(self, text, size):
         fnt = ImageFont.truetype(self.__basefolder + '/static/assets/fonts/Inconsolata-Regular.ttf', size)
         padding = int(size * self.TEXT_PADDING)
         dummy = Image.new("RGBA", (1, 1))
