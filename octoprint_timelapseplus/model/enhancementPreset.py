@@ -18,13 +18,13 @@ class EnhancementPreset:
         self.RESIZE = False
         self.RESIZE_W = 1280
         self.RESIZE_H = 720
-        self.TIMECODE = True
-        self.TIMECODE_SNAP = BorderSnap.BOTTOM_LEFT
-        self.TIMECODE_SIZE = 3
+        self.TIMECODE = False
+        self.TIMECODE_SNAP = BorderSnap.BOTTOM_RIGHT
+        self.TIMECODE_SIZE = 15
         self.TIMECODE_MARGIN = 5
-        self.TIMECODE_TYPE = TimecodeType.BAR
-        self.TIMECODE_COLOR_PRIMARY = '#FF0000'
-        self.TIMECODE_COLOR_SECONDARY = '#0000FF'
+        self.TIMECODE_TYPE = TimecodeType.PRINTTIME_HMS
+        self.TIMECODE_COLOR_PRIMARY = '#000000'
+        self.TIMECODE_COLOR_SECONDARY = '#FFFFFF'
 
         if d is not None:
             self.setJSON(parent, d)
