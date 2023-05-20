@@ -4,6 +4,7 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
+from .colorHelper import ColorHelper
 from ..model.borderSnap import BorderSnap
 from ..model.timecodeType import TimecodeType
 
@@ -56,7 +57,7 @@ class TimecodeRenderer:
 
         if type == TimecodeType.BAR:
             elemW = int(imgW / 2) * self.AA_FACTOR
-            elem = self.createElementBar(elemW, elemH, frameInfo.getRatio())
+            elem = self.createElementBar(elemW, elemH, frameInfo.getRatio(), preset.TIMECODE_COLOR_PRIMARY, preset.TIMECODE_COLOR_SECONDARY)
         elif type == TimecodeType.CLOCK:
             elem = self.createElementClock(elemH, frameInfo.getDateTime())
         elif type == TimecodeType.CLOCK_NOSECONDS:
@@ -69,19 +70,23 @@ class TimecodeRenderer:
         elem = elem.resize((finW // self.AA_FACTOR, finH // self.AA_FACTOR), resample=Image.LANCZOS)
         return elem
 
-    def createElementBar(self, width, height, ratio):
+    def createElementBar(self, width, height, ratio, colPrimary, colSecondary):
         borderW = int(height * 0.15)
         borderWH = int(borderW * 2)
         radius = math.floor(height / 2)
+
+        colFg = ColorHelper.hexToRgba(colPrimary, 0.85)
+        colBg = ColorHelper.hexToRgba(colSecondary, 0.5)
+
         img = Image.new("RGBA", (width, height))
         draw = ImageDraw.Draw(img, 'RGBA')
-        draw.rounded_rectangle((1, 1, width, height), fill=(0, 0, 0, 127), radius=radius)
+        draw.rounded_rectangle((1, 1, width, height), fill=colBg, radius=radius)
 
         innerW = int((width - borderWH) * ratio)
         if innerW > borderWH:
-            draw.rounded_rectangle((borderWH + 1, borderWH + 1, innerW, height - borderWH), fill=(255, 255, 255, 220), radius=radius)
+            draw.rounded_rectangle((borderWH + 1, borderWH + 1, innerW, height - borderWH), fill=colFg, radius=radius)
 
-        draw.rounded_rectangle((1, 1, width, height), outline=(255, 255, 255, 220), width=borderW, radius=radius)
+        draw.rounded_rectangle((1, 1, width, height), outline=colFg, width=borderW, radius=radius)
         return img
 
     def createElementClock(self, height, time, showSeconds=True):

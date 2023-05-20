@@ -23,6 +23,8 @@ class EnhancementPreset:
         self.TIMECODE_SIZE = 3
         self.TIMECODE_MARGIN = 5
         self.TIMECODE_TYPE = TimecodeType.BAR
+        self.TIMECODE_COLOR_PRIMARY = '#FF0000'
+        self.TIMECODE_COLOR_SECONDARY = '#0000FF'
 
         if d is not None:
             self.setJSON(parent, d)
