@@ -59,12 +59,12 @@ class TimecodeRenderer:
             elemW = int(imgW / 2) * self.AA_FACTOR
             elem = self.createElementBar(elemW, elemH, frameInfo.getRatio(), preset.TIMECODE_COLOR_PRIMARY, preset.TIMECODE_COLOR_SECONDARY)
         elif type == TimecodeType.CLOCK:
-            elem = self.createElementClock(elemH, frameInfo.getDateTime())
+            elem = self.createElementClock(elemH, frameInfo.getDateTime(), True, preset.TIMECODE_COLOR_PRIMARY, preset.TIMECODE_COLOR_SECONDARY)
         elif type == TimecodeType.CLOCK_NOSECONDS:
-            elem = self.createElementClock(elemH, frameInfo.getDateTime(), False)
+            elem = self.createElementClock(elemH, frameInfo.getDateTime(), False, preset.TIMECODE_COLOR_PRIMARY, preset.TIMECODE_COLOR_SECONDARY)
         else:
             text = self.createText(type, frameInfo)
-            elem = self.createElementText(text, elemH)
+            elem = self.createElementText(text, elemH, preset.TIMECODE_COLOR_PRIMARY, preset.TIMECODE_COLOR_SECONDARY)
 
         finW, finH = elem.size
         elem = elem.resize((finW // self.AA_FACTOR, finH // self.AA_FACTOR), resample=Image.LANCZOS)
@@ -99,9 +99,17 @@ class TimecodeRenderer:
 
         return img
 
-    def createElementClock(self, height, time, showSeconds=True):
+    def createElementClock(self, height, time, showSeconds, colPrimary, colSecondary):
         radius = int(height / 2)
         borderW = int(height * 0.04)
+
+        colBorder = ColorHelper.hexToRgba(colPrimary, 0.95)
+        colBg = ColorHelper.hexToRgba(colSecondary, 0.5)
+        colMarkers = ColorHelper.hexToRgba(colPrimary, 0.2)
+        colHandH = ColorHelper.hexToRgba(colPrimary, 0.85)
+        colHandM = ColorHelper.hexToRgba(colPrimary, 0.7)
+        colHandS = ColorHelper.hexToRgba(colPrimary, 0.6)
+        colDot = ColorHelper.hexToRgba(colPrimary, 0.85)
 
         markerW = int(borderW / 4)
         markerLen = int((radius - borderW) * 0.25)
@@ -125,7 +133,7 @@ class TimecodeRenderer:
         img = Image.new("RGBA", (height, height))
         draw = ImageDraw.Draw(img, 'RGBA')
 
-        draw.ellipse([(0, 0), (height, height)], fill=(0, 0, 0, 127), outline=(255, 255, 255, 220), width=borderW)
+        draw.ellipse([(0, 0), (height, height)], fill=colBg, outline=colBorder, width=borderW)
 
         for i in range(12):
             angle = math.radians(360 / 12 * i - 90)
@@ -133,31 +141,31 @@ class TimecodeRenderer:
             y1 = center_y + int(((radius - borderW) - markerLen) * math.sin(angle))
             x2 = center_x + int(((radius - borderW) - markerOffs) * math.cos(angle))
             y2 = center_y + int(((radius - borderW) - markerOffs) * math.sin(angle))
-            draw.line([(x1, y1), (x2, y2)], fill=(255, 255, 255, 60), width=markerW)
+            draw.line([(x1, y1), (x2, y2)], fill=colMarkers, width=markerW)
 
         hourAngle = (360 / 12) * hour + (360 / (12 * 60)) * minute + (360 / (12 * 60 * 60)) * second
         hourAngleRad = math.radians(hourAngle - 90)
         hourX = center_x + int(radius * lenH * math.cos(hourAngleRad))
         hourY = center_y + int(radius * lenH * math.sin(hourAngleRad))
-        draw.line([(center_x, center_y), (hourX, hourY)], fill=(255, 255, 255, 220), width=handH)
-        draw.ellipse([(hourX - math.floor(handH / 2), hourY - math.floor(handH / 2)), (hourX + math.floor(handH / 2), hourY + math.floor(handH / 2))], fill=(255, 255, 255, 220))
+        draw.line([(center_x, center_y), (hourX, hourY)], fill=colHandH, width=handH)
+        draw.ellipse([(hourX - math.floor(handH / 2), hourY - math.floor(handH / 2)), (hourX + math.floor(handH / 2), hourY + math.floor(handH / 2))], fill=colHandH)
 
         minuteAngle = (360 / 60) * minute + (360 / (60 * 60)) * second
         minuteAngleRad = math.radians(minuteAngle - 90)
         minuteX = center_x + int(radius * lenM * math.cos(minuteAngleRad))
         minuteY = center_y + int(radius * lenM * math.sin(minuteAngleRad))
-        draw.line([(center_x, center_y), (minuteX, minuteY)], fill=(255, 255, 255, 220), width=handM)
-        draw.ellipse([(minuteX - math.floor(handM / 2), minuteY - math.floor(handM / 2)), (minuteX + math.floor(handM / 2), minuteY + math.floor(handM / 2))], fill=(255, 255, 255, 220))
+        draw.line([(center_x, center_y), (minuteX, minuteY)], fill=colHandM, width=handM)
+        draw.ellipse([(minuteX - math.floor(handM / 2), minuteY - math.floor(handM / 2)), (minuteX + math.floor(handM / 2), minuteY + math.floor(handM / 2))], fill=colHandM)
 
         if showSeconds:
             secondAngle = (360 / 60) * second
             secondAngleRad = math.radians(secondAngle - 90)
             secondX = center_x + int(radius * lenS * math.cos(secondAngleRad))
             secondY = center_y + int(radius * lenS * math.sin(secondAngleRad))
-            draw.line([(center_x, center_y), (secondX, secondY)], fill=(255, 255, 255, 160), width=handS)
-            draw.ellipse([(secondX - math.floor(handS / 2), secondY - math.floor(handS / 2)), (secondX + math.floor(handS / 2), secondY + math.floor(handS / 2))], fill=(255, 255, 255, 200))
+            draw.line([(center_x, center_y), (secondX, secondY)], fill=colHandS, width=handS)
+            draw.ellipse([(secondX - math.floor(handS / 2), secondY - math.floor(handS / 2)), (secondX + math.floor(handS / 2), secondY + math.floor(handS / 2))], fill=colHandS)
 
-        draw.ellipse((center_x - int(handMax / 2), center_y - int(handMax / 2), center_x + int(handMax / 2), center_y + int(handMax / 2)), fill=(255, 255, 255, 220))
+        draw.ellipse((center_x - int(handMax / 2), center_y - int(handMax / 2), center_x + int(handMax / 2), center_y + int(handMax / 2)), fill=colDot)
 
         return img
 
@@ -192,7 +200,10 @@ class TimecodeRenderer:
 
         return '?'
 
-    def createElementText(self, text, size):
+    def createElementText(self, text, size, colPrimary, colSecondary):
+        colFg = ColorHelper.hexToRgba(colPrimary, 0.95)
+        colBg = ColorHelper.hexToRgba(colSecondary, 0.5)
+
         fnt = ImageFont.truetype(self.__basefolder + '/static/assets/fonts/Inconsolata-Regular.ttf', size)
         padding = int(size * self.TEXT_PADDING)
         dummy = Image.new("RGBA", (1, 1))
@@ -202,6 +213,6 @@ class TimecodeRenderer:
         dummy.close()
         img = Image.new("RGBA", (bbox[2], bbox[3]))
         draw = ImageDraw.Draw(img, 'RGBA')
-        draw.rectangle(bbox, fill=(0, 0, 0, 127))
-        draw.text((padding, padding), text, font=fnt, fill=(255, 255, 255))
+        draw.rectangle(bbox, fill=colBg)
+        draw.text((padding, padding), text, font=fnt, fill=colFg)
         return img
