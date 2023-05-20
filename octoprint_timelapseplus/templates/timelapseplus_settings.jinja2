@@ -255,6 +255,66 @@
 
                     <div>
                         <label class="sub checkbox">
+                            <input type="checkbox" data-bind="checked: $data.timecode">
+                            Add Timecodes
+                        </label>
+                    </div>
+                    <div class="sub-settings" data-bind="visible: $data.timecode">
+                        <div>
+                            <label class="sub">Size</label>
+                            <input type="number" step='1' placeholder='0' min="1" max="100" width="5" data-bind="value: $data.timecodeSize">
+                        </div>
+
+                        <div>
+                            <label class="sub">Margin</label>
+                            <input type="number" step='1' placeholder='0' min="0" max="50" width="5" data-bind="value: $data.timecodeMargin">
+                        </div>
+
+                        <div>
+                            <label class="sub">Position</label>
+                            <select data-bind="value: $data.timecodeSnap">
+                                <option value="TOP_LEFT">Top Left</option>
+                                <option value="TOP_CENTER">Top Center</option>
+                                <option value="TOP_RIGHT">Top Right</option>
+                                <option value="CENTER_RIGHT">Center Right</option>
+                                <option value="BOTTOM_RIGHT">Bottom Right</option>
+                                <option value="BOTTOM_CENTER">Bottom Center</option>
+                                <option value="BOTTOM_LEFT">Bottom Left</option>
+                                <option value="CENTER_LEFT">Center Left</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="sub">Type</label>
+                            <select data-bind="value: $data.timecodeType">
+                                <option value="PRINTTIME_HMS">Print Time (H:M:S)</option>
+                                <option value="PRINTTIME_HM">Print Time (H:M)</option>
+                                <option value="PRINTTIME_HMS_LETTERS">Print Time (Hh Mm Ss)</option>
+                                <option value="PRINTTIME_HM_LETTERS">Print Time (Hh Mm)</option>
+                                <option value="TIME_HMS_24">Time 24 Hours (H:M:S)</option>
+                                <option value="TIME_HM_24">Time 24 Hours (H:M)</option>
+                                <option value="TIME_HMS_12">Time 12 Hours (H:M:S)</option>
+                                <option value="TIME_HM_12">Time 12 Hours (H:M)</option>
+                                <option value="PERCENT">Percent</option>
+                                <option value="BAR">Progress Bar</option>
+                                <option value="CLOCK_NOSECONDS">Analog Clock</option>
+                                <option value="CLOCK">Analog Clock (with Seconds)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="sub">Primary Color</label>
+                            <input type="color" maxlength="7" data-bind="value: $data.timecodeColorPrimary">
+                        </div>
+
+                        <div>
+                            <label class="sub">Secondary Color</label>
+                            <input type="color" maxlength="7" data-bind="value: $data.timecodeColorSecondary">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="sub checkbox">
                             <input type="checkbox" data-bind="checked: $data.resize">
                             Enable Resizing
                         </label>
