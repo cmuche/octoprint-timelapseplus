@@ -87,8 +87,8 @@ class EnhancementPreset:
 
         if 'timecode' in d: self.TIMECODE = d['timecode']
         if 'timecodeSnap' in d: self.TIMECODE_SNAP = BorderSnap[d['timecodeSnap']]
-        if 'timecodeSize' in d: self.TIMECODE = int(d['timecodeSize'])
-        if 'timecodeMargin' in d: self.TIMECODE = int(d['timecodeMargin'])
+        if 'timecodeSize' in d: self.TIMECODE_SIZE = int(d['timecodeSize'])
+        if 'timecodeMargin' in d: self.TIMECODE_MARGIN = int(d['timecodeMargin'])
         if 'timecodeType' in d: self.TIMECODE_TYPE = TimecodeType[d['timecodeType']]
         if 'timecodeColorPrimary' in d: self.TIMECODE_COLOR_PRIMARY = d['timecodeColorPrimary']
         if 'timecodeColorSecondary' in d: self.TIMECODE_COLOR_SECONDARY = d['timecodeColorSecondary']
