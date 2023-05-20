@@ -18,23 +18,23 @@ class TimecodeRenderer:
         elemW, elemH = element.size
 
         if snap == BorderSnap.TOP_LEFT:
-            return (margin, margin)
+            return margin, margin
         if snap == BorderSnap.TOP_CENTER:
-            return (int(imgW / 2 - elemW / 2), margin)
+            return int(imgW / 2 - elemW / 2), margin
         if snap == BorderSnap.TOP_RIGHT:
-            return (imgW - elemW - margin, margin)
+            return imgW - elemW - margin, margin
         if snap == BorderSnap.CENTER_RIGHT:
-            return (imgW - elemW - margin, int(imgH / 2 - elemH / 2))
+            return imgW - elemW - margin, int(imgH / 2 - elemH / 2)
         if snap == BorderSnap.BOTTOM_RIGHT:
-            return (imgW - elemW - margin, imgH - elemH - margin)
+            return imgW - elemW - margin, imgH - elemH - margin
         if snap == BorderSnap.BOTTOM_CENTER:
-            return (int(imgW / 2 - elemW / 2), imgH - elemH - margin)
+            return int(imgW / 2 - elemW / 2), imgH - elemH - margin
         if snap == BorderSnap.BOTTOM_LEFT:
-            return (margin, imgH - elemH - margin)
+            return margin, imgH - elemH - margin
         if snap == BorderSnap.CENTER_LEFT:
-            return (margin, int(imgH / 2 - elemH / 2))
+            return margin, int(imgH / 2 - elemH / 2)
 
-        return (0, 0)
+        return 0, 0
 
     def applyTimecode(self, img, preset, frameInfo):
         if not preset.TIMECODE:
