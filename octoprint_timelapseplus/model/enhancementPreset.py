@@ -27,8 +27,8 @@ class EnhancementPreset:
         self.TIMECODE_SIZE = 15
         self.TIMECODE_MARGIN = 5
         self.TIMECODE_TYPE = TimecodeType.PRINTTIME_HMS
-        self.TIMECODE_COLOR_PRIMARY = '#000000'
-        self.TIMECODE_COLOR_SECONDARY = '#FFFFFF'
+        self.TIMECODE_COLOR_PRIMARY = '#FFFFFF'
+        self.TIMECODE_COLOR_SECONDARY = '#000000'
 
         if d is not None:
             self.setJSON(parent, d)
