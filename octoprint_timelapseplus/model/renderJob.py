@@ -179,6 +179,10 @@ class RenderJob:
         if not preset.TIMECODE:
             return
 
+        if self.METADATA is None:
+            self.PARENT.sendClientPopup('warning', 'No Timecode Data', 'The Frame Collection doesn\'t contain any Metadata. Timecode Genreation will be skipped.')
+            return
+
         self.setState(RenderJobState.ADDING_TIMECODES)
         timecodeRenderer = TimecodeRenderer(self._basefolder)
 
