@@ -148,6 +148,9 @@ class ApiController:
                 img = preset.applyEnhance(img)
                 img = preset.applyBlur(img)
 
+                timecodeRederer = TimecodeRenderer(self._basefolder)
+                img = timecodeRederer.applyTimecode(img, preset, FrameTimecodeInfo.getDummy())
+
                 res = self.PARENT.makeThumbnail(img, (500, 500))
                 resBase64 = base64.b64encode(res)
                 return dict(result=resBase64)
