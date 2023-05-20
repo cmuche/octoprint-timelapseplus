@@ -8,7 +8,7 @@ from .timecodeType import TimecodeType
 class EnhancementPreset:
     def __init__(self, parent, d=None):
         self.NAME = 'Default Enhancement Preset'
-        
+
         self.ENHANCE = False
         self.EQUALIZE = False
         self.BRIGHTNESS = 1
@@ -85,6 +85,14 @@ class EnhancementPreset:
         if 'resizeW' in d: self.RESIZE_W = int(d['resizeW'])
         if 'resizeH' in d: self.RESIZE_H = int(d['resizeH'])
 
+        if 'timecode' in d: self.TIMECODE = d['timecode']
+        if 'timecodeSnap' in d: self.TIMECODE_SNAP = BorderSnap[d['timecodeSnap']]
+        if 'timecodeSize' in d: self.TIMECODE = int(d['timecodeSize'])
+        if 'timecodeMargin' in d: self.TIMECODE = int(d['timecodeMargin'])
+        if 'timecodeType' in d: self.TIMECODE_TYPE = TimecodeType[d['timecodeType']]
+        if 'timecodeColorPrimary' in d: self.TIMECODE_COLOR_PRIMARY = d['timecodeColorPrimary']
+        if 'timecodeColorSecondary' in d: self.TIMECODE_COLOR_SECONDARY = d['timecodeColorSecondary']
+
     def getJSON(self):
         d = dict(
             name=self.NAME,
@@ -97,7 +105,14 @@ class EnhancementPreset:
             blurMask=None,
             resize=self.RESIZE,
             resizeW=self.RESIZE_W,
-            resizeH=self.RESIZE_H
+            resizeH=self.RESIZE_H,
+            timecode=self.TIMECODE,
+            timecodeSnap=self.TIMECODE_SNAP.name,
+            timecodeSize=self.TIMECODE_SIZE,
+            timecodeMargin=self.TIMECODE_MARGIN,
+            timecodeType=self.TIMECODE_TYPE.name,
+            timecodeColorPrimary=self.TIMECODE_COLOR_PRIMARY,
+            timecodeColorSecondary=self.TIMECODE_COLOR_SECONDARY
         )
 
         if self.BLUR_MASK is not None:
