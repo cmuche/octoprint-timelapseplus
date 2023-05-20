@@ -8,16 +8,20 @@ from .timecodeType import TimecodeType
 class EnhancementPreset:
     def __init__(self, parent, d=None):
         self.NAME = 'Default Enhancement Preset'
+        
         self.ENHANCE = False
         self.EQUALIZE = False
         self.BRIGHTNESS = 1
         self.CONTRAST = 1
+
         self.BLUR = False
         self.BLUR_RADIUS = 30
         self.BLUR_MASK = None
+
         self.RESIZE = False
         self.RESIZE_W = 1280
         self.RESIZE_H = 720
+
         self.TIMECODE = False
         self.TIMECODE_SNAP = BorderSnap.BOTTOM_RIGHT
         self.TIMECODE_SIZE = 15
