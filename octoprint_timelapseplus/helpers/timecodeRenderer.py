@@ -71,22 +71,32 @@ class TimecodeRenderer:
         return elem
 
     def createElementBar(self, width, height, ratio, colPrimary, colSecondary):
-        borderW = int(height * 0.15)
-        borderWH = int(borderW * 2)
-        radius = math.floor(height / 2)
+        offsOuter = int(height * 0.15)
+        offsInner = offsOuter * 2
+        heightOuter = height - 2 * offsOuter
+        heightInner = height - 2 * offsInner
 
         colFg = ColorHelper.hexToRgba(colPrimary, 0.85)
         colBg = ColorHelper.hexToRgba(colSecondary, 0.5)
 
         img = Image.new("RGBA", (width, height))
         draw = ImageDraw.Draw(img, 'RGBA')
-        draw.rounded_rectangle((1, 1, width, height), fill=colBg, radius=radius)
 
-        innerW = int((width - borderWH) * ratio)
-        if innerW > borderWH:
-            draw.rounded_rectangle((borderWH + 1, borderWH + 1, innerW, height - borderWH), fill=colFg, radius=radius)
+        draw.ellipse((0, 0, height, height), fill=colFg)
+        draw.ellipse((width - height, 0, width, height), fill=colFg)
+        draw.rectangle((height - math.floor(height / 2), 0, width - math.floor(height / 2), height), fill=colFg)
 
-        draw.rounded_rectangle((1, 1, width, height), outline=colFg, width=borderW, radius=radius)
+        draw.ellipse((offsOuter, offsOuter, offsOuter + heightOuter, offsOuter + heightOuter), fill=colBg)
+        draw.ellipse((width - heightOuter - offsOuter, offsOuter, width - offsOuter, offsOuter + heightOuter), fill=colBg)
+        draw.rectangle((offsOuter + math.floor(heightOuter / 2), offsOuter, width - offsOuter - math.floor(heightOuter / 2), offsOuter + heightOuter), fill=colBg)
+
+        maxInnerW = width - 2 * offsInner - heightInner
+        ratInnerW = int(ratio * maxInnerW)
+        draw.ellipse((offsInner, offsInner, offsInner + heightInner, offsInner + heightInner), fill=colFg)
+        if ratInnerW > 0:
+            draw.ellipse((offsInner + ratInnerW, offsInner, offsInner + heightInner + ratInnerW, offsInner + heightInner), fill=colFg)
+            draw.rectangle((offsInner + math.floor(heightInner / 2), offsInner, offsInner + math.floor(heightInner / 2) + ratInnerW, offsInner + heightInner), fill=colFg)
+
         return img
 
     def createElementClock(self, height, time, showSeconds=True):
