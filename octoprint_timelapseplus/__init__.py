@@ -118,7 +118,7 @@ class TimelapsePlusPlugin(
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
         buf = io.BytesIO()
-        img.convert('RGB').save(buf, format='JPEG', quality=75)
+        img.convert('RGB').save(buf, format='JPEG', quality=85)
         byteArr = buf.getvalue()
         return byteArr
 
