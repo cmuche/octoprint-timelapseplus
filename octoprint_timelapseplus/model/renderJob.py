@@ -222,15 +222,17 @@ class RenderJob:
         fadeInFrameCount = int(preset.FADE_IN_DURATION / 1000 * preset.getFinalFramerate())
         fadeOutFrameCount = int(preset.FADE_OUT_DURATION / 1000 * preset.getFinalFramerate())
 
-        fadeInElements = frameFiles[0:fadeInFrameCount]
-        for i, element in enumerate(fadeInElements):
-            r = 1 - i / len(fadeInElements)
-            fadeJobs.append((r, element))
+        if fadeInFrameCount > 0:
+            fadeInElements = frameFiles[0:fadeInFrameCount]
+            for i, element in enumerate(fadeInElements):
+                r = 1 - i / len(fadeInElements)
+                fadeJobs.append((r, element))
 
-        fadeOutElements = frameFiles[-fadeOutFrameCount:]
-        for i, element in enumerate(fadeOutElements):
-            r = (i + 1) / len(fadeOutElements)
-            fadeJobs.append((r, element))
+        if fadeOutFrameCount > 0:
+            fadeOutElements = frameFiles[-fadeOutFrameCount:]
+            for i, element in enumerate(fadeOutElements):
+                r = (i + 1) / len(fadeOutElements)
+                fadeJobs.append((r, element))
 
         for i, j in enumerate(fadeJobs):
             col = ColorHelper.hexToRgba(preset.FADE_COLOR, j[0])
