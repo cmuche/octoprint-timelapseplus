@@ -123,8 +123,7 @@ class RenderJob:
 
         self.setState(RenderJobState.COMBINING)
 
-        # TODO exclude PP Roll
-        frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
+        frameFiles = sorted(glob.glob(self.FOLDER + '/[!PPROLL]*.jpg'))
         chunks = ListHelper.chunkList(frameFiles, preset.COMBINE_SIZE)
         for i, chunk in enumerate(chunks):
             img = ImageCombineHelper.createCombinedImage(chunk, preset.COMBINE_METHOD)
@@ -188,8 +187,7 @@ class RenderJob:
         self.setState(RenderJobState.ADDING_TIMECODES)
         timecodeRenderer = TimecodeRenderer(self._basefolder)
 
-        # TODO exclude PP Roll
-        frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
+        frameFiles = sorted(glob.glob(self.FOLDER + '/[!PPROLL]*.jpg'))
         for i, frame in enumerate(frameFiles):
             frameInfo = FrameTimecodeInfo(self.METADATA['timestamps'][os.path.basename(frame)], self.METADATA['started'], self.METADATA['ended'])
             img = Image.open(frame)
