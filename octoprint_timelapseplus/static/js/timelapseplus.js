@@ -85,6 +85,18 @@ $(function() {
             });
         });
 
+        self.getRandomString = function(length = 16) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                result += characters.charAt(randomIndex);
+            }
+
+            return result;
+        };
+
         $("div#tlp-modal-video video source")[0].addEventListener("error", function(e) {
             self.hasVideoPlaybackError(true);
         });
