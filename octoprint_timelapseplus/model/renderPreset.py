@@ -1,6 +1,7 @@
 from math import ceil
 
 from .combineMethod import CombineMethod
+from .ppRollType import PPRollType
 from ..helpers.colorHelper import ColorHelper
 from ..helpers.listHelper import ListHelper
 
@@ -28,9 +29,14 @@ class RenderPreset:
         self.COMBINE_METHOD = CombineMethod.DROP
 
         self.PPROLL_PRE = True
-        self.PPROLL_PRE_DURATION = 1000
+        self.PPROLL_PRE_DURATION = 3000
         self.PPROLL_POST = True
         self.PPROLL_POST_DURATION = 1000
+        self.PPROLL_TYPE = PPRollType.LAPSE
+        self.PPROLL_BLUR = True
+        self.PPROLL_BLUR_RADIUS = 100
+        self.PPROLL_ZOOM = True
+        self.PPROLL_ZOOM_FACTOR = 1.5
 
         if d is not None:
             self.setJSON(d)

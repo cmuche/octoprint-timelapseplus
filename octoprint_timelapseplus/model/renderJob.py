@@ -13,6 +13,7 @@ from PIL import Image
 
 from .frameTimecodeInfo import FrameTimecodeInfo
 from .enhancementPreset import EnhancementPreset
+from .ppRollPhase import PPRollPhase
 from .renderJobState import RenderJobState
 from .renderPreset import RenderPreset
 from ..helpers.colorHelper import ColorHelper
@@ -209,7 +210,7 @@ class RenderJob:
         for i in ListHelper.rangeList(numFramesPre):
             thisRatio = i / numFramesPre
             thisOutFile = self.FOLDER + '/' + "PPROLL_PRE_{:05d}".format(i) + ".jpg"
-            img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset)
+            img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset, PPRollPhase.PRE)
             img.save(thisOutFile, quality=100, subsampling=0)
 
             currentProgress += 1
@@ -218,7 +219,7 @@ class RenderJob:
         for i in ListHelper.rangeList(numFramesPost):
             thisRatio = i / numFramesPost
             thisOutFile = self.FOLDER + '/' + "PPROLL_POST_{:05d}".format(i) + ".jpg"
-            img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset)
+            img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset, PPRollPhase.POST)
             img.save(thisOutFile, quality=100, subsampling=0)
 
             currentProgress += 1
