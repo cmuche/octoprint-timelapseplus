@@ -7,17 +7,21 @@ from ..helpers.listHelper import ListHelper
 class RenderPreset:
     def __init__(self, d=None):
         self.NAME = 'Default Render Preset'
+        
         self.FRAMERATE = 30
+
         self.INTERPOLATE = False
         self.INTERPOLATE_FRAMERATE = 60
         self.INTERPOLATE_MODE = 'blend'
         self.INTERPOLATE_ESTIMATION = 'bidir'
         self.INTERPOLATE_COMPENSATION = 'aobmc'
         self.INTERPOLATE_ALGORITHM = 'epzs'
+
         self.FADE = False
         self.FADE_IN_DURATION = 1000
         self.FADE_OUT_DURATION = 1000
         self.FADE_COLOR = 'Black'
+
         self.COMBINE = False
         self.COMBINE_SIZE = 2
         self.COMBINE_METHOD = CombineMethod.DROP
