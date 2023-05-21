@@ -14,3 +14,4 @@ class RenderJobState(Enum):
     CREATE_PALETTE = 10
     ENCODING = 11
     ADDING_TIMECODES = 12
+    GENERATING_PPROLL = 13
