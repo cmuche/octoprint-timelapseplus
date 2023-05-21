@@ -19,6 +19,7 @@ from ..helpers.fileHelper import FileHelper
 from ..helpers.formatHelper import FormatHelper
 from ..helpers.imageCombineHelper import ImageCombineHelper
 from ..helpers.listHelper import ListHelper
+from ..helpers.ppRollRenderer import PPRollRenderer
 from ..helpers.timecodeRenderer import TimecodeRenderer
 
 
@@ -122,6 +123,7 @@ class RenderJob:
 
         self.setState(RenderJobState.COMBINING)
 
+        # TODO exclude PP Roll
         frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
         chunks = ListHelper.chunkList(frameFiles, preset.COMBINE_SIZE)
         for i, chunk in enumerate(chunks):
@@ -186,6 +188,7 @@ class RenderJob:
         self.setState(RenderJobState.ADDING_TIMECODES)
         timecodeRenderer = TimecodeRenderer(self._basefolder)
 
+        # TODO exclude PP Roll
         frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
         for i, frame in enumerate(frameFiles):
             frameInfo = FrameTimecodeInfo(self.METADATA['timestamps'][os.path.basename(frame)], self.METADATA['started'], self.METADATA['ended'])
@@ -193,6 +196,29 @@ class RenderJob:
             imgRes = timecodeRenderer.applyTimecode(img, preset, frameInfo)
             imgRes.save(frame, quality=100, subsampling=0)
             self.setProgress((i + 1) / len(frameFiles))
+
+    def createPPRoll(self, preset):
+        if not preset.PPROLL:
+            return
+
+        self.setState(RenderJobState.GENERATING_PPROLL)
+        frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
+        numPPFrames = preset.getNumSinglePPRollFrames()
+
+        for i in ListHelper.rangeList(numPPFrames):
+            thisRatio = i / numPPFrames
+            thisOutFile = self.FOLDER + '/' + "PPROLL_PRE_{:05d}".format(i) + ".jpg"
+            img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset)
+            img.save(thisOutFile, quality=100, subsampling=0)
+            self.setProgress(thisRatio)
+
+    def generateFade(self, preset):
+        if not preset.FADE:
+            return
+
+        frameFiles = glob.glob(self.FOLDER + '/E_*.jpg')
+
+        return
 
     def createPalette(self, format):
         if not format.CREATE_PALETTE:
@@ -228,40 +254,38 @@ class RenderJob:
         else:
             cmd += ['-r', str(preset.FRAMERATE)]
 
-        if preset.FADE:
-            videoLength = preset.calculateVideoLength(self.FRAMEZIP)
-
-            if preset.FADE_IN_DURATION > 0:
-                fpInD = str(float(float(preset.FADE_IN_DURATION) / 1000))
-                videoFilters += ['fade=t=in:st=0:d=' + fpInD + ':color=' + preset.FADE_COLOR]
-
-            if preset.FADE_OUT_DURATION > 0:
-                fpOutD = str(float(float(preset.FADE_OUT_DURATION) / 1000))
-                fpOutSt = str(float(videoLength - preset.FADE_OUT_DURATION) / 1000)
-                videoFilters += ['fade=t=out:st=' + fpOutSt + ':d=' + fpOutD + ':color=' + preset.FADE_COLOR]
-
         if len(videoFilters):
             cmd += ['-vf', ','.join(videoFilters)]
 
         cmd += ['-qscale:v', '1', 'F_%05d.jpg']
-        self.runFfmpegWithProgress(cmd, preset.calculateTotalFrames(self.FRAMEZIP))
+        self.runFfmpegWithProgress(cmd, preset.calculateTotalFrames(self.FRAMEZIP, False))
+
+    def moveEncodeFrames(self):
+        framesPPPre = glob.glob(self.FOLDER + '/PPROLL_PRE_*.jpg')
+        framesPPPost = glob.glob(self.FOLDER + '/PPROLL_POST_*.jpg')
+        framesFinal = glob.glob(self.FOLDER + '/F_*.jpg')
+
+        framesAll = framesPPPre + framesFinal + framesPPPost
+        for i, f in enumerate(framesAll):
+            eName = "E_{:05d}".format(i + 1) + ".jpg"
+            shutil.move(f, self.FOLDER + '/' + eName)
 
     def encode(self, preset):
         self.setState(RenderJobState.ENCODING)
+        self.moveEncodeFrames()
 
         timePart = datetime.now().strftime("%Y%m%d%H%M%S")
         videoFile = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.' + self.VIDEO_FORMAT.EXTENSION
         outFileName = 'out.' + self.VIDEO_FORMAT.EXTENSION
 
-        cmd = ['-framerate', str(self.RENDER_PRESET.getFinalFramerate()), '-i', 'F_%05d.jpg']
-
+        cmd = ['-framerate', str(self.RENDER_PRESET.getFinalFramerate()), '-i', 'E_%05d.jpg']
         cmd += self.VIDEO_FORMAT.getRenderArgs()
         cmd += [outFileName]
 
         self.runFfmpegWithProgress(cmd, preset.calculateTotalFrames(self.FRAMEZIP))
 
         shutil.move(self.FOLDER + '/' + outFileName, videoFile)
-        frameFiles = glob.glob(self.FOLDER + '/F_*.jpg')
+        frameFiles = glob.glob(self.FOLDER + '/E_*.jpg')
         thumbImg = Image.open(frameFiles[-1])
         thumbImg.save(videoFile + '.thumb.jpg', quality=75)
 
@@ -286,10 +310,12 @@ class RenderJob:
             self.extractZip()
             self.enhanceImages(self.ENHANCEMENT_PRESET)
             self.blurImages(self.ENHANCEMENT_PRESET)
+            self.createPPRoll(self.RENDER_PRESET)
             self.resizeImages(self.ENHANCEMENT_PRESET)
             self.combineImages(self.RENDER_PRESET)
             self.addTimecodes(self.ENHANCEMENT_PRESET)
             self.render(self.RENDER_PRESET)
+            self.generateFade(self.RENDER_PRESET)
             self.createPalette(self.VIDEO_FORMAT)
             self.encode(self.RENDER_PRESET)
 
