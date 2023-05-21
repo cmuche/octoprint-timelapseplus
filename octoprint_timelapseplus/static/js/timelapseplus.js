@@ -355,7 +355,8 @@ $(function() {
                 "CREATE_PALETTE": {title: "Generating Color Palette", showProgress: false, icon: "fas fa-paint-brush"},
                 "ADDING_TIMECODES": {title: "Adding Timecodes", showProgress: true, icon: "fas fa-stopwatch"},
                 "ENCODING": {title: "Encoding Video File", showProgress: true, icon: "fas fa-box"},
-                "GENERATING_PPROLL": {title: "Generating Pre/Post Roll", showProgress: true, icon: "fas fa-window-restore"}
+                "GENERATING_PPROLL": {title: "Generating Pre/Post Roll", showProgress: true, icon: "fas fa-window-restore"},
+                "APPLYING_FADE": {title: "Applying Fade Effect", showProgress: true, icon: "fas fa-chess-board"}
             };
 
             if (job.state in stateVms)

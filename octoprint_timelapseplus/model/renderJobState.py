@@ -15,3 +15,4 @@ class RenderJobState(Enum):
     ENCODING = 11
     ADDING_TIMECODES = 12
     GENERATING_PPROLL = 13
+    APPLYING_FADE = 14

@@ -15,6 +15,7 @@ from .frameTimecodeInfo import FrameTimecodeInfo
 from .enhancementPreset import EnhancementPreset
 from .renderJobState import RenderJobState
 from .renderPreset import RenderPreset
+from ..helpers.colorHelper import ColorHelper
 from ..helpers.fileHelper import FileHelper
 from ..helpers.formatHelper import FormatHelper
 from ..helpers.imageCombineHelper import ImageCombineHelper
@@ -214,9 +215,31 @@ class RenderJob:
         if not preset.FADE:
             return
 
-        frameFiles = glob.glob(self.FOLDER + '/E_*.jpg')
+        self.setState(RenderJobState.APPLYING_FADE)
+        frameFiles = self.getAllFinalFrames()
 
-        return
+        fadeJobs = []
+        fadeInFrameCount = int(preset.FADE_IN_DURATION / 1000 * preset.getFinalFramerate())
+        fadeOutFrameCount = int(preset.FADE_OUT_DURATION / 1000 * preset.getFinalFramerate())
+
+        fadeInElements = frameFiles[0:fadeInFrameCount]
+        for i, element in enumerate(fadeInElements):
+            r = 1 - i / len(fadeInElements)
+            fadeJobs.append((r, element))
+
+        fadeOutElements = frameFiles[-fadeOutFrameCount:]
+        for i, element in enumerate(fadeOutElements):
+            r = (i + 1) / len(fadeOutElements)
+            fadeJobs.append((r, element))
+
+        for i, j in enumerate(fadeJobs):
+            col = ColorHelper.hexToRgba('#FF0000', j[0])
+            img = Image.open(j[1]).convert('RGBA')
+            overlay = Image.new("RGBA", img.size, col)
+            img = Image.alpha_composite(img, overlay).convert('RGB')
+            img.save(j[1], quality=100, subsampling=0)
+            overlay.close()
+            self.setProgress((i + 1) / len(fadeJobs))
 
     def createPalette(self, format):
         if not format.CREATE_PALETTE:
@@ -258,12 +281,16 @@ class RenderJob:
         cmd += ['-qscale:v', '1', 'F_%05d.jpg']
         self.runFfmpegWithProgress(cmd, preset.calculateTotalFrames(self.FRAMEZIP, False))
 
-    def moveEncodeFrames(self):
-        framesPPPre = glob.glob(self.FOLDER + '/PPROLL_PRE_*.jpg')
-        framesPPPost = glob.glob(self.FOLDER + '/PPROLL_POST_*.jpg')
-        framesFinal = glob.glob(self.FOLDER + '/F_*.jpg')
-
+    def getAllFinalFrames(self):
+        framesPPPre = sorted(glob.glob(self.FOLDER + '/PPROLL_PRE_*.jpg'))
+        framesPPPost = sorted(glob.glob(self.FOLDER + '/PPROLL_POST_*.jpg'))
+        framesFinal = sorted(glob.glob(self.FOLDER + '/F_*.jpg'))
         framesAll = framesPPPre + framesFinal + framesPPPost
+        return framesAll
+
+    def moveEncodeFrames(self):
+        framesAll = self.getAllFinalFrames()
+
         for i, f in enumerate(framesAll):
             eName = "E_{:05d}".format(i + 1) + ".jpg"
             shutil.move(f, self.FOLDER + '/' + eName)
