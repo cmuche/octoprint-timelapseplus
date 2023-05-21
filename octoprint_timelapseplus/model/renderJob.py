@@ -262,8 +262,7 @@ class RenderJob:
 
         self.setState(RenderJobState.CREATE_PALETTE)
 
-        framePattern = 'F_%05d.jpg'
-        cmd = ['-i', framePattern, '-filter_complex', '[0:v]palettegen', 'palette.png']
+        cmd = ['-i', 'E_%05d.jpg', '-filter_complex', '[0:v]palettegen', 'palette.png']
         self.runFfmpegWithProgress(cmd)
 
     def render(self, preset):
@@ -304,6 +303,7 @@ class RenderJob:
         return framesAll
 
     def moveEncodeFrames(self):
+        self.setState(RenderJobState.MERGING_FRAMES)
         framesAll = self.getAllFinalFrames()
 
         for i, f in enumerate(framesAll):
@@ -312,7 +312,6 @@ class RenderJob:
 
     def encode(self, preset):
         self.setState(RenderJobState.ENCODING)
-        self.moveEncodeFrames()
 
         timePart = datetime.now().strftime("%Y%m%d%H%M%S")
         videoFile = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.' + self.VIDEO_FORMAT.EXTENSION
@@ -356,6 +355,7 @@ class RenderJob:
             self.addTimecodes(self.ENHANCEMENT_PRESET)
             self.render(self.RENDER_PRESET)
             self.generateFade(self.RENDER_PRESET)
+            self.moveEncodeFrames()
             self.createPalette(self.VIDEO_FORMAT)
             self.encode(self.RENDER_PRESET)
 

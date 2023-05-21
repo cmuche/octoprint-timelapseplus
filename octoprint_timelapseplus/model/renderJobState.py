@@ -16,3 +16,4 @@ class RenderJobState(Enum):
     ADDING_TIMECODES = 12
     GENERATING_PPROLL = 13
     APPLYING_FADE = 14
+    MERGING_FRAMES = 15

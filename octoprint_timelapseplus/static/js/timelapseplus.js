@@ -356,7 +356,8 @@ $(function() {
                 "ADDING_TIMECODES": {title: "Adding Timecodes", showProgress: true, icon: "fas fa-stopwatch"},
                 "ENCODING": {title: "Encoding Video File", showProgress: true, icon: "fas fa-box"},
                 "GENERATING_PPROLL": {title: "Generating Pre/Post Roll", showProgress: true, icon: "fas fa-window-restore"},
-                "APPLYING_FADE": {title: "Applying Fade Effect", showProgress: true, icon: "fas fa-chess-board"}
+                "APPLYING_FADE": {title: "Applying Fade Effect", showProgress: true, icon: "fas fa-chess-board"},
+                "MERGING_FRAMES": {title: "Merging Frames", showProgress: false, icon: "fas fa-th"}
             };
 
             if (job.state in stateVms)
