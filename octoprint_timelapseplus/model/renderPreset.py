@@ -7,7 +7,7 @@ from ..helpers.listHelper import ListHelper
 class RenderPreset:
     def __init__(self, d=None):
         self.NAME = 'Default Render Preset'
-        
+
         self.FRAMERATE = 30
 
         self.INTERPOLATE = False
@@ -26,6 +26,9 @@ class RenderPreset:
         self.COMBINE_SIZE = 2
         self.COMBINE_METHOD = CombineMethod.DROP
 
+        self.PPROLL = True
+        self.PPROLL_DURATION = 1000
+
         if d is not None:
             self.setJSON(d)
 
@@ -33,15 +36,25 @@ class RenderPreset:
         if self.INTERPOLATE:
             return self.INTERPOLATE_FRAMERATE
         return self.FRAMERATE
+
+    def getNumSinglePPRollFrames(self):
+        if not self.PPROLL:
+            return 0
+        return int(self.getFinalFramerate() * self.PPROLL_DURATION / 1000)
+
     def calculateVideoLength(self, frameZip):
         totalFrames = frameZip.FRAMES
 
         if self.COMBINE:
             totalFrames = len(ListHelper.chunkList(ListHelper.rangeList(totalFrames), self.COMBINE_SIZE))
 
+        if self.PPROLL:
+            singleRoll = self.getNumSinglePPRollFrames()
+            totalFrames += 1 * singleRoll
+
         return int(totalFrames / self.FRAMERATE * 1000)
 
-    def calculateTotalFrames(self, frameZip):
+    def calculateTotalFrames(self, frameZip, includePPRoll=True):
         totalFrames = frameZip.FRAMES
 
         if self.COMBINE:
@@ -50,6 +63,10 @@ class RenderPreset:
         if (self.INTERPOLATE):
             totalFrames *= (self.INTERPOLATE_FRAMERATE / self.FRAMERATE)
             totalFrames = ceil(totalFrames)
+
+        if includePPRoll and self.PPROLL:
+            singleRoll = self.getNumSinglePPRollFrames()
+            totalFrames += 2 * singleRoll
 
         return totalFrames
 
