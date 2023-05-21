@@ -233,7 +233,7 @@ class RenderJob:
             fadeJobs.append((r, element))
 
         for i, j in enumerate(fadeJobs):
-            col = ColorHelper.hexToRgba('#FF0000', j[0])
+            col = ColorHelper.hexToRgba(preset.FADE_COLOR, j[0])
             img = Image.open(j[1]).convert('RGBA')
             overlay = Image.new("RGBA", img.size, col)
             img = Image.alpha_composite(img, overlay).convert('RGB')

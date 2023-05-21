@@ -1,6 +1,7 @@
 from math import ceil
 
 from .combineMethod import CombineMethod
+from ..helpers.colorHelper import ColorHelper
 from ..helpers.listHelper import ListHelper
 
 
@@ -82,7 +83,12 @@ class RenderPreset:
         if 'fade' in d: self.FADE = d['fade']
         if 'fadeInDuration' in d: self.FADE_IN_DURATION = int(d['fadeInDuration'])
         if 'fadeOutDuration' in d: self.FADE_OUT_DURATION = int(d['fadeOutDuration'])
-        if 'fadeColor' in d: self.FADE_COLOR = d['fadeColor']
+        if 'fadeColor' in d:
+            colStr = d['fadeColor']
+            if ColorHelper.isHexColor(colStr):
+                self.FADE_COLOR = colStr
+            else:
+                self.FADE_COLOR = ColorHelper.cssColorToHex(colStr)
         if 'combine' in d: self.COMBINE = d['combine']
         if 'combineSize' in d: self.COMBINE_SIZE = int(d['combineSize'])
         if 'combineMethod' in d: self.COMBINE_METHOD = CombineMethod[d['combineMethod']]
