@@ -2,6 +2,7 @@ import math
 
 from PIL import Image, ImageFilter
 
+from ..model.ppRollEaseFn import PPRollEaseFn
 from ..model.ppRollPhase import PPRollPhase
 from ..model.ppRollType import PPRollType
 
@@ -11,8 +12,10 @@ class PPRollRenderer:
     def renderFrame(ratio, frames, preset, phase):
         type = preset.PPROLL_TYPE
 
-        ratioEase = PPRollRenderer.applyEaseFn(ratio)
-        ratioEaseInv = PPRollRenderer.applyEaseFn(1 - ratio)
+        if phase == PPRollPhase.PRE:
+            ratio = PPRollRenderer.applyEaseFn(preset.PPROLL_EASE_FN, 1 - ratio)
+        else:
+            ratio = PPRollRenderer.applyEaseFn(preset.PPROLL_EASE_FN, ratio)
 
         img = None
 
@@ -21,20 +24,15 @@ class PPRollRenderer:
         elif type == PPRollType.STILL_FINAL:
             img = PPRollRenderer.getStillFrame(frames, PPRollPhase.POST)
         elif type == PPRollType.LAPSE:
-            img = PPRollRenderer.getLapseFrame(frames, ratioEase)
+            reverse = (phase == PPRollPhase.POST)
+            img = PPRollRenderer.getLapseFrame(frames, ratio, reverse)
 
         if preset.PPROLL_BLUR:
-            blurRatio = ratioEase
-            if phase == PPRollPhase.PRE:
-                blurRatio = ratioEaseInv
-            blurRadius = blurRatio * preset.PPROLL_BLUR_RADIUS
+            blurRadius = ratio * preset.PPROLL_BLUR_RADIUS
             img = img.filter(ImageFilter.GaussianBlur(blurRadius))
 
         if preset.PPROLL_ZOOM:
-            zoomRatio = ratioEase
-            if phase == PPRollPhase.PRE:
-                zoomRatio = ratioEaseInv
-            zoomFactor = 1 + zoomRatio * (preset.PPROLL_ZOOM_FACTOR - 1)
+            zoomFactor = 1 + ratio * (preset.PPROLL_ZOOM_FACTOR - 1)
             img = PPRollRenderer.zoomImage(img, zoomFactor)
 
         return img
@@ -53,12 +51,24 @@ class PPRollRenderer:
         return resizedImage
 
     @staticmethod
-    def applyEaseFn(ratio):
-        return 1 - math.sqrt(1 - ratio * ratio)
+    def applyEaseFn(fn, r):
+        if fn == PPRollEaseFn.LINEAR:
+            return r
+        if fn == PPRollEaseFn.EASE_IN:
+            return 1 - math.sqrt(1 - r * r)
+        if fn == PPRollEaseFn.EASE_IN_OUT:
+            rr = r * 2
+            if rr < 1:
+                return 0.5 * (1 - math.sqrt(1 - rr * rr))
+            else:
+                rr -= 2
+                return 0.5 * (math.sqrt(1 - rr * rr) + 1)
 
     @staticmethod
-    def getLapseFrame(frames, ratio):
-        retFrameIdx = int(round((1 - ratio) * len(frames) - 1))
+    def getLapseFrame(frames, ratio, reverse):
+        if reverse:
+            frames = frames[::-1]
+        retFrameIdx = int(round(ratio * (len(frames) - 1)))
         return Image.open(frames[retFrameIdx])
 
     @staticmethod
