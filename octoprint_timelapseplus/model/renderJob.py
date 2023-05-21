@@ -326,7 +326,7 @@ class RenderJob:
 
         shutil.move(self.FOLDER + '/' + outFileName, videoFile)
         frameFiles = glob.glob(self.FOLDER + '/E_*.jpg')
-        thumbImg = Image.open(frameFiles[-1])
+        thumbImg = Image.open(frameFiles[int(len(frameFiles) / 1.5)])
         thumbImg.save(videoFile + '.thumb.jpg', quality=75)
 
     def runFfmpegWithProgress(self, params, totalFrames=0):
