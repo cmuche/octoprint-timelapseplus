@@ -1,4 +1,5 @@
 import glob
+import json
 import os
 import re
 import shutil
@@ -10,22 +11,27 @@ from threading import Thread
 
 from PIL import Image
 
+from .frameTimecodeInfo import FrameTimecodeInfo
 from .enhancementPreset import EnhancementPreset
 from .renderJobState import RenderJobState
 from .renderPreset import RenderPreset
+from ..helpers.fileHelper import FileHelper
 from ..helpers.formatHelper import FormatHelper
 from ..helpers.imageCombineHelper import ImageCombineHelper
 from ..helpers.listHelper import ListHelper
+from ..helpers.timecodeRenderer import TimecodeRenderer
 
 
 class RenderJob:
-    def __init__(self, frameZip, parent, logger, settings, dataFolder, enhancementPreset=None, renderPreset=None, videoFormat=None):
+    def __init__(self, baseFolder, frameZip, parent, logger, settings, dataFolder, enhancementPreset=None, renderPreset=None, videoFormat=None):
         self.ID = parent.getRandomString(8)
         self.PARENT = parent
         self._settings = settings
         self._logger = logger
+        self._basefolder = baseFolder
 
         self.FRAMEZIP = frameZip
+        self.METADATA = None
 
         self.BASE_NAME = os.path.splitext(os.path.basename(frameZip.PATH))[0]
         self.FOLDER = ''
@@ -105,6 +111,11 @@ class RenderJob:
         with zipfile.ZipFile(self.FRAMEZIP.PATH, "r") as zip_ref:
             zip_ref.extractall(self.FOLDER)
 
+        metadataFile = self.FOLDER + '/' + FileHelper.METADATA_FILE_NAME
+        if os.path.isfile(metadataFile):
+            with open(metadataFile, 'r') as mdFile:
+                self.METADATA = json.load(mdFile)
+
     def combineImages(self, preset):
         if not preset.COMBINE:
             return
@@ -115,11 +126,15 @@ class RenderJob:
         chunks = ListHelper.chunkList(frameFiles, preset.COMBINE_SIZE)
         for i, chunk in enumerate(chunks):
             img = ImageCombineHelper.createCombinedImage(chunk, preset.COMBINE_METHOD)
-            imgPath = self.FOLDER + '/' + "C_{:05d}".format(i + 1) + ".jpg"
+            imgName = "C_{:05d}".format(i + 1) + ".jpg"
+            imgPath = self.FOLDER + '/' + imgName
             img.save(imgPath, quality=100, subsampling=0)
 
             for f in chunk:
                 os.remove(f)
+
+            if self.METADATA is not None:
+                self.METADATA['timestamps'][imgName] = self.METADATA['timestamps'][os.path.basename(chunk[-1])]
 
             self.setProgress((i + 1) / len(chunks))
 
@@ -157,6 +172,25 @@ class RenderJob:
         for i, frame in enumerate(frameFiles):
             img = Image.open(frame)
             imgRes = preset.applyResize(img)
+            imgRes.save(frame, quality=100, subsampling=0)
+            self.setProgress((i + 1) / len(frameFiles))
+
+    def addTimecodes(self, preset):
+        if not preset.TIMECODE:
+            return
+
+        if self.METADATA is None:
+            self.PARENT.sendClientPopup('warning', 'No Timecode Data', 'The Frame Collection doesn\'t contain any Metadata. Timecode Genreation will be skipped.')
+            return
+
+        self.setState(RenderJobState.ADDING_TIMECODES)
+        timecodeRenderer = TimecodeRenderer(self._basefolder)
+
+        frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
+        for i, frame in enumerate(frameFiles):
+            frameInfo = FrameTimecodeInfo(self.METADATA['timestamps'][os.path.basename(frame)], self.METADATA['started'], self.METADATA['ended'])
+            img = Image.open(frame)
+            imgRes = timecodeRenderer.applyTimecode(img, preset, frameInfo)
             imgRes.save(frame, quality=100, subsampling=0)
             self.setProgress((i + 1) / len(frameFiles))
 
@@ -254,6 +288,7 @@ class RenderJob:
             self.blurImages(self.ENHANCEMENT_PRESET)
             self.resizeImages(self.ENHANCEMENT_PRESET)
             self.combineImages(self.RENDER_PRESET)
+            self.addTimecodes(self.ENHANCEMENT_PRESET)
             self.render(self.RENDER_PRESET)
             self.createPalette(self.VIDEO_FORMAT)
             self.encode(self.RENDER_PRESET)

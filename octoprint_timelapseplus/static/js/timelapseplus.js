@@ -85,6 +85,18 @@ $(function() {
             });
         });
 
+        self.getRandomString = function(length = 16) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                result += characters.charAt(randomIndex);
+            }
+
+            return result;
+        };
+
         $("div#tlp-modal-video video source")[0].addEventListener("error", function(e) {
             self.hasVideoPlaybackError(true);
         });
@@ -341,6 +353,7 @@ $(function() {
                 "RESIZING": {title: "Resizing Frames", showProgress: true, icon: "fas fa-arrows-alt"},
                 "COMBINING": {title: "Combining Frames", showProgress: true, icon: "fas fa-clone"},
                 "CREATE_PALETTE": {title: "Generating Color Palette", showProgress: false, icon: "fas fa-paint-brush"},
+                "ADDING_TIMECODES": {title: "Adding Timecodes", showProgress: true, icon: "fas fa-stopwatch"},
                 "ENCODING": {title: "Encoding Video File", showProgress: true, icon: "fas fa-box"}
             };
 

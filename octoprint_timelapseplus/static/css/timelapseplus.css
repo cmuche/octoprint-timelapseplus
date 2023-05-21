@@ -247,6 +247,13 @@
     margin-left: 1em;
 }
 
+#timelapseplus-settings input[type=color] {
+    padding: 0.2em;
+    border: none;
+    height: 2em;
+    width: 3em;
+}
+
 #tlp-modal-webcam-preview .error {
     color: #AA2222;
     width: 50em;
