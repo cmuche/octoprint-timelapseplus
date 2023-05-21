@@ -233,7 +233,7 @@ class RenderJob:
         if preset.COMBINE:
             framePattern = 'C_%05d.jpg'
 
-        # TODO Skip Rendering if there are no effects or interpolation
+        # TODO Skip Rendering if there is no interpolation or one step further: Introduce this as an Interpolation Phase
 
         self.setState(RenderJobState.RENDERING)
 
