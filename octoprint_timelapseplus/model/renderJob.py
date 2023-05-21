@@ -197,19 +197,32 @@ class RenderJob:
             self.setProgress((i + 1) / len(frameFiles))
 
     def createPPRoll(self, preset):
-        if not preset.PPROLL:
+        if not (preset.PPROLL_PRE or preset.PPROLL_POST):
             return
 
         self.setState(RenderJobState.GENERATING_PPROLL)
         frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
-        numPPFrames = preset.getNumSinglePPRollFrames()
+        numFramesPre = preset.getNumPPRollFramesPre()
+        numFramesPost = preset.getNumPPRollFramesPost()
+        currentProgress = 0
 
-        for i in ListHelper.rangeList(numPPFrames):
-            thisRatio = i / numPPFrames
+        for i in ListHelper.rangeList(numFramesPre):
+            thisRatio = i / numFramesPre
             thisOutFile = self.FOLDER + '/' + "PPROLL_PRE_{:05d}".format(i) + ".jpg"
             img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset)
             img.save(thisOutFile, quality=100, subsampling=0)
-            self.setProgress(thisRatio)
+
+            currentProgress += 1
+            self.setProgress(currentProgress / (numFramesPre + numFramesPost))
+
+        for i in ListHelper.rangeList(numFramesPost):
+            thisRatio = i / numFramesPost
+            thisOutFile = self.FOLDER + '/' + "PPROLL_POST_{:05d}".format(i) + ".jpg"
+            img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset)
+            img.save(thisOutFile, quality=100, subsampling=0)
+
+            currentProgress += 1
+            self.setProgress(currentProgress / (numFramesPre + numFramesPost))
 
     def generateFade(self, preset):
         if not preset.FADE:

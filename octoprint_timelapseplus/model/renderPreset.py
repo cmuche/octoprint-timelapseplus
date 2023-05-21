@@ -27,8 +27,10 @@ class RenderPreset:
         self.COMBINE_SIZE = 2
         self.COMBINE_METHOD = CombineMethod.DROP
 
-        self.PPROLL = True
-        self.PPROLL_DURATION = 1000
+        self.PPROLL_PRE = True
+        self.PPROLL_PRE_DURATION = 1000
+        self.PPROLL_POST = True
+        self.PPROLL_POST_DURATION = 1000
 
         if d is not None:
             self.setJSON(d)
@@ -38,10 +40,15 @@ class RenderPreset:
             return self.INTERPOLATE_FRAMERATE
         return self.FRAMERATE
 
-    def getNumSinglePPRollFrames(self):
-        if not self.PPROLL:
+    def getNumPPRollFramesPre(self):
+        if not self.PPROLL_PRE:
             return 0
-        return int(self.getFinalFramerate() * self.PPROLL_DURATION / 1000)
+        return int(self.getFinalFramerate() * self.PPROLL_PRE_DURATION / 1000)
+
+    def getNumPPRollFramesPost(self):
+        if not self.PPROLL_POST:
+            return 0
+        return int(self.getFinalFramerate() * self.PPROLL_POST_DURATION / 1000)
 
     def calculateVideoLength(self, frameZip):
         totalFrames = frameZip.FRAMES
@@ -49,11 +56,14 @@ class RenderPreset:
         if self.COMBINE:
             totalFrames = len(ListHelper.chunkList(ListHelper.rangeList(totalFrames), self.COMBINE_SIZE))
 
-        if self.PPROLL:
-            singleRoll = self.getNumSinglePPRollFrames()
-            totalFrames += 1 * singleRoll
+        ret = int(totalFrames / self.FRAMERATE * 1000)
 
-        return int(totalFrames / self.FRAMERATE * 1000)
+        if self.PPROLL_PRE:
+            ret += self.PPROLL_PRE_DURATION
+        if self.PPROLL_POST:
+            ret += self.PPROLL_POST_DURATION
+
+        return ret
 
     def calculateTotalFrames(self, frameZip, includePPRoll=True):
         totalFrames = frameZip.FRAMES
@@ -65,9 +75,9 @@ class RenderPreset:
             totalFrames *= (self.INTERPOLATE_FRAMERATE / self.FRAMERATE)
             totalFrames = ceil(totalFrames)
 
-        if includePPRoll and self.PPROLL:
-            singleRoll = self.getNumSinglePPRollFrames()
-            totalFrames += 2 * singleRoll
+        if includePPRoll:
+            totalFrames += self.getNumPPRollFramesPre()
+            totalFrames += self.getNumPPRollFramesPost()
 
         return totalFrames
 
