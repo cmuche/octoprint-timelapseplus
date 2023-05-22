@@ -424,153 +424,133 @@
                         </div>
 
                         <div data-bind="visible: $data.fade">
-                            <label class="sub">Fade Color</label>
-                            <div style="display: flex">
-                                <select data-bind="value: $data.fadeColor">
-                                    <option value="AliceBlue">AliceBlue</option>
-                                    <option value="AntiqueWhite">AntiqueWhite</option>
-                                    <option value="Aqua">Aqua</option>
-                                    <option value="Aquamarine">Aquamarine</option>
-                                    <option value="Azure">Azure</option>
-                                    <option value="Beige">Beige</option>
-                                    <option value="Bisque">Bisque</option>
-                                    <option value="Black">Black</option>
-                                    <option value="BlanchedAlmond">BlanchedAlmond</option>
-                                    <option value="Blue">Blue</option>
-                                    <option value="BlueViolet">BlueViolet</option>
-                                    <option value="Brown">Brown</option>
-                                    <option value="BurlyWood">BurlyWood</option>
-                                    <option value="CadetBlue">CadetBlue</option>
-                                    <option value="Chartreuse">Chartreuse</option>
-                                    <option value="Chocolate">Chocolate</option>
-                                    <option value="Coral">Coral</option>
-                                    <option value="CornflowerBlue">CornflowerBlue</option>
-                                    <option value="Cornsilk">Cornsilk</option>
-                                    <option value="Crimson">Crimson</option>
-                                    <option value="Cyan">Cyan</option>
-                                    <option value="DarkBlue">DarkBlue</option>
-                                    <option value="DarkCyan">DarkCyan</option>
-                                    <option value="DarkGoldenRod">DarkGoldenRod</option>
-                                    <option value="DarkGray">DarkGray</option>
-                                    <option value="DarkGreen">DarkGreen</option>
-                                    <option value="DarkKhaki">DarkKhaki</option>
-                                    <option value="DarkMagenta">DarkMagenta</option>
-                                    <option value="DarkOliveGreen">DarkOliveGreen</option>
-                                    <option value="Darkorange">Darkorange</option>
-                                    <option value="DarkOrchid">DarkOrchid</option>
-                                    <option value="DarkRed">DarkRed</option>
-                                    <option value="DarkSalmon">DarkSalmon</option>
-                                    <option value="DarkSeaGreen">DarkSeaGreen</option>
-                                    <option value="DarkSlateBlue">DarkSlateBlue</option>
-                                    <option value="DarkSlateGray">DarkSlateGray</option>
-                                    <option value="DarkTurquoise">DarkTurquoise</option>
-                                    <option value="DarkViolet">DarkViolet</option>
-                                    <option value="DeepPink">DeepPink</option>
-                                    <option value="DeepSkyBlue">DeepSkyBlue</option>
-                                    <option value="DimGray">DimGray</option>
-                                    <option value="DodgerBlue">DodgerBlue</option>
-                                    <option value="FireBrick">FireBrick</option>
-                                    <option value="FloralWhite">FloralWhite</option>
-                                    <option value="ForestGreen">ForestGreen</option>
-                                    <option value="Fuchsia">Fuchsia</option>
-                                    <option value="Gainsboro">Gainsboro</option>
-                                    <option value="GhostWhite">GhostWhite</option>
-                                    <option value="Gold">Gold</option>
-                                    <option value="GoldenRod">GoldenRod</option>
-                                    <option value="Gray">Gray</option>
-                                    <option value="Green">Green</option>
-                                    <option value="GreenYellow">GreenYellow</option>
-                                    <option value="HoneyDew">HoneyDew</option>
-                                    <option value="HotPink">HotPink</option>
-                                    <option value="IndianRed">IndianRed</option>
-                                    <option value="Indigo">Indigo</option>
-                                    <option value="Ivory">Ivory</option>
-                                    <option value="Khaki">Khaki</option>
-                                    <option value="Lavender">Lavender</option>
-                                    <option value="LavenderBlush">LavenderBlush</option>
-                                    <option value="LawnGreen">LawnGreen</option>
-                                    <option value="LemonChiffon">LemonChiffon</option>
-                                    <option value="LightBlue">LightBlue</option>
-                                    <option value="LightCoral">LightCoral</option>
-                                    <option value="LightCyan">LightCyan</option>
-                                    <option value="LightGoldenRodYellow">LightGoldenRodYellow</option>
-                                    <option value="LightGreen">LightGreen</option>
-                                    <option value="LightGrey">LightGrey</option>
-                                    <option value="LightPink">LightPink</option>
-                                    <option value="LightSalmon">LightSalmon</option>
-                                    <option value="LightSeaGreen">LightSeaGreen</option>
-                                    <option value="LightSkyBlue">LightSkyBlue</option>
-                                    <option value="LightSlateGray">LightSlateGray</option>
-                                    <option value="LightSteelBlue">LightSteelBlue</option>
-                                    <option value="LightYellow">LightYellow</option>
-                                    <option value="Lime">Lime</option>
-                                    <option value="LimeGreen">LimeGreen</option>
-                                    <option value="Linen">Linen</option>
-                                    <option value="Magenta">Magenta</option>
-                                    <option value="Maroon">Maroon</option>
-                                    <option value="MediumAquaMarine">MediumAquaMarine</option>
-                                    <option value="MediumBlue">MediumBlue</option>
-                                    <option value="MediumOrchid">MediumOrchid</option>
-                                    <option value="MediumPurple">MediumPurple</option>
-                                    <option value="MediumSeaGreen">MediumSeaGreen</option>
-                                    <option value="MediumSlateBlue">MediumSlateBlue</option>
-                                    <option value="MediumSpringGreen">MediumSpringGreen</option>
-                                    <option value="MediumTurquoise">MediumTurquoise</option>
-                                    <option value="MediumVioletRed">MediumVioletRed</option>
-                                    <option value="MidnightBlue">MidnightBlue</option>
-                                    <option value="MintCream">MintCream</option>
-                                    <option value="MistyRose">MistyRose</option>
-                                    <option value="Moccasin">Moccasin</option>
-                                    <option value="NavajoWhite">NavajoWhite</option>
-                                    <option value="Navy">Navy</option>
-                                    <option value="OldLace">OldLace</option>
-                                    <option value="Olive">Olive</option>
-                                    <option value="OliveDrab">OliveDrab</option>
-                                    <option value="Orange">Orange</option>
-                                    <option value="OrangeRed">OrangeRed</option>
-                                    <option value="Orchid">Orchid</option>
-                                    <option value="PaleGoldenRod">PaleGoldenRod</option>
-                                    <option value="PaleGreen">PaleGreen</option>
-                                    <option value="PaleTurquoise">PaleTurquoise</option>
-                                    <option value="PaleVioletRed">PaleVioletRed</option>
-                                    <option value="PapayaWhip">PapayaWhip</option>
-                                    <option value="PeachPuff">PeachPuff</option>
-                                    <option value="Peru">Peru</option>
-                                    <option value="Pink">Pink</option>
-                                    <option value="Plum">Plum</option>
-                                    <option value="PowderBlue">PowderBlue</option>
-                                    <option value="Purple">Purple</option>
-                                    <option value="Red">Red</option>
-                                    <option value="RosyBrown">RosyBrown</option>
-                                    <option value="RoyalBlue">RoyalBlue</option>
-                                    <option value="SaddleBrown">SaddleBrown</option>
-                                    <option value="Salmon">Salmon</option>
-                                    <option value="SandyBrown">SandyBrown</option>
-                                    <option value="SeaGreen">SeaGreen</option>
-                                    <option value="SeaShell">SeaShell</option>
-                                    <option value="Sienna">Sienna</option>
-                                    <option value="Silver">Silver</option>
-                                    <option value="SkyBlue">SkyBlue</option>
-                                    <option value="SlateBlue">SlateBlue</option>
-                                    <option value="SlateGray">SlateGray</option>
-                                    <option value="Snow">Snow</option>
-                                    <option value="SpringGreen">SpringGreen</option>
-                                    <option value="SteelBlue">SteelBlue</option>
-                                    <option value="Tan">Tan</option>
-                                    <option value="Teal">Teal</option>
-                                    <option value="Thistle">Thistle</option>
-                                    <option value="Tomato">Tomato</option>
-                                    <option value="Turquoise">Turquoise</option>
-                                    <option value="Violet">Violet</option>
-                                    <option value="Wheat">Wheat</option>
-                                    <option value="White">White</option>
-                                    <option value="WhiteSmoke">WhiteSmoke</option>
-                                    <option value="Yellow">Yellow</option>
-                                    <option value="YellowGreen">YellowGreen</option>
+                            <label class="sub">Color</label>
+                            <input type="color" maxlength="7" data-bind="value: $data.fadeColor">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="sub checkbox">
+                            <input type="checkbox" data-bind="checked: $data.ppRoll">
+                            Pre/Post Roll
+                        </label>
+                    </div>
+
+                    <div class="sub-settings" data-bind="visible: $data.ppRoll">
+                        <div>
+                            <label class="sub">Max Blur Radius</label>
+                            <input type="number" step='1' min="0" max="500" width="5" data-bind="value: $data.ppRollBlurRadius">
+                        </div>
+
+                        <div>
+                            <label class="sub">Max Zoom Factor</label>
+                            <input type="number" step='0.01' min="0.0" max="5.0" width="5" data-bind="value: $data.ppRollZoomFactor">
+                        </div>
+
+                        <h4>Pre-Roll</h4>
+                        <div class="sub-settings">
+                            <div>
+                                <label class="sub">Duration (ms)</label>
+                                <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.ppRollPreDuration">
+                            </div>
+                            <div>
+                                <label class="sub">Type</label>
+                                <select data-bind="value: $data.ppRollPreType">
+                                    <option value="STILL">Still Frame</option>
+                                    <option value="STILL_FINAL">Still Frame (Final)</option>
+                                    <option value="LAPSE">Short Timelapse</option>
                                 </select>
-                                <div class="colorPreview" data-bind="style: {'background-color': $data.fadeColor()}"></div>
+                            </div>
+                            <div>
+                                <label class="sub">Ease Function</label>
+                                <select data-bind="value: $data.ppRollPreEaseFn">
+                                    <option value="LINEAR">Linear</option>
+                                    <option value="EASE_IN">Ease-In</option>
+                                    <option value="EASE_IN_OUT">Ease-In-Out</option>
+                                    <span class="help-block">Animations during the Pre-Roll will be mapped by this function. Ease-In and Ease-In-Out will generate a much smoother transition between the Pre-Roll and the timelapse.</span>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.ppRollPreZoom">
+                                    Zoom Animation
+                                </label>
+                            </div>
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.ppRollPreBlur">
+                                    Blur Animation
+                                </label>
                             </div>
                         </div>
+
+                        <h4>Post-Roll</h4>
+                        <div class="sub-settings">
+                            <div>
+                                <label class="sub">Duration (ms)</label>
+                                <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.ppRollPostDuration">
+                            </div>
+                            <div>
+                                <label class="sub">Type</label>
+                                <select data-bind="value: $data.ppRollPostType">
+                                    <option value="STILL">Still Frame</option>
+                                    <option value="STILL_FINAL">Still Frame (Final)</option>
+                                    <option value="LAPSE">Short Timelapse</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="sub">Ease Function</label>
+                                <select data-bind="value: $data.ppRollPostEaseFn">
+                                    <option value="LINEAR">Linear</option>
+                                    <option value="EASE_IN">Ease-In</option>
+                                    <option value="EASE_IN_OUT">Ease-In-Out</option>
+                                    <span class="help-block">Animations during the Post-Roll will be mapped by this function. Ease-In and Ease-In-Out will generate a much smoother transition between the timelapse and the Post-Roll.</span>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.ppRollPostZoom">
+                                    Zoom Animation
+                                </label>
+                            </div>
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.ppRollPostBlur">
+                                    Blur Animation
+                                </label>
+                            </div>
+                        </div>
+
+                        <h4>Text</h4>
+                        <label class="sub checkbox">
+                            <input type="checkbox" data-bind="checked: $data.ppRollText">
+                            Enable Pre-Roll Text
+                            <span class="help-block">Show the source print file name or parts of it as a Pre-Roll text overlay</span>
+                        </label>
+                        <div class="sub-settings" data-bind="visible: $data.ppRollText">
+                            <div>
+                                <label class="sub">Size</label>
+                                <input type="number" step='1' min="1" max="100" width="5" data-bind="value: $data.ppRollTextSize">
+                            </div>
+                            <div>
+                                <label class="sub">Text Color</label>
+                                <input type="color" maxlength="7" data-bind="value: $data.ppRollTextForeground">
+                            </div>
+                            <div>
+                                <label class="sub">Background Color</label>
+                                <input type="color" maxlength="7" data-bind="value: $data.ppRollTextBackground">
+                            </div>
+                            <div>
+                                <label class="sub">RegEx</label>
+                                <input type="text" data-bind="value: $data.ppRollTextRegex">
+                                <span class="help-block">
+                                    This RegEx is applied to the file name. Every matching group creates a new line of text.
+                                    By that you can extract multiple information (name, filament, temperature, ...) out of the print file name.
+                                    You can use <a target="_blank" href="https://regex101.com">this tool</a> to verify your RegEx string.
+                                </span>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div>
