@@ -24,6 +24,19 @@ Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render y
   - Based on __motion calculation__ algorithms
   - Or just __blend frames__ together to generate sub-frames
 - __Combine/Blend multiple frames__ to reduce the number of total frames
+- __Pre-Roll__ and __Post-Roll__ Effects
+  - __Still Frame__ / __Short Timelapse__ / __Final Preview__
+  - __Animated__
+  - Show __Print File__ and __Infos__ at the Beginning
+- Add __Timecode__ Information
+  - Many Variations
+    - Text
+    - Elapsed Print Time
+    - Time
+    - Analog Clock
+    - Progress Bar
+   - Customizable __Colors__
+   - Customizable __Position__ and __Size__
 - Colorful Fade-In and Fade-Out effects
 - Manage and set up your enhancement- and render presets via the settings page
 - Snapshots are stored in __Frame Collections__, so you can re-render them at any time with different settings and presets
