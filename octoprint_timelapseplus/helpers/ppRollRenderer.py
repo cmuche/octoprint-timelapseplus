@@ -1,7 +1,10 @@
 import math
 
 from PIL import Image, ImageFilter
+from PIL import ImageDraw
+from PIL import ImageFont
 
+from .colorHelper import ColorHelper
 from ..model.ppRollEaseFn import PPRollEaseFn
 from ..model.ppRollPhase import PPRollPhase
 from ..model.ppRollType import PPRollType
@@ -9,7 +12,7 @@ from ..model.ppRollType import PPRollType
 
 class PPRollRenderer:
     @staticmethod
-    def renderFrame(ratio, frames, preset, phase):
+    def renderFrame(ratio, frames, preset, phase, metadata, baseFolder):
         type = preset.PPROLL_TYPE
 
         if phase == PPRollPhase.PRE:
@@ -34,6 +37,19 @@ class PPRollRenderer:
         if preset.PPROLL_ZOOM:
             zoomFactor = 1 + ratio * (preset.PPROLL_ZOOM_FACTOR - 1)
             img = PPRollRenderer.zoomImage(img, zoomFactor)
+
+        if preset.PPROLL_TEXT and phase == PPRollPhase.PRE:
+            if metadata is None:
+                raise Exception('The Frame Collection doesn\'t contain any Metadata. Pre/Post Roll Text can\'t be added.')
+            printName = metadata['baseName']
+
+            imgText = Image.new('RGBA', img.size)
+            fnt = ImageFont.truetype(baseFolder + '/static/assets/fonts/Inconsolata-Bold.ttf', 100)
+            draw = ImageDraw.Draw(imgText, 'RGBA')
+            col = ColorHelper.hexToRgba(preset.PPROLL_TEXT_FOREGROUND, max(0, ratio - 0.2))
+            draw.text((10, 10), printName, font=fnt, fill=col, anchor='la')
+            img.paste(imgText, (0, 0), imgText)
+            imgText.close()
 
         return img
 

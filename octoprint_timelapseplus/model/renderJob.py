@@ -210,7 +210,7 @@ class RenderJob:
         for i in ListHelper.rangeList(numFramesPre):
             thisRatio = i / numFramesPre
             thisOutFile = self.FOLDER + '/' + "PPROLL_PRE_{:05d}".format(i) + ".jpg"
-            img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset, PPRollPhase.PRE)
+            img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset, PPRollPhase.PRE, self.METADATA, self._basefolder)
             img.save(thisOutFile, quality=100, subsampling=0)
 
             currentProgress += 1
@@ -219,7 +219,7 @@ class RenderJob:
         for i in ListHelper.rangeList(numFramesPost):
             thisRatio = i / numFramesPost
             thisOutFile = self.FOLDER + '/' + "PPROLL_POST_{:05d}".format(i) + ".jpg"
-            img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset, PPRollPhase.POST)
+            img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset, PPRollPhase.POST, self.METADATA, self._basefolder)
             img.save(thisOutFile, quality=100, subsampling=0)
 
             currentProgress += 1

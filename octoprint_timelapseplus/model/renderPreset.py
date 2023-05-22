@@ -39,6 +39,9 @@ class RenderPreset:
         self.PPROLL_BLUR_RADIUS = 100
         self.PPROLL_ZOOM = True
         self.PPROLL_ZOOM_FACTOR = 1.5
+        self.PPROLL_TEXT = True
+        self.PPROLL_TEXT_FOREGROUND = '#FF0000'
+        self.PPROLL_TEXT_BACKGROUND = '#000000'
 
         if d is not None:
             self.setJSON(d)
