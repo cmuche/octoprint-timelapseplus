@@ -11,7 +11,7 @@ from ..model.timecodeType import TimecodeType
 
 class TimecodeRenderer:
     def __init__(self, baseFolder):
-        self.__basefolder = baseFolder
+        self._basefolder = baseFolder
         self.TEXT_PADDING = 0.1
         self.AA_FACTOR = 3
 
@@ -204,7 +204,7 @@ class TimecodeRenderer:
         colFg = ColorHelper.hexToRgba(colPrimary, 0.95)
         colBg = ColorHelper.hexToRgba(colSecondary, 0.5)
 
-        fnt = ImageFont.truetype(self.__basefolder + '/static/assets/fonts/Inconsolata-Regular.ttf', size)
+        fnt = ImageFont.truetype(self._basefolder + '/static/assets/fonts/Inconsolata-Regular.ttf', size)
         padding = int(size * self.TEXT_PADDING)
         dummy = Image.new("RGBA", (1, 1))
         dummyDraw = ImageDraw.Draw(dummy, 'RGBA')
