@@ -30,18 +30,24 @@ class RenderPreset:
         self.COMBINE_METHOD = CombineMethod.DROP
 
         self.PPROLL_PRE = True
-        self.PPROLL_PRE_DURATION = 3000
+        self.PPROLL_PRE_DURATION = 5000
         self.PPROLL_POST = True
-        self.PPROLL_POST_DURATION = 1000
-        self.PPROLL_TYPE = PPRollType.STILL
-        self.PPROLL_EASE_FN = PPRollEaseFn.EASE_IN_OUT
-        self.PPROLL_BLUR = True
-        self.PPROLL_BLUR_RADIUS = 100
-        self.PPROLL_ZOOM = True
-        self.PPROLL_ZOOM_FACTOR = 1.5
+        self.PPROLL_POST_DURATION = 3000
+        self.PPROLL_PRE_TYPE = PPRollType.STILL_FINAL
+        self.PPROLL_POST_TYPE = PPRollType.LAPSE
+        self.PPROLL_PRE_EASE_FN = PPRollEaseFn.EASE_IN_OUT
+        self.PPROLL_POST_EASE_FN = PPRollEaseFn.EASE_IN
+        self.PPROLL_PRE_BLUR = True
+        self.PPROLL_POST_BLUR = False
+        self.PPROLL_BLUR_RADIUS = 50
+        self.PPROLL_PRE_ZOOM = True
+        self.PPROLL_POST_ZOOM = True
+        self.PPROLL_ZOOM_FACTOR = 1.25
         self.PPROLL_TEXT = True
-        self.PPROLL_TEXT_FOREGROUND = '#FF0000'
+        self.PPROLL_TEXT_SIZE = 10
+        self.PPROLL_TEXT_FOREGROUND = '#FFFFFF'
         self.PPROLL_TEXT_BACKGROUND = '#000000'
+        self.PPROLL_TEXT_REGEX = '(.+) - [A-Z]+ ([0-9\\,\\.m]+) - (.+) [0-9]+C'
 
         if d is not None:
             self.setJSON(d)

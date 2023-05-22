@@ -1,4 +1,5 @@
 import math
+import re
 
 from PIL import Image, ImageFilter
 from PIL import ImageDraw
@@ -13,41 +14,73 @@ from ..model.ppRollType import PPRollType
 class PPRollRenderer:
     @staticmethod
     def renderFrame(ratio, frames, preset, phase, metadata, baseFolder):
-        type = preset.PPROLL_TYPE
+        ppBlur = preset.PPROLL_PRE_BLUR
+        ppType = preset.PPROLL_PRE_TYPE
+        ppEaseFn = preset.PPROLL_PRE_EASE_FN
+        ppZoom = preset.PPROLL_PRE_ZOOM
+        if phase == PPRollPhase.POST:
+            ppBlur = preset.PPROLL_POST_BLUR
+            ppType = preset.PPROLL_POST_TYPE
+            ppEaseFn = preset.PPROLL_POST_EASE_FN
+            ppZoom = preset.PPROLL_POST_ZOOM
 
         if phase == PPRollPhase.PRE:
-            ratio = PPRollRenderer.applyEaseFn(preset.PPROLL_EASE_FN, 1 - ratio)
+            ratio = PPRollRenderer.applyEaseFn(ppEaseFn, 1 - ratio)
         else:
-            ratio = PPRollRenderer.applyEaseFn(preset.PPROLL_EASE_FN, ratio)
+            ratio = PPRollRenderer.applyEaseFn(ppEaseFn, ratio)
 
         img = None
 
-        if type == PPRollType.STILL:
+        if ppType == PPRollType.STILL:
             img = PPRollRenderer.getStillFrame(frames, phase)
-        elif type == PPRollType.STILL_FINAL:
+        elif ppType == PPRollType.STILL_FINAL:
             img = PPRollRenderer.getStillFrame(frames, PPRollPhase.POST)
-        elif type == PPRollType.LAPSE:
+        elif ppType == PPRollType.LAPSE:
             reverse = (phase == PPRollPhase.POST)
             img = PPRollRenderer.getLapseFrame(frames, ratio, reverse)
 
-        if preset.PPROLL_BLUR:
+        if ppBlur:
             blurRadius = ratio * preset.PPROLL_BLUR_RADIUS
             img = img.filter(ImageFilter.GaussianBlur(blurRadius))
 
-        if preset.PPROLL_ZOOM:
+        zoomFactor = 1.0
+        if ppZoom:
             zoomFactor = 1 + ratio * (preset.PPROLL_ZOOM_FACTOR - 1)
             img = PPRollRenderer.zoomImage(img, zoomFactor)
 
         if preset.PPROLL_TEXT and phase == PPRollPhase.PRE:
             if metadata is None:
                 raise Exception('The Frame Collection doesn\'t contain any Metadata. Pre/Post Roll Text can\'t be added.')
+
             printName = metadata['baseName']
+            match = re.search(preset.PPROLL_TEXT_REGEX, printName)
+            gList = match.groups() if match else [printName]
+            printName = '\n'.join(gList)
+
+            imgW, imgH = img.size
+            textSize = int(imgH * preset.PPROLL_TEXT_SIZE / 100)
+            textSpacing = int(textSize / 4)
+            textPadding = int(textSize / 3)
+            fnt = ImageFont.truetype(baseFolder + '/static/assets/fonts/Inconsolata-Bold.ttf', textSize)
+
+            colText = ColorHelper.hexToRgba(preset.PPROLL_TEXT_FOREGROUND, max(0, ratio - 0.2))
+            colBg = ColorHelper.hexToRgba(preset.PPROLL_TEXT_BACKGROUND, max(0, ratio - 0.2) * 0.5)
 
             imgText = Image.new('RGBA', img.size)
-            fnt = ImageFont.truetype(baseFolder + '/static/assets/fonts/Inconsolata-Bold.ttf', 100)
             draw = ImageDraw.Draw(imgText, 'RGBA')
-            col = ColorHelper.hexToRgba(preset.PPROLL_TEXT_FOREGROUND, max(0, ratio - 0.2))
-            draw.text((10, 10), printName, font=fnt, fill=col, anchor='la')
+
+            textBbox = draw.multiline_textbbox((0, 0), printName, font=fnt, anchor='la', spacing=textSpacing)
+            backgroundBbox = (0, 0, textBbox[2] + 2 * textPadding, textBbox[3] + 2 * textPadding)
+
+            offsX = int(imgW / 2 - backgroundBbox[2] / 2)
+            offsY = int(imgH / 2 - backgroundBbox[3] / 2)
+
+            draw.rectangle((offsX, offsY, offsX + backgroundBbox[2], offsY + backgroundBbox[3]), fill=colBg)
+            draw.multiline_text((offsX + textPadding, offsY + textPadding), printName, align='center', font=fnt, fill=colText, anchor='la', spacing=textSpacing)
+
+            textZoom = 0.6 + zoomFactor * 0.4
+            imgText = PPRollRenderer.zoomImage(imgText, textZoom)
+
             img.paste(imgText, (0, 0), imgText)
             imgText.close()
 
@@ -55,6 +88,9 @@ class PPRollRenderer:
 
     @staticmethod
     def zoomImage(image, zoomFactor):
+        if zoomFactor == 1:
+            return image
+
         width, height = image.size
         cropWidth = int(width / zoomFactor)
         cropHeight = int(height / zoomFactor)
