@@ -74,9 +74,8 @@ class RenderPreset:
 
         ret = int(totalFrames / self.FRAMERATE * 1000)
 
-        if self.PPROLL_PRE:
+        if self.PPROLL:
             ret += self.PPROLL_PRE_DURATION
-        if self.PPROLL_POST:
             ret += self.PPROLL_POST_DURATION
 
         return ret
