@@ -318,7 +318,7 @@ class RenderJob:
         videoFile = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.' + self.VIDEO_FORMAT.EXTENSION
         outFileName = 'out.' + self.VIDEO_FORMAT.EXTENSION
 
-        cmd = ['-framerate', str(self.RENDER_PRESET.getFinalFramerate()), '-i', 'E_%05d.jpg']
+        cmd = ['-framerate', str(self.RENDER_PRESET.getFinalFramerate()), '-i', 'E_%05d.jpg', '-r', str(self.RENDER_PRESET.getFinalFramerate())]
         cmd += self.VIDEO_FORMAT.getRenderArgs()
         cmd += [outFileName]
 
