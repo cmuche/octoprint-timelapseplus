@@ -118,6 +118,24 @@ class RenderPreset:
         if 'combine' in d: self.COMBINE = d['combine']
         if 'combineSize' in d: self.COMBINE_SIZE = int(d['combineSize'])
         if 'combineMethod' in d: self.COMBINE_METHOD = CombineMethod[d['combineMethod']]
+        if 'ppRoll' in d: self.PPROLL = d['ppRoll']
+        if 'ppRollPreDuration' in d: self.PPROLL_PRE_DURATION = int(d['ppRollPreDuration'])
+        if 'ppRollPostDuration' in d: self.PPROLL_POST_DURATION = int(d['ppRollPostDuration'])
+        if 'ppRollPreType' in d: self.PPROLL_PRE_TYPE = PPRollType[d['ppRollPreType']]
+        if 'ppRollPostType' in d: self.PPROLL_POST_TYPE = PPRollType[d['ppRollPostType']]
+        if 'ppRollPreEaseFn' in d: self.PPROLL_PRE_EASE_FN = PPRollEaseFn[d['ppRollPreEaseFn']]
+        if 'ppRollPostEaseFn' in d: self.PPROLL_POST_EASE_FN = PPRollEaseFn[d['ppRollPostEaseFn']]
+        if 'ppRollPreBlur' in d: self.PPROLL_PRE_BLUR = d['ppRollPreBlur']
+        if 'ppRollPostBlur' in d: self.PPROLL_POST_BLUR = d['ppRollPostBlur']
+        if 'ppRollBlurRadius' in d: self.PPROLL_BLUR_RADIUS = int(d['ppRollBlurRadius'])
+        if 'ppRollPreZoom' in d: self.PPROLL_PRE_ZOOM = d['ppRollPreZoom']
+        if 'ppRollPostZoom' in d: self.PPROLL_POST_ZOOM = d['ppRollPostZoom']
+        if 'ppRollZoomFactor' in d: self.PPROLL_ZOOM_FACTOR = float(d['ppRollZoomFactor'])
+        if 'ppRollText' in d: self.PPROLL_TEXT = d['ppRollText']
+        if 'ppRollTextSize' in d: self.PPROLL_TEXT_SIZE = int(d['ppRollTextSize'])
+        if 'ppRollTextForeground' in d: self.PPROLL_TEXT_FOREGROUND = d['ppRollTextForeground']
+        if 'ppRollTextBackground' in d: self.PPROLL_TEXT_BACKGROUND = d['ppRollTextBackground']
+        if 'ppRollTextRegex' in d: self.PPROLL_TEXT_REGEX = d['ppRollTextRegex']
 
     def getJSON(self):
         return dict(
@@ -135,5 +153,23 @@ class RenderPreset:
             fadeColor=self.FADE_COLOR,
             combine=self.COMBINE,
             combineSize=self.COMBINE_SIZE,
-            combineMethod=self.COMBINE_METHOD.name
+            combineMethod=self.COMBINE_METHOD.name,
+            ppRoll=self.PPROLL,
+            ppRollPreDuration=self.PPROLL_PRE_DURATION,
+            ppRollPostDuration=self.PPROLL_POST_DURATION,
+            ppRollPreType=self.PPROLL_PRE_TYPE.name,
+            ppRollPostType=self.PPROLL_POST_TYPE.name,
+            ppRollPreEaseFn=self.PPROLL_PRE_EASE_FN.name,
+            ppRollPostEaseFn=self.PPROLL_POST_EASE_FN.name,
+            ppRollPreBlur=self.PPROLL_PRE_BLUR,
+            ppRollPostBlur=self.PPROLL_POST_BLUR,
+            ppRollBlurRadius=self.PPROLL_BLUR_RADIUS,
+            ppRollPreZoom=self.PPROLL_PRE_ZOOM,
+            ppRollPostZoom=self.PPROLL_POST_ZOOM,
+            ppRollZoomFactor=self.PPROLL_ZOOM_FACTOR,
+            ppRollText=self.PPROLL_TEXT,
+            ppRollTextSize=self.PPROLL_TEXT_SIZE,
+            ppRollTextForeground=self.PPROLL_TEXT_FOREGROUND,
+            ppRollTextBackground=self.PPROLL_TEXT_BACKGROUND,
+            ppRollTextRegex=self.PPROLL_TEXT_REGEX
         )
