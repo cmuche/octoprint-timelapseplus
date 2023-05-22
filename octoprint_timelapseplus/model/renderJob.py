@@ -198,7 +198,7 @@ class RenderJob:
             self.setProgress((i + 1) / len(frameFiles))
 
     def createPPRoll(self, preset):
-        if not (preset.PPROLL_PRE or preset.PPROLL_POST):
+        if not preset.PPROLL:
             return
 
         self.setState(RenderJobState.GENERATING_PPROLL)

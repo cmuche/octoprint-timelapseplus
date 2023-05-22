@@ -29,9 +29,8 @@ class RenderPreset:
         self.COMBINE_SIZE = 2
         self.COMBINE_METHOD = CombineMethod.DROP
 
-        self.PPROLL_PRE = True
+        self.PPROLL = True
         self.PPROLL_PRE_DURATION = 5000
-        self.PPROLL_POST = True
         self.PPROLL_POST_DURATION = 3000
         self.PPROLL_PRE_TYPE = PPRollType.STILL_FINAL
         self.PPROLL_POST_TYPE = PPRollType.LAPSE
@@ -58,12 +57,12 @@ class RenderPreset:
         return self.FRAMERATE
 
     def getNumPPRollFramesPre(self):
-        if not self.PPROLL_PRE:
+        if not self.PPROLL:
             return 0
         return int(self.getFinalFramerate() * self.PPROLL_PRE_DURATION / 1000)
 
     def getNumPPRollFramesPost(self):
-        if not self.PPROLL_POST:
+        if not self.PPROLL:
             return 0
         return int(self.getFinalFramerate() * self.PPROLL_POST_DURATION / 1000)
 
