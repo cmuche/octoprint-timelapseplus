@@ -431,6 +431,130 @@
 
                     <div>
                         <label class="sub checkbox">
+                            <input type="checkbox" data-bind="checked: $data.ppRoll">
+                            Pre/Post Roll
+                        </label>
+                    </div>
+
+                    <div class="sub-settings" data-bind="visible: $data.ppRoll">
+                        <div>
+                            <label class="sub">Max Blur Radius</label>
+                            <input type="number" step='1' min="0" max="500" width="5" data-bind="value: $data.ppRollBlurRadius">
+                        </div>
+
+                        <div>
+                            <label class="sub">Max Zoom Factor</label>
+                            <input type="number" step='0.01' min="0.0" max="5.0" width="5" data-bind="value: $data.ppRollZoomFactor">
+                        </div>
+
+                        <h4>Pre-Roll</h4>
+                        <div class="sub-settings">
+                            <div>
+                                <label class="sub">Duration (ms)</label>
+                                <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.ppRollPreDuration">
+                            </div>
+                            <div>
+                                <label class="sub">Type</label>
+                                <select data-bind="value: $data.ppRollPreType">
+                                    <option value="STILL">Still Frame</option>
+                                    <option value="STILL_FINAL">Still Frame (Final)</option>
+                                    <option value="LAPSE">Short Timelapse</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="sub">Ease Function</label>
+                                <select data-bind="value: $data.ppRollPreEaseFn">
+                                    <option value="LINEAR">Linear</option>
+                                    <option value="EASE_IN">Ease-In</option>
+                                    <option value="EASE_IN_OUT">Ease-In-Out</option>
+                                    <span class="help-block">Animations during the Pre-Roll will be mapped by this function. Ease-In and Ease-In-Out will generate a much smoother transition between the Pre-Roll and the timelapse.</span>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.ppRollPreZoom">
+                                    Zoom Animation
+                                </label>
+                            </div>
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.ppRollPreBlur">
+                                    Blur Animation
+                                </label>
+                            </div>
+                        </div>
+
+                        <h4>Post-Roll</h4>
+                        <div class="sub-settings">
+                            <div>
+                                <label class="sub">Duration (ms)</label>
+                                <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.ppRollPostDuration">
+                            </div>
+                            <div>
+                                <label class="sub">Type</label>
+                                <select data-bind="value: $data.ppRollPostType">
+                                    <option value="STILL">Still Frame</option>
+                                    <option value="STILL_FINAL">Still Frame (Final)</option>
+                                    <option value="LAPSE">Short Timelapse</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="sub">Ease Function</label>
+                                <select data-bind="value: $data.ppRollPostEaseFn">
+                                    <option value="LINEAR">Linear</option>
+                                    <option value="EASE_IN">Ease-In</option>
+                                    <option value="EASE_IN_OUT">Ease-In-Out</option>
+                                    <span class="help-block">Animations during the Post-Roll will be mapped by this function. Ease-In and Ease-In-Out will generate a much smoother transition between the timelapse and the Post-Roll.</span>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.ppRollPostZoom">
+                                    Zoom Animation
+                                </label>
+                            </div>
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.ppRollPostBlur">
+                                    Blur Animation
+                                </label>
+                            </div>
+                        </div>
+
+                        <h4>Text</h4>
+                        <label class="sub checkbox">
+                            <input type="checkbox" data-bind="checked: $data.ppRollText">
+                            Enable Pre-Roll Text
+                            <span class="help-block">Show the source print file name or parts of it as a Pre-Roll text overlay</span>
+                        </label>
+                        <div class="sub-settings" data-bind="visible: $data.ppRollText">
+                            <div>
+                                <label class="sub">Size</label>
+                                <input type="number" step='1' min="1" max="100" width="5" data-bind="value: $data.ppRollTextSize">
+                            </div>
+                            <div>
+                                <label class="sub">Text Color</label>
+                                <input type="color" maxlength="7" data-bind="value: $data.ppRollTextForeground">
+                            </div>
+                            <div>
+                                <label class="sub">Background Color</label>
+                                <input type="color" maxlength="7" data-bind="value: $data.ppRollTextBackground">
+                            </div>
+                            <div>
+                                <label class="sub">RegEx</label>
+                                <input type="text" data-bind="value: $data.ppRollTextRegex">
+                                <span class="help-block">
+                                    This RegEx is applied to the file name. Every matching group creates a new line of text.
+                                    By that you can extract multiple information (name, filament, temperature, ...) out of the print file name.
+                                    You can use <a target="_blank" href="https://regex101.com">this tool</a> to verify your RegEx string.
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div>
+                        <label class="sub checkbox">
                             <input type="checkbox" data-bind="checked: $data.interpolate">
                             Enable Frame Interpolation
                         </label>
