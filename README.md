@@ -31,10 +31,10 @@ Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render y
 - Add __Timecode__ information
   - Many variations
     - Text
-    - Elapsed Print Time
     - Time
-    - Analog Clock
-    - Progress Bar
+    - Elapsed time
+    - Analog clock
+    - Progress bar
    - Customizable __colors__
    - Customizable __position__ and __size__
 - Colorful Fade-In and Fade-Out effects
