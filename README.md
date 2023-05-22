@@ -6,7 +6,10 @@ Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render y
 |------------------------------------------------------------------------------------------------------------------------------------------------|
 | Click the image to see the video                                                                                                               |                                                                                                               |
 
-# Features
+# 👀 Examples 
+Check out the [_Examples Page_](https://github.com/cmuche/octoprint-timelapseplus/wiki/Examples)
+
+# 🚀 Features
 - Trigger snapshots via __commands__ in your GCODE (e.g. on layer change)
   - __@-Commands__ like ``@SNAPSHOT``
   - __Action Commands__ like ``//action:SNAPSHOT`` (on Marlin via ``M118``)
@@ -54,10 +57,10 @@ Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render y
 - __Purge__ Videos and Frame Collections after `n` days
 - Timelapse+ __doesn't modify your GCODE__ and __doesn't affect your printer's movements__!
 
-# Wiki
+# 📚 Wiki
 You can find the Documentation and Help on the [Timelapse+ Wiki Pages](https://github.com/cmuche/octoprint-timelapseplus/wiki).
 
-# Screenshots
+# 🖥️ Screenshots
 
 ### File Manager
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/files.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/files.png)
