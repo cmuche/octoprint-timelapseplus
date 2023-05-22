@@ -275,7 +275,7 @@ class RenderJob:
 
         self.setState(RenderJobState.RENDERING)
 
-        cmd = ['-framerate', str(preset.FRAMERATE), '-i', framePattern]
+        cmd = ['-framerate', str(preset.FRAMERATE), '-i', framePattern, '-r', str(self.RENDER_PRESET.getFinalFramerate())]
 
         videoFilters = []
 
