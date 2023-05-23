@@ -266,35 +266,38 @@ class RenderJob:
         cmd = ['-i', 'E_%05d.jpg', '-filter_complex', '[0:v]palettegen', 'palette.png']
         self.runFfmpegWithProgress(cmd)
 
-    def render(self, preset):
-        framePattern = '%05d.jpg'
-        if preset.COMBINE:
-            framePattern = 'C_%05d.jpg'
-
-        # TODO Skip Rendering if there is no interpolation or one step further: Introduce this as an Interpolation Phase
-
-        self.setState(RenderJobState.RENDERING)
-
-        cmd = ['-framerate', str(preset.FRAMERATE), '-i', framePattern, '-r', str(self.RENDER_PRESET.getFinalFramerate())]
-
-        videoFilters = []
-
+    def interpolateOrMove(self, preset):
         if preset.INTERPOLATE:
-            cmd += ['-r', str(preset.INTERPOLATE_FRAMERATE)]
-            miStr = 'minterpolate=fps=' + str(preset.INTERPOLATE_FRAMERATE) + \
-                    ':mi_mode=' + preset.INTERPOLATE_MODE + \
-                    ':me_mode=' + preset.INTERPOLATE_ESTIMATION + \
-                    ':mc_mode=' + preset.INTERPOLATE_COMPENSATION + \
-                    ':me=' + preset.INTERPOLATE_ALGORITHM
-            videoFilters += [miStr]
+            self.setState(RenderJobState.INTERPOLATING)
+
+            framePattern = '%05d.jpg'
+            if preset.COMBINE:
+                framePattern = 'C_%05d.jpg'
+
+            cmd = ['-framerate', str(preset.FRAMERATE), '-i', framePattern, '-r', str(self.RENDER_PRESET.getFinalFramerate())]
+            videoFilters = []
+            if preset.INTERPOLATE:
+                cmd += ['-r', str(preset.INTERPOLATE_FRAMERATE)]
+                miStr = 'minterpolate=fps=' + str(preset.INTERPOLATE_FRAMERATE) + \
+                        ':mi_mode=' + preset.INTERPOLATE_MODE + \
+                        ':me_mode=' + preset.INTERPOLATE_ESTIMATION + \
+                        ':mc_mode=' + preset.INTERPOLATE_COMPENSATION + \
+                        ':me=' + preset.INTERPOLATE_ALGORITHM
+                videoFilters += [miStr]
+            else:
+                cmd += ['-r', str(preset.FRAMERATE)]
+
+            if len(videoFilters):
+                cmd += ['-vf', ','.join(videoFilters)]
+
+            cmd += ['-qscale:v', '1', 'F_%05d.jpg']
+            self.runFfmpegWithProgress(cmd, preset.calculateTotalFrames(self.FRAMEZIP, False))
         else:
-            cmd += ['-r', str(preset.FRAMERATE)]
-
-        if len(videoFilters):
-            cmd += ['-vf', ','.join(videoFilters)]
-
-        cmd += ['-qscale:v', '1', 'F_%05d.jpg']
-        self.runFfmpegWithProgress(cmd, preset.calculateTotalFrames(self.FRAMEZIP, False))
+            self.setState(RenderJobState.MOVING_FRAMES)
+            frames = sorted(glob.glob(self.FOLDER + '/[!PPROLL]*.jpg'))
+            for i, f in enumerate(frames):
+                fName = "F_{:05d}".format(i + 1) + ".jpg"
+                shutil.move(f, self.FOLDER + '/' + fName)
 
     def getAllFinalFrames(self):
         framesPPPre = sorted(glob.glob(self.FOLDER + '/PPROLL_PRE_*.jpg'))
@@ -304,7 +307,7 @@ class RenderJob:
         return framesAll
 
     def moveEncodeFrames(self):
-        self.setState(RenderJobState.MERGING_FRAMES)
+        self.setState(RenderJobState.MOVING_FRAMES)
         framesAll = self.getAllFinalFrames()
 
         for i, f in enumerate(framesAll):
@@ -354,7 +357,7 @@ class RenderJob:
             self.resizeImages(self.ENHANCEMENT_PRESET)
             self.combineImages(self.RENDER_PRESET)
             self.addTimecodes(self.ENHANCEMENT_PRESET)
-            self.render(self.RENDER_PRESET)
+            self.interpolateOrMove(self.RENDER_PRESET)
             self.generateFade(self.RENDER_PRESET)
             self.moveEncodeFrames()
             self.createPalette(self.VIDEO_FORMAT)
