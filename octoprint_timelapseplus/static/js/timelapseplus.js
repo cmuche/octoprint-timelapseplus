@@ -345,19 +345,19 @@ $(function() {
             let stateVms = {
                 "WAITING": {title: "Waiting", showProgress: false, icon: "fas fa-hourglass-half"},
                 "EXTRACTING": {title: "Extracting Frame Collection", showProgress: false, icon: "fas fa-box-open"},
-                "RENDERING": {title: "Rendering Video", showProgress: true, icon: "fas fa-photo-video"},
                 "FINISHED": {title: "Finished", showProgress: false, icon: "fas fa-check"},
                 "FAILED": {title: "Failed", showProgress: false, icon: "fas fa-exclamation-triangle"},
                 "ENHANCING": {title: "Enhancing Images", showProgress: true, icon: "fas fa-magic"},
                 "BLURRING": {title: "Blurring Areas", showProgress: true, icon: "fas fa-eraser"},
-                "RESIZING": {title: "Resizing Frames", showProgress: true, icon: "fas fa-arrows-alt"},
+                "RESIZING": {title: "Resizing Frames", showProgress: true, icon: "fas fa-compress"},
                 "COMBINING": {title: "Combining Frames", showProgress: true, icon: "fas fa-clone"},
                 "CREATE_PALETTE": {title: "Generating Color Palette", showProgress: false, icon: "fas fa-paint-brush"},
                 "ADDING_TIMECODES": {title: "Adding Timecodes", showProgress: true, icon: "fas fa-stopwatch"},
-                "ENCODING": {title: "Encoding Video File", showProgress: true, icon: "fas fa-box"},
-                "GENERATING_PPROLL": {title: "Generating Pre/Post Roll", showProgress: true, icon: "fas fa-window-restore"},
-                "APPLYING_FADE": {title: "Applying Fade Effect", showProgress: true, icon: "fas fa-chess-board"},
-                "MERGING_FRAMES": {title: "Merging Frames", showProgress: false, icon: "fas fa-th"}
+                "ENCODING": {title: "Encoding Video File", showProgress: true, icon: "fas fa-photo-video"},
+                "GENERATING_PPROLL": {title: "Generating Pre/Post Roll", showProgress: true, icon: "fas fa-tv"},
+                "APPLYING_FADE": {title: "Applying Fade Effect", showProgress: true, icon: "fas fa-sort"},
+                "MOVING_FRAMES": {title: "Moving Frames", showProgress: false, icon: "fas fa-copy"},
+                "INTERPOLATING": {title: "Interpolating Frames", showProgress: true, icon: "fas fa-object-group"}
             };
 
             if (job.state in stateVms)
