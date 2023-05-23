@@ -335,18 +335,29 @@ class RenderJob:
     def runFfmpegWithProgress(self, params, totalFrames=0):
         cmd = [self._settings.get(["ffmpegPath"]), '-y']
         cmd += params
-        cmd += ['-hide_banner', '-loglevel', 'verbose', '-progress', 'pipe:1', '-nostats']
-        process = subprocess.Popen(cmd, cwd=self.FOLDER, stdout=subprocess.PIPE)
+        cmd += ['-hide_banner', '-loglevel', 'info', '-progress', 'pipe:1', '-nostats']
+        process = subprocess.Popen(cmd, cwd=self.FOLDER, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        outLines = []
         while process.poll() is None:
             line = process.stdout.readline().decode()
+            outLines += line.split('\n')
+
             m = re.search('^frame=([0-9]+)', line)
             if m and totalFrames > 0:
                 frame = int(m.groups()[0])
                 p = frame / totalFrames
                 self.setProgress(p)
 
+        outLines += process.stdout.read().decode().split('\n')
+        outLines = [x.replace('\r', '').strip() for x in outLines]
+        outLines = [x for x in outLines if x != '']
+
         if process.returncode != 0:
-            raise Exception("Failed to run FFmpeg (Return Code " + str(process.returncode) + " )")
+            for ol in outLines:
+                self._logger.error(ol)
+
+            raise Exception("Failed to run FFmpeg (Return Code " + str(process.returncode) + ")")
 
     def startPipeline(self):
         try:
