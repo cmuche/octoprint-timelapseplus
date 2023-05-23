@@ -13,7 +13,7 @@ class ClientController:
         self._pluginManager = pluginManager
         self.QUEUE = dict()
         self.LAST_DATA = dict()
-        self.INTERVAL = 500
+        self.INTERVAL = 250
         self.TIMER = None
         self.TIMER_ACTIVE = False
 
