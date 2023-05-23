@@ -39,8 +39,8 @@ class FormatHelper:
             Format('mpeg2-nq', 'MPEG', 'Normal Quality', 'mpg', 'video/mpeg', 'MPEG-2', 'mpeg2video', {'-qscale:v': '10'}),
             Format('mpeg2-hq', 'MPEG', 'High Quality', 'mpg', 'video/mpeg', 'MPEG-2', 'mpeg2video', {'-qscale:v': '2'}),
 
-            Format('gif', 'GIF', None, 'gif', 'image/gif', None, None, {'-i': 'palette.png', '-filter_complex': '[0:v][1:v]paletteuse'}, True),
-            Format('gif-nopalette', 'GIF', 'Low Quality', 'gif', 'image/gif', None, None)
+            Format('gif', 'GIF', None, 'gif', 'image/gif', None, ['gif', 'png'], {'-i': 'palette.png', '-filter_complex': '[0:v][1:v]paletteuse'}, True),
+            Format('gif-nopalette', 'GIF', 'Low Quality', 'gif', 'image/gif', None, ['gif', 'png'])
         ]
 
     @staticmethod

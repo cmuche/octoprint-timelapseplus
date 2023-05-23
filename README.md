@@ -1,5 +1,9 @@
 ![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/logo-small.png)
 
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/cmuche/octoprint-timelapseplus?label=Latest%20Version)
+![GitHub Release Date](https://img.shields.io/github/release-date/cmuche/octoprint-timelapseplus?label=Release%20Date)
+![GitHub repo size](https://img.shields.io/github/repo-size/cmuche/octoprint-timelapseplus?label=Size)
+
 Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render your print timelapses.
 
 | [![Video](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/timelapseplus.gif)](https://www.youtube.com/watch?v=zs9QcQsIEyM) |
