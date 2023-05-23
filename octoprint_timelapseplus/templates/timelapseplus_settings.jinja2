@@ -1,633 +1,653 @@
 <form class="form-horizontal" id="timelapseplus-settings" style="margin-right: 1em">
 
-    <div class="alert alert-block">
-        <strong>Need Help?</strong>
-        If you are unsure which options to choose or how to start, you can visit the Wiki which also includes a 'Getting Started Guide'.
-        You are always welcome to open an issue on GitHub when you might find a bug, want a feature to be added to Timelapse+, need help or just have a question about this plugin.
-        <br><br>
-        <a href="https://github.com/cmuche/octoprint-timelapseplus/wiki" target="_blank" class="btn btn-mini">
-            <i class="fa fa-book"></i>
-            Read the Wiki
-        </a>
-        <a href="https://github.com/cmuche/octoprint-timelapseplus/issues/new" target="_blank" class="btn btn-mini">
-            <i class="fa fa-exclamation-triangle"></i>
-            Open an Issue
-        </a>
-    </div>
+    <ul class="nav nav-pills">
+        <li class="active"><a data-toggle="tab" href="#timelapseplus-settings-tab-info">Info</a></li>
+        <li><a data-toggle="tab" href="#timelapseplus-settings-tab-pathsandwebcam">Paths and Webcam</a></li>
+        <li><a data-toggle="tab" href="#timelapseplus-settings-tab-general">General</a></li>
+        <li><a data-toggle="tab" href="#timelapseplus-settings-tab-purging">Purging</a></li>
+        <li><a data-toggle="tab" href="#timelapseplus-settings-tab-enhancement">Enhancement</a></li>
+        <li><a data-toggle="tab" href="#timelapseplus-settings-tab-rendering">Rendering</a></li>
+    </ul>
+    <hr />
 
-    <h3>Paths and Webcam</h3>
-    <div class="control-group">
-        <label class="control-label">FFmpeg Path</label>
-        <div class="controls">
-            <input type="text" data-bind="value: settings.plugins.timelapseplus.ffmpegPath">
-            <span class="help-block">The path to the FFmpeg binary. You need to install it manually on your host machine.</span>
+    <div class="tab-content">
+        <div class="tab-pane active" id="timelapseplus-settings-tab-info">
+            <div class="alert alert-block">
+                <strong>Need Help?</strong>
+                If you are unsure which options to choose or how to start, you can visit the Wiki which also includes a 'Getting Started Guide'.
+                You are always welcome to open an issue on GitHub when you might find a bug, want a feature to be added to Timelapse+, need help or just have a question about this plugin.
+                <br><br>
+                <a href="https://github.com/cmuche/octoprint-timelapseplus/wiki" target="_blank" class="btn btn-mini">
+                    <i class="fa fa-book"></i>
+                    Read the Wiki
+                </a>
+                <a href="https://github.com/cmuche/octoprint-timelapseplus/issues/new" target="_blank" class="btn btn-mini">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    Open an Issue
+                </a>
+            </div>
         </div>
-    </div>
+        <div class="tab-pane" id="timelapseplus-settings-tab-pathsandwebcam">
+            <h3>Paths and Webcam</h3>
+            <div class="control-group">
+                <label class="control-label">FFmpeg Path</label>
+                <div class="controls">
+                    <input type="text" data-bind="value: settings.plugins.timelapseplus.ffmpegPath">
+                    <span class="help-block">The path to the FFmpeg binary. You need to install it manually on your host machine.</span>
+                </div>
+            </div>
 
-    <div class="control-group">
-        <label class="control-label">FFprobe Path</label>
-        <div class="controls">
-            <input type="text" data-bind="value: settings.plugins.timelapseplus.ffprobePath">
-            <span class="help-block">Usually FFprobe is located in the same folder as FFmpeg.</span>
-        </div>
-    </div>
+            <div class="control-group">
+                <label class="control-label">FFprobe Path</label>
+                <div class="controls">
+                    <input type="text" data-bind="value: settings.plugins.timelapseplus.ffprobePath">
+                    <span class="help-block">Usually FFprobe is located in the same folder as FFmpeg.</span>
+                </div>
+            </div>
 
-    <hr>
+            <hr>
 
-    <div class="control-group">
-        <label class="control-label">Webcam Type</label>
-        <div class="controls">
-            <select data-bind="value: settings.plugins.timelapseplus.webcamType">
-                <option value="IMAGE_JPEG">JPEG Image</option>
-                <option value="STREAM_MJPEG">MJPEG Stream</option>
-                <option value="STREAM_MP4">MP4 Stream (via FFmpeg)</option>
-                <option value="STREAM_HLS">HLS Stream (Via FFmpeg)</option>
-            </select>
-            <span class="help-block">
+            <div class="control-group">
+                <label class="control-label">Webcam Type</label>
+                <div class="controls">
+                    <select data-bind="value: settings.plugins.timelapseplus.webcamType">
+                        <option value="IMAGE_JPEG">JPEG Image</option>
+                        <option value="STREAM_MJPEG">MJPEG Stream</option>
+                        <option value="STREAM_MP4">MP4 Stream (via FFmpeg)</option>
+                        <option value="STREAM_HLS">HLS Stream (Via FFmpeg)</option>
+                    </select>
+                    <span class="help-block">
                 Stream-based capturing might take some extra time to be processed and converted which could have an impact on your snapshot timing.<br>
                 <strong>The image snapshot type should therefore be your first choice (if possible) since it doesn't require any transcoding by Timelapse+.</strong>
             </span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Webcam URL</label>
+                <div class="controls">
+                    <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamUrl">
+                    <span class="help-block">The URL must be reachable for OctoPrint and return a still image or the stream in the format specified above.</span>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="control-group">
+                <label class="control-label">Test Settings</label>
+                <div class="controls">
+                    <span class="help-block">You can test the FFmpeg and FFprobe paths as well as the snapshot capture here:</span>
+                    <button id="tlp-button-webcam-preview" style="margin-top: 1em" class="btn btn-mini" data-bind="click: function(){parent.openWebcamCapturePreview(settings.plugins.timelapseplus.ffmpegPath, settings.plugins.timelapseplus.ffprobePath, settings.plugins.timelapseplus.webcamType, settings.plugins.timelapseplus.webcamUrl)}">
+                        <i class="fa fa-check"></i>
+                        Test Paths and Webcam Settings
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
+        <div class="tab-pane" id="timelapseplus-settings-tab-general">
+            <h3>General</h3>
+            <div class="control-group">
+                <label class="control-label">Capture Mode</label>
+                <div class="controls">
+                    <select data-bind="value: settings.plugins.timelapseplus.captureMode">
+                        <option value="COMMAND">Command</option>
+                        <option value="TIMED">Timer</option>
+                    </select>
+                </div>
+            </div>
 
-    <div class="control-group">
-        <label class="control-label">Webcam URL</label>
-        <div class="controls">
-            <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamUrl">
-            <span class="help-block">The URL must be reachable for OctoPrint and return a still image or the stream in the format specified above.</span>
+            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.captureMode() == 'COMMAND'">
+                <label class="control-label">Snapshot Command</label>
+                <div class="controls">
+                    <input type="text" data-bind="value: settings.plugins.timelapseplus.snapshotCommand">
+                    <span class="help-block">Action Command or @-Command that will trigger a snapshot capture. You'll have to include it in your GCODE where you want a snapshot to be triggered.</span>
+                    <code>; Example GCODE
+
+                        ; @-Command like this:
+                        @<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>
+
+                        ; Or Action Command like this:
+                        M118 A1 action:<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>
+                    </code>
+                </div>
+            </div>
+
+            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.captureMode() == 'TIMED'">
+                <label class="control-label">Timer Interval</label>
+                <div class="controls">
+                    <input type="number" step='1' min="1" max="600" width="5" data-bind="value: settings.plugins.timelapseplus.captureTimerInterval">
+                    <span class="help-block">Capture Timer Interval in seconds</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Render Video after Print</label>
+                <div class="controls">
+                    <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.renderAfterPrint">
+                    <span class="help-block">When a Print has finished a Render Job will be started with the default Video Format, the first Enhancement Preset and the first Render Preset defined below.</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Compress Frame Collections</label>
+                <div class="controls">
+                    <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.compressFrameZips">
+                    <span class="help-block">Generated Frame Collections won't be compressed by default. Checking this option compresses the Frame Collections after a print has finished. This means lower disk space consumption but adds some time compressing at the end of a print and OctoPrint will stay in the 'Finishing' state during that.</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Default Video Output Format</label>
+                <div class="controls">
+                    <select data-bind="valueAllowUnset: true, foreach: parent.videoFormatsGrouped, value: settings.plugins.timelapseplus.defaultVideoFormat">
+                        <optgroup data-bind="attr: {label: name}, foreach: children">
+                            <option data-bind="text: fullName, value: $data.id"></option>
+                        </optgroup>
+                    </select>
+                    <span class="help-block">Maybe not all formats are available on your system or your used FFmpeg version. Please consider changing the Video Format if a Render Job is not successful.</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Force Capturing</label>
+                <div class="controls">
+                    <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.forceCapturing">
+                    <span class="help-block">Start the Capturing Process when a Print Job starts even if there are errors. <strong>Use this option unless you really need to.</strong></span>
+                </div>
+            </div>
         </div>
-    </div>
-
-    <hr>
-
-    <div class="control-group">
-        <label class="control-label">Test Settings</label>
-        <div class="controls">
-            <span class="help-block">You can test the FFmpeg and FFprobe paths as well as the snapshot capture here:</span>
-            <button id="tlp-button-webcam-preview" style="margin-top: 1em" class="btn btn-mini" data-bind="click: function(){parent.openWebcamCapturePreview(settings.plugins.timelapseplus.ffmpegPath, settings.plugins.timelapseplus.ffprobePath, settings.plugins.timelapseplus.webcamType, settings.plugins.timelapseplus.webcamUrl)}">
-                <i class="fa fa-check"></i>
-                Test Paths and Webcam Settings
-            </button>
-        </div>
-    </div>
-
-    <h3>General</h3>
-    <div class="control-group">
-        <label class="control-label">Capture Mode</label>
-        <div class="controls">
-            <select data-bind="value: settings.plugins.timelapseplus.captureMode">
-                <option value="COMMAND">Command</option>
-                <option value="TIMED">Timer</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.captureMode() == 'COMMAND'">
-        <label class="control-label">Snapshot Command</label>
-        <div class="controls">
-            <input type="text" data-bind="value: settings.plugins.timelapseplus.snapshotCommand">
-            <span class="help-block">Action Command or @-Command that will trigger a snapshot capture. You'll have to include it in your GCODE where you want a snapshot to be triggered.</span>
-            <code>; Example GCODE
-
-                ; @-Command like this:
-                @<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>
-
-                ; Or Action Command like this:
-                M118 A1 action:<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>
-            </code>
-        </div>
-    </div>
-
-    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.captureMode() == 'TIMED'">
-        <label class="control-label">Timer Interval</label>
-        <div class="controls">
-            <input type="number" step='1' min="1" max="600" width="5" data-bind="value: settings.plugins.timelapseplus.captureTimerInterval">
-            <span class="help-block">Capture Timer Interval in seconds</span>
-        </div>
-    </div>
-
-    <div class="control-group">
-        <label class="control-label">Render Video after Print</label>
-        <div class="controls">
-            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.renderAfterPrint">
-            <span class="help-block">When a Print has finished a Render Job will be started with the default Video Format, the first Enhancement Preset and the first Render Preset defined below.</span>
-        </div>
-    </div>
-
-    <div class="control-group">
-        <label class="control-label">Compress Frame Collections</label>
-        <div class="controls">
-            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.compressFrameZips">
-            <span class="help-block">Generated Frame Collections won't be compressed by default. Checking this option compresses the Frame Collections after a print has finished. This means lower disk space consumption but adds some time compressing at the end of a print and OctoPrint will stay in the 'Finishing' state during that.</span>
-        </div>
-    </div>
-
-    <div class="control-group">
-        <label class="control-label">Default Video Output Format</label>
-        <div class="controls">
-            <select data-bind="valueAllowUnset: true, foreach: parent.videoFormatsGrouped, value: settings.plugins.timelapseplus.defaultVideoFormat">
-                <optgroup data-bind="attr: {label: name}, foreach: children">
-                    <option data-bind="text: fullName, value: $data.id"></option>
-                </optgroup>
-            </select>
-            <span class="help-block">Maybe not all formats are available on your system or your used FFmpeg version. Please consider changing the Video Format if a Render Job is not successful.</span>
-        </div>
-    </div>
-
-    <div class="control-group">
-        <label class="control-label">Force Capturing</label>
-        <div class="controls">
-            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.forceCapturing">
-            <span class="help-block">Start the Capturing Process when a Print Job starts even if there are errors. <strong>Use this option unless you really need to.</strong></span>
-        </div>
-    </div>
-
-    <h3>Purging</h3>
-    <div class="control-group">
-        <label class="control-label">Delete Videos</label>
-        <div class="controls">
-            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.purgeVideos">
-        </div>
-    </div>
-    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.purgeVideos">
-        <label class="control-label">Days</label>
-        <div class="controls">
-            <input type="number" step='1' min="1" max="300" width="5" data-bind="value: settings.plugins.timelapseplus.purgeVideosDays">
-            <span class="help-block">
+        <div class="tab-pane" id="timelapseplus-settings-tab-purging">
+            <h3>Purging</h3>
+            <div class="control-group">
+                <label class="control-label">Delete Videos</label>
+                <div class="controls">
+                    <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.purgeVideos">
+                </div>
+            </div>
+            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.purgeVideos">
+                <label class="control-label">Days</label>
+                <div class="controls">
+                    <input type="number" step='1' min="1" max="300" width="5" data-bind="value: settings.plugins.timelapseplus.purgeVideosDays">
+                    <span class="help-block">
                 <span>Rendered Videos older than</span>
                 <strong data-bind="text: settings.plugins.timelapseplus.purgeVideosDays"></strong>
                 <span>days will be automatically removed.</span>
             </span>
-        </div>
-    </div>
+                </div>
+            </div>
 
-    <div class="control-group">
-        <label class="control-label">Delete Frame Collections</label>
-        <div class="controls">
-            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.purgeFrameCollections">
-        </div>
-    </div>
-    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.purgeFrameCollections">
-        <label class="control-label">Days</label>
-        <div class="controls">
-            <input type="number" step='1' min="1" max="300" width="5" data-bind="value: settings.plugins.timelapseplus.purgeFrameCollectionsDays">
-            <span class="help-block">
+            <div class="control-group">
+                <label class="control-label">Delete Frame Collections</label>
+                <div class="controls">
+                    <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.purgeFrameCollections">
+                </div>
+            </div>
+            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.purgeFrameCollections">
+                <label class="control-label">Days</label>
+                <div class="controls">
+                    <input type="number" step='1' min="1" max="300" width="5" data-bind="value: settings.plugins.timelapseplus.purgeFrameCollectionsDays">
+                    <span class="help-block">
                 <span>Captured Frame Collections older than</span>
                 <strong data-bind="text: settings.plugins.timelapseplus.purgeFrameCollectionsDays"></strong>
                 <span>days will be automatically removed.</span>
             </span>
-        </div>
-    </div>
-
-    <h3>Enhancement</h3>
-    <div class="control-group">
-        <label class="control-label">Enhancement Presets</label>
-        <div class="controls">
-
-            <div class="help-block">Enhancement presets define how the frames should be optimized and filtered before the final video is rendered</div>
-
-            <button class="btn btn-mini" data-bind="click: function(){parent.addEnhancementPreset(settings.plugins.timelapseplus.enhancementPresets)}">
-                <i class="fa fa-plus"></i>
-                Add Enhancement Preset
-            </button>
-
-            <div data-bind="foreach: settings.plugins.timelapseplus.enhancementPresets">
-                <div class="preset">
-                    <h4 style="margin: 0">Preset #<span data-bind="text: $parent.parent.itemIndex($parent.settings.plugins.timelapseplus.enhancementPresets, $data) + 1"></span></h4>
-
-                    <div>
-                        <label class="sub">Name</label>
-                        <input type="text" class="input-block-level" data-bind="value: $data.name">
-                    </div>
-
-                    <div>
-                        <label class="sub checkbox">
-                            <input type="checkbox" data-bind="checked: $data.enhance">
-                            Enable Enhancing
-                        </label>
-                    </div>
-
-                    <div class="sub-settings">
-                        <div data-bind="visible: $data.enhance">
-                            <label class="sub">Brightness Factor</label>
-                            <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.brightness">
-                        </div>
-
-                        <div data-bind="visible: $data.enhance">
-                            <label class="sub">Contrast Factor</label>
-                            <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.contrast">
-                        </div>
-
-                        <div data-bind="visible: $data.enhance">
-                            <label class="sub checkbox">
-                                <input type="checkbox" data-bind="checked: $data.equalize">
-                                Equalize Histogram
-                            </label>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="sub checkbox">
-                            <input type="checkbox" data-bind="checked: $data.blur">
-                            Enable Blur
-                        </label>
-                    </div>
-
-                    <div class="sub-settings">
-                        <div data-bind="visible: $data.blur">
-                            <label class="sub">Blur Radius</label>
-                            <input type="number" step='1' placeholder='0' min="1" max="500" width="5" data-bind="value: $data.blurRadius">
-                            <span class="help-block">The Blur Radius (in Pixels) defines how blurry the masked areas will be.</span>
-                        </div>
-
-                        <div data-bind="visible: $data.blur">
-                            <label class="sub">Mask</label>
-                            <div>
-                                <img style="width:8em" data-bind="visible: $data.blurMask() != null, attr: {src: $data.blurMask() == null ? '' : '/plugin/timelapseplus/maskPreview?id=' + $data.blurMask()}">
-                                <div data-bind="visible: $data.blurMask() == null" style="color: red !important">
-                                    With Blur enabled you must provide a grayscale blur mask!
-                                </div>
-                            </div>
-                            <button style="margin-top: 1em" class="btn" data-bind="click: $parent.parent.openBlurMask">Import Blur Mask</button>
-                            <span class="help-block">Requires a grayscale image, ideally the same resolution as your webcam image. White areas define where the blur is applied on the frames, black areas mean no blur.</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="sub checkbox">
-                            <input type="checkbox" data-bind="checked: $data.timecode">
-                            Add Timecodes
-                        </label>
-                    </div>
-                    <div class="sub-settings" data-bind="visible: $data.timecode">
-                        <div>
-                            <label class="sub">Size</label>
-                            <input type="number" step='1' placeholder='0' min="1" max="100" width="5" data-bind="value: $data.timecodeSize">
-                        </div>
-
-                        <div>
-                            <label class="sub">Margin</label>
-                            <input type="number" step='1' placeholder='0' min="0" max="50" width="5" data-bind="value: $data.timecodeMargin">
-                        </div>
-
-                        <div>
-                            <label class="sub">Position</label>
-                            <select data-bind="value: $data.timecodeSnap">
-                                <option value="TOP_LEFT">Top Left</option>
-                                <option value="TOP_CENTER">Top Center</option>
-                                <option value="TOP_RIGHT">Top Right</option>
-                                <option value="CENTER_RIGHT">Center Right</option>
-                                <option value="BOTTOM_RIGHT">Bottom Right</option>
-                                <option value="BOTTOM_CENTER">Bottom Center</option>
-                                <option value="BOTTOM_LEFT">Bottom Left</option>
-                                <option value="CENTER_LEFT">Center Left</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="sub">Type</label>
-                            <select data-bind="value: $data.timecodeType">
-                                <option value="PRINTTIME_HMS">Print Time (H:M:S)</option>
-                                <option value="PRINTTIME_HM">Print Time (H:M)</option>
-                                <option value="PRINTTIME_HMS_LETTERS">Print Time (Hh Mm Ss)</option>
-                                <option value="PRINTTIME_HM_LETTERS">Print Time (Hh Mm)</option>
-                                <option value="TIME_HMS_24">Time 24 Hours (H:M:S)</option>
-                                <option value="TIME_HM_24">Time 24 Hours (H:M)</option>
-                                <option value="TIME_HMS_12">Time 12 Hours (H:M:S)</option>
-                                <option value="TIME_HM_12">Time 12 Hours (H:M)</option>
-                                <option value="PERCENT">Percent</option>
-                                <option value="BAR">Progress Bar</option>
-                                <option value="CLOCK_NOSECONDS">Analog Clock</option>
-                                <option value="CLOCK">Analog Clock (with Seconds)</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="sub">Primary Color</label>
-                            <input type="color" maxlength="7" data-bind="value: $data.timecodeColorPrimary">
-                        </div>
-
-                        <div>
-                            <label class="sub">Secondary Color</label>
-                            <input type="color" maxlength="7" data-bind="value: $data.timecodeColorSecondary">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="sub checkbox">
-                            <input type="checkbox" data-bind="checked: $data.resize">
-                            Enable Resizing
-                        </label>
-                    </div>
-                    <div class="sub-settings">
-                        <div data-bind="visible: $data.resize">
-                            <label class="sub">Width</label>
-                            <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeW">
-                        </div>
-
-                        <div data-bind="visible: $data.resize">
-                            <label class="sub">Height</label>
-                            <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
-                        </div>
-                    </div>
-
-                    <button class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data), click: function(){$parent.parent.moveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data)}">
-                        <i class="fa fa-chevron-up"></i>
-                    </button>
-
-                    <button style="margin-right: 1em" class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemDown($parent.settings.plugins.timelapseplus.enhancementPresets, $data), click: function(){$parent.parent.moveItemDown($parent.settings.plugins.timelapseplus.enhancementPresets, $data)}">
-                        <i class="fa fa-chevron-down"></i>
-                    </button>
-
-                    <button class="btn btn-mini" data-bind="click: $parent.parent.openEnhancementPresetPreview">
-                        <i class="fa fa-eye"></i>
-                        Live Preview
-                    </button>
-
-                    <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.timelapseplus.enhancementPresets().length > 1">
-                        <i class="fa fa-trash"></i>
-                        Remove this Preset
-                    </button>
                 </div>
             </div>
         </div>
-    </div>
+        <div class="tab-pane" id="timelapseplus-settings-tab-enhancement">
+            <h3>Enhancement</h3>
+            <div class="control-group">
+                <label class="control-label">Enhancement Presets</label>
+                <div class="controls">
 
-    <h3>Rendering</h3>
-    <div class="control-group">
-        <label class="control-label">Render Presets</label>
-        <div class="controls">
+                    <div class="help-block">Enhancement presets define how the frames should be optimized and filtered before the final video is rendered</div>
 
-            <div class="help-block">Render presets define how the actual video should be rendered</div>
+                    <button class="btn btn-mini" data-bind="click: function(){parent.addEnhancementPreset(settings.plugins.timelapseplus.enhancementPresets)}">
+                        <i class="fa fa-plus"></i>
+                        Add Enhancement Preset
+                    </button>
 
-            <button class="btn btn-mini" data-bind="click: function(){parent.addRenderPreset(settings.plugins.timelapseplus.renderPresets)}">
-                <i class="fa fa-plus"></i>
-                Add Render Preset
-            </button>
+                    <div data-bind="foreach: settings.plugins.timelapseplus.enhancementPresets">
+                        <div class="preset">
+                            <h4 style="margin: 0">Preset #<span data-bind="text: $parent.parent.itemIndex($parent.settings.plugins.timelapseplus.enhancementPresets, $data) + 1"></span></h4>
 
-            <div data-bind="foreach: settings.plugins.timelapseplus.renderPresets">
-                <div class="preset">
-                    <h4 style="margin: 0">Preset #<span data-bind="text: $parent.parent.itemIndex($parent.settings.plugins.timelapseplus.renderPresets, $data) + 1"></span></h4>
-
-                    <div>
-                        <label class="sub">Name</label>
-                        <input type="text" class="input-block-level" data-bind="value: $data.name">
-                    </div>
-
-                    <div>
-                        <label class="sub">Framerate</label>
-                        <input type="number" step='1' min="1" max="120" width="5" data-bind="value: $data.framerate">
-                    </div>
-
-                    <div>
-                        <label class="sub checkbox">
-                            <input type="checkbox" data-bind="checked: $data.combine">
-                            Combine Frames
-                        </label>
-                        <span class="help-block">Before rendering, multiple frames will be combined to reduce the number of total frames and by that the length of the final video.</span>
-                    </div>
-
-                    <div class="sub-settings">
-                        <div data-bind="visible: $data.combine">
-                            <label class="sub">Chunk Size</label>
-                            <input type="number" step='1' min="2" max="100" width="5" data-bind="value: $data.combineSize">
-                            <span class="help-block">Defines how many frames should be combined into one chunk.</span>
-                        </div>
-
-                        <div data-bind="visible: $data.combine">
-                            <label class="sub">Method</label>
-                            <select data-bind="value: $data.combineMethod">
-                                <option value="DROP">Drop Frames</option>
-                                <option value="BLEND">Blend</option>
-                                <option value="BLEND_WEIGHTED">Weighted Blend</option>
-                            </select>
-                            <span class="help-block">When dropping frames, only the last frame of a combined chunk will be used, blending creates a combined frame by mixing all chunk frames into one.</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="sub checkbox">
-                            <input type="checkbox" data-bind="checked: $data.fade">
-                            Enable Fade
-                        </label>
-                    </div>
-
-                    <div class="sub-settings">
-                        <div data-bind="visible: $data.fade">
-                            <label class="sub">Fade-In Duration (ms)</label>
-                            <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.fadeInDuration">
-                        </div>
-
-                        <div data-bind="visible: $data.fade">
-                            <label class="sub">Fade-Out Duration (ms)</label>
-                            <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.fadeOutDuration">
-                        </div>
-
-                        <div data-bind="visible: $data.fade">
-                            <label class="sub">Color</label>
-                            <input type="color" maxlength="7" data-bind="value: $data.fadeColor">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="sub checkbox">
-                            <input type="checkbox" data-bind="checked: $data.ppRoll">
-                            Pre/Post Roll
-                        </label>
-                    </div>
-
-                    <div class="sub-settings" data-bind="visible: $data.ppRoll">
-                        <div>
-                            <label class="sub">Max Blur Radius</label>
-                            <input type="number" step='1' min="0" max="500" width="5" data-bind="value: $data.ppRollBlurRadius">
-                        </div>
-
-                        <div>
-                            <label class="sub">Max Zoom Factor</label>
-                            <input type="number" step='0.01' min="0.0" max="5.0" width="5" data-bind="value: $data.ppRollZoomFactor">
-                        </div>
-
-                        <h4>Pre-Roll</h4>
-                        <div class="sub-settings">
                             <div>
-                                <label class="sub">Duration (ms)</label>
-                                <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.ppRollPreDuration">
+                                <label class="sub">Name</label>
+                                <input type="text" class="input-block-level" data-bind="value: $data.name">
                             </div>
-                            <div>
-                                <label class="sub">Type</label>
-                                <select data-bind="value: $data.ppRollPreType">
-                                    <option value="STILL">Still Frame</option>
-                                    <option value="STILL_FINAL">Still Frame (Final)</option>
-                                    <option value="LAPSE">Short Timelapse</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="sub">Ease Function</label>
-                                <select data-bind="value: $data.ppRollPreEaseFn">
-                                    <option value="LINEAR">Linear</option>
-                                    <option value="EASE_IN">Ease-In</option>
-                                    <option value="EASE_IN_OUT">Ease-In-Out</option>
-                                    <span class="help-block">Animations during the Pre-Roll will be mapped by this function. Ease-In and Ease-In-Out will generate a much smoother transition between the Pre-Roll and the timelapse.</span>
-                                </select>
-                            </div>
+
                             <div>
                                 <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.ppRollPreZoom">
-                                    Zoom Animation
+                                    <input type="checkbox" data-bind="checked: $data.enhance">
+                                    Enable Enhancing
                                 </label>
                             </div>
-                            <div>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.ppRollPreBlur">
-                                    Blur Animation
-                                </label>
-                            </div>
-                        </div>
 
-                        <h4>Post-Roll</h4>
-                        <div class="sub-settings">
-                            <div>
-                                <label class="sub">Duration (ms)</label>
-                                <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.ppRollPostDuration">
-                            </div>
-                            <div>
-                                <label class="sub">Type</label>
-                                <select data-bind="value: $data.ppRollPostType">
-                                    <option value="STILL">Still Frame</option>
-                                    <option value="STILL_FINAL">Still Frame (Final)</option>
-                                    <option value="LAPSE">Short Timelapse</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="sub">Ease Function</label>
-                                <select data-bind="value: $data.ppRollPostEaseFn">
-                                    <option value="LINEAR">Linear</option>
-                                    <option value="EASE_IN">Ease-In</option>
-                                    <option value="EASE_IN_OUT">Ease-In-Out</option>
-                                    <span class="help-block">Animations during the Post-Roll will be mapped by this function. Ease-In and Ease-In-Out will generate a much smoother transition between the timelapse and the Post-Roll.</span>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.ppRollPostZoom">
-                                    Zoom Animation
-                                </label>
-                            </div>
-                            <div>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.ppRollPostBlur">
-                                    Blur Animation
-                                </label>
-                            </div>
-                        </div>
+                            <div class="sub-settings">
+                                <div data-bind="visible: $data.enhance">
+                                    <label class="sub">Brightness Factor</label>
+                                    <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.brightness">
+                                </div>
 
-                        <h4>Text</h4>
-                        <label class="sub checkbox">
-                            <input type="checkbox" data-bind="checked: $data.ppRollText">
-                            Enable Pre-Roll Text
-                            <span class="help-block">Show the source print file name or parts of it as a Pre-Roll text overlay</span>
-                        </label>
-                        <div class="sub-settings" data-bind="visible: $data.ppRollText">
-                            <div>
-                                <label class="sub">Size</label>
-                                <input type="number" step='1' min="1" max="100" width="5" data-bind="value: $data.ppRollTextSize">
+                                <div data-bind="visible: $data.enhance">
+                                    <label class="sub">Contrast Factor</label>
+                                    <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.contrast">
+                                </div>
+
+                                <div data-bind="visible: $data.enhance">
+                                    <label class="sub checkbox">
+                                        <input type="checkbox" data-bind="checked: $data.equalize">
+                                        Equalize Histogram
+                                    </label>
+                                </div>
                             </div>
+
                             <div>
-                                <label class="sub">Text Color</label>
-                                <input type="color" maxlength="7" data-bind="value: $data.ppRollTextForeground">
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.blur">
+                                    Enable Blur
+                                </label>
                             </div>
-                            <div>
-                                <label class="sub">Background Color</label>
-                                <input type="color" maxlength="7" data-bind="value: $data.ppRollTextBackground">
+
+                            <div class="sub-settings">
+                                <div data-bind="visible: $data.blur">
+                                    <label class="sub">Blur Radius</label>
+                                    <input type="number" step='1' placeholder='0' min="1" max="500" width="5" data-bind="value: $data.blurRadius">
+                                    <span class="help-block">The Blur Radius (in Pixels) defines how blurry the masked areas will be.</span>
+                                </div>
+
+                                <div data-bind="visible: $data.blur">
+                                    <label class="sub">Mask</label>
+                                    <div>
+                                        <img style="width:8em" data-bind="visible: $data.blurMask() != null, attr: {src: $data.blurMask() == null ? '' : '/plugin/timelapseplus/maskPreview?id=' + $data.blurMask()}">
+                                        <div data-bind="visible: $data.blurMask() == null" style="color: red !important">
+                                            With Blur enabled you must provide a grayscale blur mask!
+                                        </div>
+                                    </div>
+                                    <button style="margin-top: 1em" class="btn" data-bind="click: $parent.parent.openBlurMask">Import Blur Mask</button>
+                                    <span class="help-block">Requires a grayscale image, ideally the same resolution as your webcam image. White areas define where the blur is applied on the frames, black areas mean no blur.</span>
+                                </div>
                             </div>
+
                             <div>
-                                <label class="sub">RegEx</label>
-                                <input type="text" data-bind="value: $data.ppRollTextRegex">
-                                <span class="help-block">
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.timecode">
+                                    Add Timecodes
+                                </label>
+                            </div>
+                            <div class="sub-settings" data-bind="visible: $data.timecode">
+                                <div>
+                                    <label class="sub">Size</label>
+                                    <input type="number" step='1' placeholder='0' min="1" max="100" width="5" data-bind="value: $data.timecodeSize">
+                                </div>
+
+                                <div>
+                                    <label class="sub">Margin</label>
+                                    <input type="number" step='1' placeholder='0' min="0" max="50" width="5" data-bind="value: $data.timecodeMargin">
+                                </div>
+
+                                <div>
+                                    <label class="sub">Position</label>
+                                    <select data-bind="value: $data.timecodeSnap">
+                                        <option value="TOP_LEFT">Top Left</option>
+                                        <option value="TOP_CENTER">Top Center</option>
+                                        <option value="TOP_RIGHT">Top Right</option>
+                                        <option value="CENTER_RIGHT">Center Right</option>
+                                        <option value="BOTTOM_RIGHT">Bottom Right</option>
+                                        <option value="BOTTOM_CENTER">Bottom Center</option>
+                                        <option value="BOTTOM_LEFT">Bottom Left</option>
+                                        <option value="CENTER_LEFT">Center Left</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="sub">Type</label>
+                                    <select data-bind="value: $data.timecodeType">
+                                        <option value="PRINTTIME_HMS">Print Time (H:M:S)</option>
+                                        <option value="PRINTTIME_HM">Print Time (H:M)</option>
+                                        <option value="PRINTTIME_HMS_LETTERS">Print Time (Hh Mm Ss)</option>
+                                        <option value="PRINTTIME_HM_LETTERS">Print Time (Hh Mm)</option>
+                                        <option value="TIME_HMS_24">Time 24 Hours (H:M:S)</option>
+                                        <option value="TIME_HM_24">Time 24 Hours (H:M)</option>
+                                        <option value="TIME_HMS_12">Time 12 Hours (H:M:S)</option>
+                                        <option value="TIME_HM_12">Time 12 Hours (H:M)</option>
+                                        <option value="PERCENT">Percent</option>
+                                        <option value="BAR">Progress Bar</option>
+                                        <option value="CLOCK_NOSECONDS">Analog Clock</option>
+                                        <option value="CLOCK">Analog Clock (with Seconds)</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="sub">Primary Color</label>
+                                    <input type="color" maxlength="7" data-bind="value: $data.timecodeColorPrimary">
+                                </div>
+
+                                <div>
+                                    <label class="sub">Secondary Color</label>
+                                    <input type="color" maxlength="7" data-bind="value: $data.timecodeColorSecondary">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.resize">
+                                    Enable Resizing
+                                </label>
+                            </div>
+                            <div class="sub-settings">
+                                <div data-bind="visible: $data.resize">
+                                    <label class="sub">Width</label>
+                                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeW">
+                                </div>
+
+                                <div data-bind="visible: $data.resize">
+                                    <label class="sub">Height</label>
+                                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
+                                </div>
+                            </div>
+
+                            <button class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data), click: function(){$parent.parent.moveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data)}">
+                                <i class="fa fa-chevron-up"></i>
+                            </button>
+
+                            <button style="margin-right: 1em" class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemDown($parent.settings.plugins.timelapseplus.enhancementPresets, $data), click: function(){$parent.parent.moveItemDown($parent.settings.plugins.timelapseplus.enhancementPresets, $data)}">
+                                <i class="fa fa-chevron-down"></i>
+                            </button>
+
+                            <button class="btn btn-mini" data-bind="click: $parent.parent.openEnhancementPresetPreview">
+                                <i class="fa fa-eye"></i>
+                                Live Preview
+                            </button>
+
+                            <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.timelapseplus.enhancementPresets().length > 1">
+                                <i class="fa fa-trash"></i>
+                                Remove this Preset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="timelapseplus-settings-tab-rendering">
+            <h3>Rendering</h3>
+            <div class="control-group">
+                <label class="control-label">Render Presets</label>
+                <div class="controls">
+
+                    <div class="help-block">Render presets define how the actual video should be rendered</div>
+
+                    <button class="btn btn-mini" data-bind="click: function(){parent.addRenderPreset(settings.plugins.timelapseplus.renderPresets)}">
+                        <i class="fa fa-plus"></i>
+                        Add Render Preset
+                    </button>
+
+                    <div data-bind="foreach: settings.plugins.timelapseplus.renderPresets">
+                        <div class="preset">
+                            <h4 style="margin: 0">Preset #<span data-bind="text: $parent.parent.itemIndex($parent.settings.plugins.timelapseplus.renderPresets, $data) + 1"></span></h4>
+
+                            <div>
+                                <label class="sub">Name</label>
+                                <input type="text" class="input-block-level" data-bind="value: $data.name">
+                            </div>
+
+                            <div>
+                                <label class="sub">Framerate</label>
+                                <input type="number" step='1' min="1" max="120" width="5" data-bind="value: $data.framerate">
+                            </div>
+
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.combine">
+                                    Combine Frames
+                                </label>
+                                <span class="help-block">Before rendering, multiple frames will be combined to reduce the number of total frames and by that the length of the final video.</span>
+                            </div>
+
+                            <div class="sub-settings">
+                                <div data-bind="visible: $data.combine">
+                                    <label class="sub">Chunk Size</label>
+                                    <input type="number" step='1' min="2" max="100" width="5" data-bind="value: $data.combineSize">
+                                    <span class="help-block">Defines how many frames should be combined into one chunk.</span>
+                                </div>
+
+                                <div data-bind="visible: $data.combine">
+                                    <label class="sub">Method</label>
+                                    <select data-bind="value: $data.combineMethod">
+                                        <option value="DROP">Drop Frames</option>
+                                        <option value="BLEND">Blend</option>
+                                        <option value="BLEND_WEIGHTED">Weighted Blend</option>
+                                    </select>
+                                    <span class="help-block">When dropping frames, only the last frame of a combined chunk will be used, blending creates a combined frame by mixing all chunk frames into one.</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.fade">
+                                    Enable Fade
+                                </label>
+                            </div>
+
+                            <div class="sub-settings">
+                                <div data-bind="visible: $data.fade">
+                                    <label class="sub">Fade-In Duration (ms)</label>
+                                    <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.fadeInDuration">
+                                </div>
+
+                                <div data-bind="visible: $data.fade">
+                                    <label class="sub">Fade-Out Duration (ms)</label>
+                                    <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.fadeOutDuration">
+                                </div>
+
+                                <div data-bind="visible: $data.fade">
+                                    <label class="sub">Color</label>
+                                    <input type="color" maxlength="7" data-bind="value: $data.fadeColor">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.ppRoll">
+                                    Pre/Post Roll
+                                </label>
+                            </div>
+
+                            <div class="sub-settings" data-bind="visible: $data.ppRoll">
+                                <div>
+                                    <label class="sub">Max Blur Radius</label>
+                                    <input type="number" step='1' min="0" max="500" width="5" data-bind="value: $data.ppRollBlurRadius">
+                                </div>
+
+                                <div>
+                                    <label class="sub">Max Zoom Factor</label>
+                                    <input type="number" step='0.01' min="0.0" max="5.0" width="5" data-bind="value: $data.ppRollZoomFactor">
+                                </div>
+
+                                <h4>Pre-Roll</h4>
+                                <div class="sub-settings">
+                                    <div>
+                                        <label class="sub">Duration (ms)</label>
+                                        <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.ppRollPreDuration">
+                                    </div>
+                                    <div>
+                                        <label class="sub">Type</label>
+                                        <select data-bind="value: $data.ppRollPreType">
+                                            <option value="STILL">Still Frame</option>
+                                            <option value="STILL_FINAL">Still Frame (Final)</option>
+                                            <option value="LAPSE">Short Timelapse</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="sub">Ease Function</label>
+                                        <select data-bind="value: $data.ppRollPreEaseFn">
+                                            <option value="LINEAR">Linear</option>
+                                            <option value="EASE_IN">Ease-In</option>
+                                            <option value="EASE_IN_OUT">Ease-In-Out</option>
+                                            <span class="help-block">Animations during the Pre-Roll will be mapped by this function. Ease-In and Ease-In-Out will generate a much smoother transition between the Pre-Roll and the timelapse.</span>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="sub checkbox">
+                                            <input type="checkbox" data-bind="checked: $data.ppRollPreZoom">
+                                            Zoom Animation
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label class="sub checkbox">
+                                            <input type="checkbox" data-bind="checked: $data.ppRollPreBlur">
+                                            Blur Animation
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h4>Post-Roll</h4>
+                                <div class="sub-settings">
+                                    <div>
+                                        <label class="sub">Duration (ms)</label>
+                                        <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.ppRollPostDuration">
+                                    </div>
+                                    <div>
+                                        <label class="sub">Type</label>
+                                        <select data-bind="value: $data.ppRollPostType">
+                                            <option value="STILL">Still Frame</option>
+                                            <option value="STILL_FINAL">Still Frame (Final)</option>
+                                            <option value="LAPSE">Short Timelapse</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="sub">Ease Function</label>
+                                        <select data-bind="value: $data.ppRollPostEaseFn">
+                                            <option value="LINEAR">Linear</option>
+                                            <option value="EASE_IN">Ease-In</option>
+                                            <option value="EASE_IN_OUT">Ease-In-Out</option>
+                                            <span class="help-block">Animations during the Post-Roll will be mapped by this function. Ease-In and Ease-In-Out will generate a much smoother transition between the timelapse and the Post-Roll.</span>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="sub checkbox">
+                                            <input type="checkbox" data-bind="checked: $data.ppRollPostZoom">
+                                            Zoom Animation
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label class="sub checkbox">
+                                            <input type="checkbox" data-bind="checked: $data.ppRollPostBlur">
+                                            Blur Animation
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h4>Text</h4>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.ppRollText">
+                                    Enable Pre-Roll Text
+                                    <span class="help-block">Show the source print file name or parts of it as a Pre-Roll text overlay</span>
+                                </label>
+                                <div class="sub-settings" data-bind="visible: $data.ppRollText">
+                                    <div>
+                                        <label class="sub">Size</label>
+                                        <input type="number" step='1' min="1" max="100" width="5" data-bind="value: $data.ppRollTextSize">
+                                    </div>
+                                    <div>
+                                        <label class="sub">Text Color</label>
+                                        <input type="color" maxlength="7" data-bind="value: $data.ppRollTextForeground">
+                                    </div>
+                                    <div>
+                                        <label class="sub">Background Color</label>
+                                        <input type="color" maxlength="7" data-bind="value: $data.ppRollTextBackground">
+                                    </div>
+                                    <div>
+                                        <label class="sub">RegEx</label>
+                                        <input type="text" data-bind="value: $data.ppRollTextRegex">
+                                        <span class="help-block">
                                     This RegEx is applied to the file name. Every matching group creates a new line of text.
                                     By that you can extract multiple information (name, filament, temperature, ...) out of the print file name.
                                     You can use <a target="_blank" href="https://regex101.com">this tool</a> to verify your RegEx string.
                                 </span>
+                                    </div>
+                                </div>
+
                             </div>
-                        </div>
 
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.interpolate">
+                                    Enable Frame Interpolation
+                                </label>
+                            </div>
+
+                            <div class="sub-settings">
+                                <div data-bind="visible: $data.interpolate">
+                                    <label class="sub">Interpolated Framerate</label>
+                                    <input type="number" step='1' min="1" max="120" width="5" data-bind="value: $data.interpolateFramerate">
+                                </div>
+
+                                <div data-bind="visible: $data.interpolate">
+                                    <label class="sub">Mode</label>
+                                    <select data-bind="value: $data.interpolateMode">
+                                        <option value="blend">Blending Frames</option>
+                                        <option value="mci">Motion Compensated</option>
+                                    </select>
+                                </div>
+
+                                <div class="alert alert-block" style="margin-top: 1em" data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
+                                    <strong>Note: </strong>
+                                    <a href="http://underpop.online.fr/f/ffmpeg/help/minterpolate.htm.gz" target="_blank">Click here</a>
+                                    for more information about the interpolation parameters. If you are not sure, you can just keep the default settings.
+                                </div>
+
+                                <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
+                                    <label class="sub">Motion Estimation</label>
+                                    <select data-bind="value: $data.interpolateEstimation">
+                                        <option value="bidir">Bidirectional</option>
+                                        <option value="bilat">Bilateral</option>
+                                    </select>
+                                </div>
+
+                                <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
+                                    <label class="sub">Motion Search Algorithm</label>
+                                    <select data-bind="value: $data.interpolateAlgorithm">
+                                        <option value="esa">Exhaustive</option>
+                                        <option value="tss">Three step</option>
+                                        <option value="tdls">Two dimensional logarithmic</option>
+                                        <option value="ntss">New three step</option>
+                                        <option value="fss">Four step</option>
+                                        <option value="ds">Diamond</option>
+                                        <option value="hexbs">Hexagon-based</option>
+                                        <option value="epzs">Enhanced predictive zonal</option>
+                                        <option value="umh">Uneven multi-hexagon</option>
+                                    </select>
+                                </div>
+
+                                <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
+                                    <label class="sub">Motion Compensation</label>
+                                    <select data-bind="value: $data.interpolateCompensation">
+                                        <option value="obmc">Normal</option>
+                                        <option value="aobmc">Adaptive</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemUp($parent.settings.plugins.timelapseplus.renderPresets, $data), click: function(){$parent.parent.moveItemUp($parent.settings.plugins.timelapseplus.renderPresets, $data)}">
+                                <i class="fa fa-chevron-up"></i>
+                            </button>
+
+                            <button style="margin-right: 1em" class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemDown($parent.settings.plugins.timelapseplus.renderPresets, $data), click: function(){$parent.parent.moveItemDown($parent.settings.plugins.timelapseplus.renderPresets, $data)}">
+                                <i class="fa fa-chevron-down"></i>
+                            </button>
+
+                            <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.timelapseplus.renderPresets.remove($data)}, enable: $parent.settings.plugins.timelapseplus.renderPresets().length > 1">
+                                <i class="fa fa-trash"></i>
+                                Remove this Preset
+                            </button>
+                        </div>
                     </div>
-
-                    <div>
-                        <label class="sub checkbox">
-                            <input type="checkbox" data-bind="checked: $data.interpolate">
-                            Enable Frame Interpolation
-                        </label>
-                    </div>
-
-                    <div class="sub-settings">
-                        <div data-bind="visible: $data.interpolate">
-                            <label class="sub">Interpolated Framerate</label>
-                            <input type="number" step='1' min="1" max="120" width="5" data-bind="value: $data.interpolateFramerate">
-                        </div>
-
-                        <div data-bind="visible: $data.interpolate">
-                            <label class="sub">Mode</label>
-                            <select data-bind="value: $data.interpolateMode">
-                                <option value="blend">Blending Frames</option>
-                                <option value="mci">Motion Compensated</option>
-                            </select>
-                        </div>
-
-                        <div class="alert alert-block" style="margin-top: 1em" data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
-                            <strong>Note: </strong>
-                            <a href="http://underpop.online.fr/f/ffmpeg/help/minterpolate.htm.gz" target="_blank">Click here</a>
-                            for more information about the interpolation parameters. If you are not sure, you can just keep the default settings.
-                        </div>
-
-                        <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
-                            <label class="sub">Motion Estimation</label>
-                            <select data-bind="value: $data.interpolateEstimation">
-                                <option value="bidir">Bidirectional</option>
-                                <option value="bilat">Bilateral</option>
-                            </select>
-                        </div>
-
-                        <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
-                            <label class="sub">Motion Search Algorithm</label>
-                            <select data-bind="value: $data.interpolateAlgorithm">
-                                <option value="esa">Exhaustive</option>
-                                <option value="tss">Three step</option>
-                                <option value="tdls">Two dimensional logarithmic</option>
-                                <option value="ntss">New three step</option>
-                                <option value="fss">Four step</option>
-                                <option value="ds">Diamond</option>
-                                <option value="hexbs">Hexagon-based</option>
-                                <option value="epzs">Enhanced predictive zonal</option>
-                                <option value="umh">Uneven multi-hexagon</option>
-                            </select>
-                        </div>
-
-                        <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
-                            <label class="sub">Motion Compensation</label>
-                            <select data-bind="value: $data.interpolateCompensation">
-                                <option value="obmc">Normal</option>
-                                <option value="aobmc">Adaptive</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemUp($parent.settings.plugins.timelapseplus.renderPresets, $data), click: function(){$parent.parent.moveItemUp($parent.settings.plugins.timelapseplus.renderPresets, $data)}">
-                        <i class="fa fa-chevron-up"></i>
-                    </button>
-
-                    <button style="margin-right: 1em" class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemDown($parent.settings.plugins.timelapseplus.renderPresets, $data), click: function(){$parent.parent.moveItemDown($parent.settings.plugins.timelapseplus.renderPresets, $data)}">
-                        <i class="fa fa-chevron-down"></i>
-                    </button>
-
-                    <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.timelapseplus.renderPresets.remove($data)}, enable: $parent.settings.plugins.timelapseplus.renderPresets().length > 1">
-                        <i class="fa fa-trash"></i>
-                        Remove this Preset
-                    </button>
                 </div>
             </div>
         </div>
     </div>
+
 </form>
 
 <!------------------------------------------------------->
