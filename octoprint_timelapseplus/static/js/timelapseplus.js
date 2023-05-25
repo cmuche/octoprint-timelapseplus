@@ -305,7 +305,8 @@ $(function() {
             }
         };
 
-        self.openEnhancementPresetPreview = function(preset) {
+        self.openEnhancementPresetPreview = function() {
+            preset = self.editPreEnhancement();
             preset = ko.toJS(preset);
             self.api("enhancementPreviewSettings", {preset: preset}, function(data) {
                 $("div#tlp-modal-enhancement-live-preview img.preview").attr("src", "data:image/png;base64," + data.result);
