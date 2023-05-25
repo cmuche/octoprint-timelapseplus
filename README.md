@@ -17,6 +17,7 @@ Check out the [_Examples Page_](https://github.com/cmuche/octoprint-timelapseplu
 - Trigger snapshots via __commands__ in your GCODE (e.g. on layer change)
   - __@-Commands__ like ``@SNAPSHOT``
   - __Action Commands__ like ``//action:SNAPSHOT`` (on Marlin via ``M118``)
+  - __Pause__ and __Resume__ Capturing via Commands
 - Regular __time-based__ snapshot mode
 - User-friendly and tidy user interface
   - __View, watch and download__ your rendered videos
