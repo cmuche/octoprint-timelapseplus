@@ -13,6 +13,10 @@ class RenderPreset:
 
         self.FRAMERATE = 30
 
+        self.RESIZE = False
+        self.RESIZE_W = 1280
+        self.RESIZE_H = 720
+
         self.INTERPOLATE = False
         self.INTERPOLATE_FRAMERATE = 60
         self.INTERPOLATE_MODE = 'blend'
@@ -98,6 +102,9 @@ class RenderPreset:
 
     def setJSON(self, d):
         if 'name' in d: self.NAME = d['name']
+        if 'resize' in d: self.RESIZE = d['resize']
+        if 'resizeW' in d: self.RESIZE_W = int(d['resizeW'])
+        if 'resizeH' in d: self.RESIZE_H = int(d['resizeH'])
         if 'framerate' in d: self.FRAMERATE = int(d['framerate'])
         if 'interpolate' in d: self.INTERPOLATE = d['interpolate']
         if 'interpolateFramerate' in d: self.INTERPOLATE_FRAMERATE = int(d['interpolateFramerate'])
@@ -139,6 +146,9 @@ class RenderPreset:
     def getJSON(self):
         return dict(
             name=self.NAME,
+            resize=self.RESIZE,
+            resizeW=self.RESIZE_W,
+            resizeH=self.RESIZE_H,
             framerate=self.FRAMERATE,
             interpolate=self.INTERPOLATE,
             interpolateFramerate=self.INTERPOLATE_FRAMERATE,
