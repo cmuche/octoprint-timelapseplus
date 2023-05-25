@@ -108,6 +108,11 @@
 
                         ; Or Action Command like this:
                         M118 A1 action:<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>
+
+                        ; Pause Snapshot Capturing:
+                        @<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>-PAUSE
+                        ; Resume Snapshot Capturing:
+                        @<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>-RESUME
                     </code>
                 </div>
             </div>
