@@ -345,24 +345,6 @@
                                 </div>
                             </div>
 
-                            <div>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.resize">
-                                    Enable Resizing
-                                </label>
-                            </div>
-                            <div class="sub-settings">
-                                <div data-bind="visible: $data.resize">
-                                    <label class="sub">Width</label>
-                                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeW">
-                                </div>
-
-                                <div data-bind="visible: $data.resize">
-                                    <label class="sub">Height</label>
-                                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
-                                </div>
-                            </div>
-
                             <button class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data), click: function(){$parent.parent.moveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data)}">
                                 <i class="fa fa-chevron-up"></i>
                             </button>
@@ -410,6 +392,24 @@
                             <div>
                                 <label class="sub">Framerate</label>
                                 <input type="number" step='1' min="1" max="120" width="5" data-bind="value: $data.framerate">
+                            </div>
+
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.resize">
+                                    Enable Resizing
+                                </label>
+                            </div>
+                            <div class="sub-settings">
+                                <div data-bind="visible: $data.resize">
+                                    <label class="sub">Width</label>
+                                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeW">
+                                </div>
+
+                                <div data-bind="visible: $data.resize">
+                                    <label class="sub">Height</label>
+                                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
+                                </div>
                             </div>
 
                             <div>
