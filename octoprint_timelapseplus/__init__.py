@@ -326,11 +326,24 @@ class TimelapsePlusPlugin(
     def errorSnapshot(self, err):
         self.sendClientPopup('error', 'Webcam Capture failed', str(err))
 
+    def isSnapshotCommand(self, command):
+        ssCommand = self._settings.get(["snapshotCommand"])
+
+        if command is None:
+            return False
+        if ssCommand is None:
+            return False
+
+        c1 = ssCommand.strip().lower()
+        c2 = command.strip().lower()
+
+        return c1 == c2
+
     def atCommand(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
 
-        if command != self._settings.get(["snapshotCommand"]):
+        if not self.isSnapshotCommand(command):
             return
 
         if self.PRINTJOB.CAPTURE_MODE != CaptureMode.COMMAND:
@@ -342,7 +355,7 @@ class TimelapsePlusPlugin(
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
 
-        if action != self._settings.get(["snapshotCommand"]):
+        if not self.isSnapshotCommand(action):
             return
 
         if self.PRINTJOB.CAPTURE_MODE != CaptureMode.COMMAND:
