@@ -282,7 +282,7 @@
 
     <!------------------------------------------------------->
 
-    <div id="tlp-modal-edit-enhancement-preset" class="modal hide fade preset-modal">
+    <div id="tlp-modal-edit-enhancement-preset" class="modal hide fade tlp-preset-modal">
         <div class="modal-header">
             <a href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
             <h3>Edit Enhancement Preset</h3>
@@ -419,7 +419,7 @@
         </div>
     </div>
 
-    <div id="tlp-modal-edit-render-preset" class="modal hide fade preset-modal">
+    <div id="tlp-modal-edit-render-preset" class="modal hide fade tlp-preset-modal">
         <div class="modal-header">
             <a href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
             <h3>Edit Render Preset</h3>
@@ -428,7 +428,7 @@
             <div class="row-fluid" data-bind="if: parent.editPreRender() != null">
                 <div>
                     <label class="sub">Name</label>
-                    <input type="text" class="input-block-level" data-bind="value: parent.editPreRender().name">
+                    <input type="text" data-bind="value: parent.editPreRender().name">
                 </div>
 
                 <div>
@@ -687,7 +687,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary pull-right" data-dismiss="modal">Close</button>
