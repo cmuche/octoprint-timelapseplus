@@ -42,6 +42,9 @@ class TimelapsePlusPlugin(
         self.RENDERJOBS = []
         self.ERROR = None
 
+        self.SUFFIX_PRINT_PAUSE = 'PAUSE'
+        self.SUFFIX_PRINT_RESUME = 'RESUME'
+
     @octoprint.plugin.BlueprintPlugin.route("/webcamCapturePreview", methods=["POST"])
     def apiWebcamCapturePreview(self):
         return self.API_CONTROLLER.webcamCapturePreview()
@@ -118,7 +121,7 @@ class TimelapsePlusPlugin(
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
         buf = io.BytesIO()
-        img.convert('RGB').save(buf, format='JPEG', quality=75)
+        img.convert('RGB').save(buf, format='JPEG', quality=85)
         byteArr = buf.getvalue()
         return byteArr
 
@@ -326,32 +329,41 @@ class TimelapsePlusPlugin(
     def errorSnapshot(self, err):
         self.sendClientPopup('error', 'Webcam Capture failed', str(err))
 
+    def isSnapshotCommand(self, command, suffix=None):
+        ssCommand = self._settings.get(["snapshotCommand"]).strip()
+
+        if suffix is not None:
+            ssCommand += '-' + suffix
+
+        if command is None:
+            return False
+        if ssCommand is None:
+            return False
+
+        c1 = ssCommand.strip().lower()
+        c2 = command.strip().lower()
+
+        return c1 == c2
+
     def atCommand(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
-        if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
-            return
-
-        if command != self._settings.get(["snapshotCommand"]):
-            return
-
-        if self.PRINTJOB.CAPTURE_MODE != CaptureMode.COMMAND:
-            return
-
-        self.PRINTJOB.doSnapshot()
+        self.processCommand(command)
 
     def atAction(self, comm, line, action, *args, **kwargs):
+        self.processCommand(action)
+
+    def processCommand(self, cmd):
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
 
-        if action != self._settings.get(["snapshotCommand"]):
-            return
-
-        if self.PRINTJOB.CAPTURE_MODE != CaptureMode.COMMAND:
-            return
-
-        self.PRINTJOB.doSnapshot()
+        if self.isSnapshotCommand(cmd) and self.PRINTJOB.CAPTURE_MODE == CaptureMode.COMMAND:
+            self.PRINTJOB.doSnapshot()
+        elif self.isSnapshotCommand(cmd, self.SUFFIX_PRINT_PAUSE):
+            self.printHaltedTo(True)
+        elif self.isSnapshotCommand(cmd, self.SUFFIX_PRINT_RESUME):
+            self.printHaltedTo(False)
 
     def render(self, frameZip, enhancementPreset=None, renderPreset=None, videoFormat=None):
-        job = RenderJob(frameZip, self, self._logger, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset, videoFormat)
+        job = RenderJob(self._basefolder, frameZip, self, self._logger, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset, videoFormat)
         job.start()
         self.RENDERJOBS.append(job)
 
@@ -396,6 +408,11 @@ class TimelapsePlusPlugin(
 
         self.PRINTJOB.PAUSED = False
         self.sendClientData()
+
+    def printHaltedTo(self, val):
+        if val != self.PRINTJOB.HALTED:
+            self.PRINTJOB.HALTED = val
+            self.sendClientData()
 
     def on_event(self, event, payload):
         if event == Events.PRINT_STARTED:

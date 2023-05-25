@@ -32,14 +32,24 @@ class Format:
 
         return ret
 
+    def getCodecIdsList(self):
+        if self.CODEC_ID is None:
+            return []
+
+        if isinstance(self.CODEC_ID, str):
+            return [self.CODEC_ID]
+
+        return self.CODEC_ID
+
     def getRenderArgs(self):
         ret = []
-
-        if self.CODEC_ID is not None:
-            ret += ['-c:v', self.CODEC_ID]
 
         for k in self.ADDITIONAL_ARGS.keys():
             v = str(self.ADDITIONAL_ARGS[k])
             ret += [k, v]
+
+        if self.CODEC_ID is not None:
+            codecId = self.getCodecIdsList()[0]
+            ret += ['-c:v', codecId]
 
         return ret

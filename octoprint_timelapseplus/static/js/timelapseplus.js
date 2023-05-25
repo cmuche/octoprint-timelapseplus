@@ -69,6 +69,9 @@ $(function() {
 
         self.isUploadingFrameZip = ko.observable(false);
 
+        self.editPreEnhancement = ko.observable(null);
+        self.editPreRender = ko.observable(null);
+
         self.videoFormats.subscribe(function(data) {
             const groups = {};
             for (const obj of data) {
@@ -84,6 +87,18 @@ $(function() {
                 self.selectedRenderPresetVideoLength(res.length);
             });
         });
+
+        self.getRandomString = function(length = 16) {
+            const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let result = "";
+
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                result += characters.charAt(randomIndex);
+            }
+
+            return result;
+        };
 
         $("div#tlp-modal-video video source")[0].addEventListener("error", function(e) {
             self.hasVideoPlaybackError(true);
@@ -204,7 +219,7 @@ $(function() {
             }
         };
 
-        self.openBlurMask = function(preset) {
+        self.openBlurMask = function() {
             $("<input type=\"file\">").on("change", function() {
                 let f = this.files[0];
 
@@ -212,7 +227,7 @@ $(function() {
                 reader.readAsDataURL(f);
                 reader.onload = function() {
                     self.api("createBlurMask", {image: reader.result}, function(res) {
-                        preset.blurMask(res.id);
+                        self.editPreEnhancement().blurMask(res.id);
                     });
                 };
                 reader.onerror = function(error) {
@@ -290,7 +305,8 @@ $(function() {
             }
         };
 
-        self.openEnhancementPresetPreview = function(preset) {
+        self.openEnhancementPresetPreview = function() {
+            preset = self.editPreEnhancement();
             preset = ko.toJS(preset);
             self.api("enhancementPreviewSettings", {preset: preset}, function(data) {
                 $("div#tlp-modal-enhancement-live-preview img.preview").attr("src", "data:image/png;base64," + data.result);
@@ -333,15 +349,19 @@ $(function() {
             let stateVms = {
                 "WAITING": {title: "Waiting", showProgress: false, icon: "fas fa-hourglass-half"},
                 "EXTRACTING": {title: "Extracting Frame Collection", showProgress: false, icon: "fas fa-box-open"},
-                "RENDERING": {title: "Rendering Video", showProgress: true, icon: "fas fa-photo-video"},
                 "FINISHED": {title: "Finished", showProgress: false, icon: "fas fa-check"},
                 "FAILED": {title: "Failed", showProgress: false, icon: "fas fa-exclamation-triangle"},
                 "ENHANCING": {title: "Enhancing Images", showProgress: true, icon: "fas fa-magic"},
                 "BLURRING": {title: "Blurring Areas", showProgress: true, icon: "fas fa-eraser"},
-                "RESIZING": {title: "Resizing Frames", showProgress: true, icon: "fas fa-arrows-alt"},
+                "RESIZING": {title: "Resizing Frames", showProgress: true, icon: "fas fa-compress"},
                 "COMBINING": {title: "Combining Frames", showProgress: true, icon: "fas fa-clone"},
                 "CREATE_PALETTE": {title: "Generating Color Palette", showProgress: false, icon: "fas fa-paint-brush"},
-                "ENCODING": {title: "Encoding Video File", showProgress: true, icon: "fas fa-box"}
+                "ADDING_TIMECODES": {title: "Adding Timecodes", showProgress: true, icon: "fas fa-stopwatch"},
+                "ENCODING": {title: "Encoding Video File", showProgress: true, icon: "fas fa-photo-video"},
+                "GENERATING_PPROLL": {title: "Generating Pre/Post Roll", showProgress: true, icon: "fas fa-tv"},
+                "APPLYING_FADE": {title: "Applying Fade Effect", showProgress: true, icon: "fas fa-sort"},
+                "MOVING_FRAMES": {title: "Moving Frames", showProgress: false, icon: "fas fa-copy"},
+                "INTERPOLATING": {title: "Interpolating Frames", showProgress: true, icon: "fas fa-object-group"}
             };
 
             if (job.state in stateVms)
@@ -442,6 +462,20 @@ $(function() {
                     });
                 });
 
+            });
+        };
+
+        self.openSettingsEnhancementPreset = function(preset) {
+            self.editPreEnhancement(preset);
+            $("div#tlp-modal-edit-enhancement-preset").modal({
+                width: "auto"
+            });
+        };
+
+        self.openSettingsRenderPreset = function(preset) {
+            self.editPreRender(preset);
+            $("div#tlp-modal-edit-render-preset").modal({
+                width: "auto"
             });
         };
 

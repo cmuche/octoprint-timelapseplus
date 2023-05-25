@@ -1,12 +1,16 @@
 import os
+import re
 import subprocess
 
 from PIL import Image
 
+from .helpers.formatHelper import FormatHelper
 from .model.webcamType import WebcamType
 
 
 class PrerequisitesController:
+    ENCODERS_TEST_REGEX = '^[ ]*V[VASFXBD\\.]{5} ([a-zA-Z0-9-_]+) [ ]+.*'
+
     @staticmethod
     def check(settings, webcamController, ffmpegPath=None, ffprobePath=None, webcamType=None, webcamUrl=None):
         if ffmpegPath is None:
@@ -29,6 +33,8 @@ class PrerequisitesController:
 
         if result.returncode != 0:
             raise Exception('FFmpeg returned status code ' + result.returncode)
+
+        PrerequisitesController.checkFfmpegEncoders(ffmpegPath)
 
         if ffprobePath is None or ffprobePath.strip() == '':
             raise Exception('FFprobe Path is not set')
@@ -62,3 +68,24 @@ class PrerequisitesController:
 
         if imgFormat != 'JPEG':
             raise Exception('Webcam Snapshot URL did not return a JPG/JPEG Image')
+
+    @staticmethod
+    def checkFfmpegEncoders(ffmpegPath):
+        cmd = [ffmpegPath, '-encoders']
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=False)
+        outLines = result.stdout.decode().split('\n')
+        outLines = [x.replace('\r', '').strip() for x in outLines]
+        outLines = [x for x in outLines if x != '']
+
+        encoders = []
+        for ol in outLines:
+            match = re.search(PrerequisitesController.ENCODERS_TEST_REGEX, ol)
+            if not match:
+                continue
+            encoders += [match.group(1)]
+
+        videoFormats = FormatHelper.getVideoFormats()
+        for vf in videoFormats:
+            for vc in vf.getCodecIdsList():
+                if vc not in encoders:
+                    raise Exception('The Encoder \'' + vc + '\'  is not supported by your FFmpeg Version')

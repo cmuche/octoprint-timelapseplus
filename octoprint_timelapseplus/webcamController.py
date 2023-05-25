@@ -86,6 +86,26 @@ class WebcamController:
                     os.remove(path)
                 raise Exception('Webcam Snapshot Endpoint took too long sending Data')
 
+    def getSnapshotFromScript(self, scriptPath, fileName):
+        if not os.path.isfile(scriptPath):
+            raise Exception('The Script File does not exist')
+
+        scriptType = os.path.splitext(scriptPath)[1][1:].lower()
+        argument = os.path.abspath(fileName)
+
+        if scriptType == 'sh':
+            proc = subprocess.run(['bash', scriptPath, argument], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        elif scriptType == 'bat':
+            proc = subprocess.run([scriptPath, argument], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        elif scriptType == 'ps1':
+            proc = subprocess.run(['powershell', '-ExecutionPolicy', 'Bypass', '-File', scriptPath, argument], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        else:
+            raise Exception('Unsupported Webcam Script Type (*.' + scriptType + ')')
+
+        if not os.path.isfile(fileName) or proc.returncode != 0:
+            scriptOutput = proc.stdout.decode(errors='ignore')
+            raise Exception('Webcam Script did not create the requested Output File.\n\nReturn Code: ' + str(proc.returncode) + '\n\nOutput: ' + str(scriptOutput))
+
     def getSnapshot(self, ffmpegPath=None, webcamType=None, webcamUrl=None):
         if ffmpegPath is None:
             ffmpegPath = self._settings.get(["ffmpegPath"])
@@ -103,6 +123,8 @@ class WebcamController:
                 self.getSnapshotStreamMjpeg(fileName, webcamUrl)
             if webcamType == WebcamType.STREAM_MP4 or webcamType == WebcamType.STREAM_HLS:
                 self.getSnapshotStreamMp4OrHls(fileName, ffmpegPath, webcamUrl)
+            if webcamType == WebcamType.SCRIPT:
+                self.getSnapshotFromScript(webcamUrl, fileName)
 
             if not os.path.isfile(fileName):
                 raise Exception('An Error occured during Snapshot Capturing')

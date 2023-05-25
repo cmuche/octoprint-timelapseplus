@@ -33,6 +33,7 @@ class PrintJob:
         self.CAPTURE_THREADS = []
         self.RUNNING = False
         self.PAUSED = False
+        self.HALTED = False
         self.CAPTURE_MODE = CaptureMode[self._settings.get(["captureMode"])]
         self.CAPTURE_TIMER_INTERVAL = int(self._settings.get(["captureTimerInterval"]))
         self.CAPTURE_TIMER = ResettableTimer(self.CAPTURE_TIMER_INTERVAL, self.captureTimerTriggered)
@@ -42,7 +43,7 @@ class PrintJob:
         self.createFolder(dataFolder)
 
     def isCapturing(self):
-        return self.RUNNING and not self.PAUSED
+        return self.RUNNING and not self.PAUSED and not self.HALTED
 
     def createFolder(self, dataFolder):
         self.FOLDER_NAME = self.PARENT.getRandomString(16)
@@ -135,7 +136,7 @@ class PrintJob:
         return mdPath
 
     def doSnapshot(self):
-        if self.PAUSED:
+        if self.PAUSED or self.HALTED:
             return
 
         thread = Thread(target=self.doSnapshotInner, daemon=True)

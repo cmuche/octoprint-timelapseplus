@@ -1,20 +1,30 @@
+from .borderSnap import BorderSnap
 from .mask import Mask
 from PIL import Image, ImageFilter, ImageOps, ImageEnhance
+
+from .timecodeType import TimecodeType
 
 
 class EnhancementPreset:
     def __init__(self, parent, d=None):
         self.NAME = 'Default Enhancement Preset'
+
         self.ENHANCE = False
         self.EQUALIZE = False
         self.BRIGHTNESS = 1
         self.CONTRAST = 1
+
         self.BLUR = False
         self.BLUR_RADIUS = 30
         self.BLUR_MASK = None
-        self.RESIZE = False
-        self.RESIZE_W = 1280
-        self.RESIZE_H = 720
+
+        self.TIMECODE = False
+        self.TIMECODE_SNAP = BorderSnap.BOTTOM_RIGHT
+        self.TIMECODE_SIZE = 15
+        self.TIMECODE_MARGIN = 5
+        self.TIMECODE_TYPE = TimecodeType.PRINTTIME_HMS
+        self.TIMECODE_COLOR_PRIMARY = '#FFFFFF'
+        self.TIMECODE_COLOR_SECONDARY = '#000000'
 
         if d is not None:
             self.setJSON(parent, d)
@@ -45,13 +55,6 @@ class EnhancementPreset:
         # img = ImageOps.autocontrast(img)
         return img
 
-    def applyResize(self, img):
-        if not self.RESIZE:
-            return img
-
-        img = img.resize((self.RESIZE_W, self.RESIZE_H), resample=Image.LANCZOS)
-        return img
-
     def setJSON(self, parent, d):
         if 'name' in d: self.NAME = d['name']
         if 'enhance' in d: self.ENHANCE = d['enhance']
@@ -67,9 +70,13 @@ class EnhancementPreset:
             if bmId is not None:
                 self.BLUR_MASK = Mask(parent, parent._data_folder, bmId)
 
-        if 'resize' in d: self.RESIZE = d['resize']
-        if 'resizeW' in d: self.RESIZE_W = int(d['resizeW'])
-        if 'resizeH' in d: self.RESIZE_H = int(d['resizeH'])
+        if 'timecode' in d: self.TIMECODE = d['timecode']
+        if 'timecodeSnap' in d: self.TIMECODE_SNAP = BorderSnap[d['timecodeSnap']]
+        if 'timecodeSize' in d: self.TIMECODE_SIZE = int(d['timecodeSize'])
+        if 'timecodeMargin' in d: self.TIMECODE_MARGIN = int(d['timecodeMargin'])
+        if 'timecodeType' in d: self.TIMECODE_TYPE = TimecodeType[d['timecodeType']]
+        if 'timecodeColorPrimary' in d: self.TIMECODE_COLOR_PRIMARY = d['timecodeColorPrimary']
+        if 'timecodeColorSecondary' in d: self.TIMECODE_COLOR_SECONDARY = d['timecodeColorSecondary']
 
     def getJSON(self):
         d = dict(
@@ -81,9 +88,13 @@ class EnhancementPreset:
             blur=self.BLUR,
             blurRadius=self.BLUR_RADIUS,
             blurMask=None,
-            resize=self.RESIZE,
-            resizeW=self.RESIZE_W,
-            resizeH=self.RESIZE_H
+            timecode=self.TIMECODE,
+            timecodeSnap=self.TIMECODE_SNAP.name,
+            timecodeSize=self.TIMECODE_SIZE,
+            timecodeMargin=self.TIMECODE_MARGIN,
+            timecodeType=self.TIMECODE_TYPE.name,
+            timecodeColorPrimary=self.TIMECODE_COLOR_PRIMARY,
+            timecodeColorSecondary=self.TIMECODE_COLOR_SECONDARY
         )
 
         if self.BLUR_MASK is not None:
