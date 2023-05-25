@@ -91,6 +91,7 @@ class WebcamController:
             raise Exception('The Script File does not exist')
 
         scriptType = os.path.splitext(scriptPath)[1][1:].lower()
+        argument = os.path.abspath(fileName)
 
         if scriptType == 'sh':
             proc = subprocess.run(['bash', scriptPath, argument], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
