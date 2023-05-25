@@ -69,6 +69,9 @@ $(function() {
 
         self.isUploadingFrameZip = ko.observable(false);
 
+        self.editPreEnhancement = ko.observable(null);
+        self.editPreRender = ko.observable(null);
+
         self.videoFormats.subscribe(function(data) {
             const groups = {};
             for (const obj of data) {
@@ -86,8 +89,8 @@ $(function() {
         });
 
         self.getRandomString = function(length = 16) {
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let result = '';
+            const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let result = "";
 
             for (let i = 0; i < length; i++) {
                 const randomIndex = Math.floor(Math.random() * characters.length);
@@ -216,7 +219,7 @@ $(function() {
             }
         };
 
-        self.openBlurMask = function(preset) {
+        self.openBlurMask = function() {
             $("<input type=\"file\">").on("change", function() {
                 let f = this.files[0];
 
@@ -224,7 +227,7 @@ $(function() {
                 reader.readAsDataURL(f);
                 reader.onload = function() {
                     self.api("createBlurMask", {image: reader.result}, function(res) {
-                        preset.blurMask(res.id);
+                        self.editPreEnhancement().blurMask(res.id);
                     });
                 };
                 reader.onerror = function(error) {
@@ -302,7 +305,8 @@ $(function() {
             }
         };
 
-        self.openEnhancementPresetPreview = function(preset) {
+        self.openEnhancementPresetPreview = function() {
+            preset = self.editPreEnhancement();
             preset = ko.toJS(preset);
             self.api("enhancementPreviewSettings", {preset: preset}, function(data) {
                 $("div#tlp-modal-enhancement-live-preview img.preview").attr("src", "data:image/png;base64," + data.result);
@@ -458,6 +462,20 @@ $(function() {
                     });
                 });
 
+            });
+        };
+
+        self.openSettingsEnhancementPreset = function(preset) {
+            self.editPreEnhancement(preset);
+            $("div#tlp-modal-edit-enhancement-preset").modal({
+                width: "auto"
+            });
+        };
+
+        self.openSettingsRenderPreset = function(preset) {
+            self.editPreRender(preset);
+            $("div#tlp-modal-edit-render-preset").modal({
+                width: "auto"
             });
         };
 

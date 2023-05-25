@@ -202,7 +202,7 @@
     margin-right: 2em;
 }
 
-#timelapseplus-settings .sub-settings {
+#timelapseplus-settings .sub-settings, .tlp-preset-modal .sub-settings {
     border-left: 0.25em solid rgba(127, 127, 127, 0.25);
     padding-left: 1em;
     margin-left: 0.5em;
@@ -214,7 +214,7 @@
     box-shadow: 0.2em 0.2em 0.35em rgba(0, 0, 0, 0.5);
 }
 
-#timelapseplus-settings code {
+#timelapseplus-settings code, .tlp-preset-modal code {
     display: block;
     white-space: pre-line;
     margin-top: 1em;
@@ -235,23 +235,20 @@
     margin-top: 0;
 }
 
-#timelapseplus-settings .preset .btn-mini {
+#timelapseplus-settings .preset .btn-mini, .tlp-preset-modal .btn-mini {
     margin-top: 1em;
 }
 
-#timelapseplus-settings .colorPreview {
-    width: 1.5em;
-    height: 1.5em;
-    border-radius: 100%;
-    box-shadow: 0.2em 0.2em 0.35em rgba(0, 0, 0, 0.25);
-    margin-left: 1em;
-}
-
-#timelapseplus-settings input[type=color] {
+#timelapseplus-settings input[type=color], .tlp-preset-modal input[type=color] {
     padding: 0.2em;
     border: none;
     height: 2em;
     width: 3em;
+}
+
+.tlp-preset-modal .modal-body {
+    width: 40em;
+    height: 70vh;
 }
 
 #tlp-modal-webcam-preview .error {
