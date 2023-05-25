@@ -1,5 +1,7 @@
 from math import ceil
 
+from PIL import Image
+
 from .combineMethod import CombineMethod
 from .ppRollEaseFn import PPRollEaseFn
 from .ppRollType import PPRollType
