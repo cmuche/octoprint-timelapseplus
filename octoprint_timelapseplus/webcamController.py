@@ -93,16 +93,17 @@ class WebcamController:
         scriptType = os.path.splitext(scriptPath)[1][1:].lower()
 
         if scriptType == 'sh':
-            subprocess.run(['bash', scriptPath, os.path.abspath(fileName)])
+            proc = subprocess.run(['bash', scriptPath, argument], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         elif scriptType == 'bat':
-            subprocess.run([scriptPath, os.path.abspath(fileName)], shell=True)
+            proc = subprocess.run([scriptPath, argument], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         elif scriptType == 'ps1':
-            subprocess.run(['powershell', '-ExecutionPolicy', 'Bypass', '-File', scriptPath, os.path.abspath(fileName)])
+            proc = subprocess.run(['powershell', '-ExecutionPolicy', 'Bypass', '-File', scriptPath, argument], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         else:
             raise Exception('Unsupported Webcam Script Type (*.' + scriptType + ')')
 
-        if not os.path.isfile(fileName):
-            raise Exception('Webcam Script did not create the requested Output File')
+        if not os.path.isfile(fileName) or proc.returncode != 0:
+            scriptOutput = proc.stdout.decode(errors='ignore')
+            raise Exception('Webcam Script did not create the requested Output File.\n\nReturn Code: ' + str(proc.returncode) + '\n\nOutput: ' + str(scriptOutput))
 
     def getSnapshot(self, ffmpegPath=None, webcamType=None, webcamUrl=None):
         if ffmpegPath is None:
