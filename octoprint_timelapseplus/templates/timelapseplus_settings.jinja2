@@ -55,6 +55,7 @@
                         <option value="STREAM_MJPEG">MJPEG Stream</option>
                         <option value="STREAM_MP4">MP4 Stream (via FFmpeg)</option>
                         <option value="STREAM_HLS">HLS Stream (Via FFmpeg)</option>
+                        <option value="SCRIPT">Custom Script</option>
                     </select>
                     <span class="help-block">
                 Stream-based capturing might take some extra time to be processed and converted which could have an impact on your snapshot timing.<br>
@@ -63,11 +64,26 @@
                 </div>
             </div>
 
-            <div class="control-group">
+            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.webcamType() != 'SCRIPT'">
                 <label class="control-label">Webcam URL</label>
                 <div class="controls">
                     <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamUrl">
                     <span class="help-block">The URL must be reachable for OctoPrint and return a still image or the stream in the format specified above.</span>
+                </div>
+            </div>
+            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.webcamType() == 'SCRIPT'">
+                <label class="control-label">Webcam Script Path</label>
+                <div class="controls">
+                    <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamUrl">
+                    <span class="help-block">
+                        Supported Script Types are:
+                        <ul>
+                            <li>Linux Bash Script (*.sh)</li>
+                            <li>Windows Batch Script (*.bat)</li>
+                            <li>Windows PowerShell Script (*.ps1)</li>
+                        </ul>
+                        Timelapse+ will pass a file path as an argument to the script. Your script needs to create the snapshot as a <strong>jpg</strong> file at this location.
+                    </span>
                 </div>
             </div>
 
@@ -329,24 +345,6 @@
                                 </div>
                             </div>
 
-                            <div>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.resize">
-                                    Enable Resizing
-                                </label>
-                            </div>
-                            <div class="sub-settings">
-                                <div data-bind="visible: $data.resize">
-                                    <label class="sub">Width</label>
-                                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeW">
-                                </div>
-
-                                <div data-bind="visible: $data.resize">
-                                    <label class="sub">Height</label>
-                                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
-                                </div>
-                            </div>
-
                             <button class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data), click: function(){$parent.parent.moveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data)}">
                                 <i class="fa fa-chevron-up"></i>
                             </button>
@@ -394,6 +392,24 @@
                             <div>
                                 <label class="sub">Framerate</label>
                                 <input type="number" step='1' min="1" max="120" width="5" data-bind="value: $data.framerate">
+                            </div>
+
+                            <div>
+                                <label class="sub checkbox">
+                                    <input type="checkbox" data-bind="checked: $data.resize">
+                                    Enable Resizing
+                                </label>
+                            </div>
+                            <div class="sub-settings">
+                                <div data-bind="visible: $data.resize">
+                                    <label class="sub">Width</label>
+                                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeW">
+                                </div>
+
+                                <div data-bind="visible: $data.resize">
+                                    <label class="sub">Height</label>
+                                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
+                                </div>
                             </div>
 
                             <div>

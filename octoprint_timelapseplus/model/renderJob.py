@@ -365,7 +365,7 @@ class RenderJob:
             self.enhanceImages(self.ENHANCEMENT_PRESET)
             self.blurImages(self.ENHANCEMENT_PRESET)
             self.createPPRoll(self.RENDER_PRESET)
-            self.resizeImages(self.ENHANCEMENT_PRESET)
+            self.resizeImages(self.RENDER_PRESET)
             self.combineImages(self.RENDER_PRESET)
             self.addTimecodes(self.ENHANCEMENT_PRESET)
             self.interpolateOrMove(self.RENDER_PRESET)
