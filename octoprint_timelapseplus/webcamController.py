@@ -93,11 +93,11 @@ class WebcamController:
         scriptType = os.path.splitext(scriptPath)[1][1:].lower()
 
         if scriptType == 'sh':
-            subprocess.run(['bash', scriptPath, fileName])
+            subprocess.run(['bash', scriptPath, os.path.abspath(fileName)])
         elif scriptType == 'bat':
-            subprocess.run([scriptPath, fileName], shell=True)
+            subprocess.run([scriptPath, os.path.abspath(fileName)], shell=True)
         elif scriptType == 'ps1':
-            subprocess.run(['powershell', '-ExecutionPolicy', 'Bypass', '-File', scriptPath, fileName])
+            subprocess.run(['powershell', '-ExecutionPolicy', 'Bypass', '-File', scriptPath, os.path.abspath(fileName)])
         else:
             raise Exception('Unsupported Webcam Script Type (*.' + scriptType + ')')
 
