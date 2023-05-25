@@ -218,7 +218,7 @@
 
                     <div class="help-block">Enhancement presets define how the frames should be optimized and filtered before the final video is rendered</div>
 
-                    <button class="btn btn-mini" data-bind="click: function(){parent.addEnhancementPreset(settings.plugins.timelapseplus.enhancementPresets)}">
+                    <button class="btn btn-mini" style="margin-top: 1em" data-bind="click: function(){parent.addEnhancementPreset(settings.plugins.timelapseplus.enhancementPresets)}">
                         <i class="fa fa-plus"></i>
                         Add Enhancement Preset
                     </button>
@@ -226,8 +226,12 @@
                     <div data-bind="foreach: settings.plugins.timelapseplus.enhancementPresets">
                         <div class="preset">
                             <h4 style="margin: 0">Preset #<span data-bind="text: $parent.parent.itemIndex($parent.settings.plugins.timelapseplus.enhancementPresets, $data) + 1"></span></h4>
+                            <h5 data-bind="text: $data.name"></h5>
 
-                            <button data-bind="click: $parent.parent.openSettingsEnhancementPreset">EDIT</button>
+                            <button style="margin-right: 1em" class="btn btn-mini" data-bind="click: $parent.parent.openSettingsEnhancementPreset">
+                                <i class="fa fa-cog"></i>
+                                Edit Settings
+                            </button>
 
                             <button class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data), click: function(){$parent.parent.moveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data)}">
                                 <i class="fa fa-chevron-up"></i>
@@ -237,7 +241,7 @@
                             </button>
                             <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.timelapseplus.enhancementPresets().length > 1">
                                 <i class="fa fa-trash"></i>
-                                Remove this Preset
+                                Remove
                             </button>
                         </div>
                     </div>
@@ -252,7 +256,7 @@
 
                     <div class="help-block">Render presets define how the actual video should be rendered</div>
 
-                    <button class="btn btn-mini" data-bind="click: function(){parent.addRenderPreset(settings.plugins.timelapseplus.renderPresets)}">
+                    <button class="btn btn-mini" style="margin-top: 1em" data-bind="click: function(){parent.addRenderPreset(settings.plugins.timelapseplus.renderPresets)}">
                         <i class="fa fa-plus"></i>
                         Add Render Preset
                     </button>
@@ -260,8 +264,12 @@
                     <div data-bind="foreach: settings.plugins.timelapseplus.renderPresets">
                         <div class="preset">
                             <h4 style="margin: 0">Preset #<span data-bind="text: $parent.parent.itemIndex($parent.settings.plugins.timelapseplus.renderPresets, $data) + 1"></span></h4>
+                            <h5 data-bind="text: $data.name"></h5>
 
-                            <button data-bind="click: $parent.parent.openSettingsRenderPreset">EDIT</button>
+                            <button style="margin-right: 1em" class="btn btn-mini" data-bind="click: $parent.parent.openSettingsRenderPreset">
+                                <i class="fa fa-cog"></i>
+                                Edit Settings
+                            </button>
 
                             <button class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemUp($parent.settings.plugins.timelapseplus.renderPresets, $data), click: function(){$parent.parent.moveItemUp($parent.settings.plugins.timelapseplus.renderPresets, $data)}">
                                 <i class="fa fa-chevron-up"></i>
@@ -271,7 +279,7 @@
                             </button>
                             <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.timelapseplus.renderPresets.remove($data)}, enable: $parent.settings.plugins.timelapseplus.renderPresets().length > 1">
                                 <i class="fa fa-trash"></i>
-                                Remove this Preset
+                                Remove
                             </button>
                         </div>
                     </div>
