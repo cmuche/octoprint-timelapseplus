@@ -86,6 +86,24 @@ class WebcamController:
                     os.remove(path)
                 raise Exception('Webcam Snapshot Endpoint took too long sending Data')
 
+    def getSnapshotFromScript(self, scriptPath, fileName):
+        if not os.path.isfile(scriptPath):
+            raise Exception('The Script File does not exist')
+
+        scriptType = os.path.splitext(scriptPath)[1][1:].lower()
+
+        if scriptType == 'sh':
+            subprocess.run(['bash', scriptPath, fileName])
+        elif scriptType == 'bat':
+            subprocess.run([scriptPath, fileName], shell=True)
+        elif scriptType == 'ps1':
+            subprocess.run(['powershell', '-ExecutionPolicy', 'Bypass', '-File', scriptPath, fileName])
+        else:
+            raise Exception('Unsupported Webcam Script Type (*.' + scriptType + ')')
+
+        if not os.path.isfile(fileName):
+            raise Exception('Webcam Script did not create the requested Output File')
+
     def getSnapshot(self, ffmpegPath=None, webcamType=None, webcamUrl=None):
         if ffmpegPath is None:
             ffmpegPath = self._settings.get(["ffmpegPath"])
@@ -103,6 +121,8 @@ class WebcamController:
                 self.getSnapshotStreamMjpeg(fileName, webcamUrl)
             if webcamType == WebcamType.STREAM_MP4 or webcamType == WebcamType.STREAM_HLS:
                 self.getSnapshotStreamMp4OrHls(fileName, ffmpegPath, webcamUrl)
+            if webcamType == WebcamType.SCRIPT:
+                self.getSnapshotFromScript(webcamUrl, fileName)
 
             if not os.path.isfile(fileName):
                 raise Exception('An Error occured during Snapshot Capturing')
