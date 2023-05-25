@@ -219,7 +219,7 @@ $(function() {
             }
         };
 
-        self.openBlurMask = function(preset) {
+        self.openBlurMask = function() {
             $("<input type=\"file\">").on("change", function() {
                 let f = this.files[0];
 
@@ -227,7 +227,7 @@ $(function() {
                 reader.readAsDataURL(f);
                 reader.onload = function() {
                     self.api("createBlurMask", {image: reader.result}, function(res) {
-                        preset.blurMask(res.id);
+                        self.editPreEnhancement().blurMask(res.id);
                     });
                 };
                 reader.onerror = function(error) {
