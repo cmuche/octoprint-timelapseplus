@@ -55,6 +55,13 @@ class RenderPreset:
         if d is not None:
             self.setJSON(d)
 
+    def applyResize(self, img):
+        if not self.RESIZE:
+            return img
+
+        img = img.resize((self.RESIZE_W, self.RESIZE_H), resample=Image.LANCZOS)
+        return img
+
     def getFinalFramerate(self):
         if self.INTERPOLATE:
             return self.INTERPOLATE_FRAMERATE

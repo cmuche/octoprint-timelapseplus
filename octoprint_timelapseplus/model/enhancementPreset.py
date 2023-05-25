@@ -55,13 +55,6 @@ class EnhancementPreset:
         # img = ImageOps.autocontrast(img)
         return img
 
-    def applyResize(self, img):
-        if not self.RESIZE:
-            return img
-
-        img = img.resize((self.RESIZE_W, self.RESIZE_H), resample=Image.LANCZOS)
-        return img
-
     def setJSON(self, parent, d):
         if 'name' in d: self.NAME = d['name']
         if 'enhance' in d: self.ENHANCE = d['enhance']
