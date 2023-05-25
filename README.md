@@ -45,7 +45,7 @@ Check out the [_Examples Page_](https://github.com/cmuche/octoprint-timelapseplu
    - Customizable __colors__
    - Customizable __position__ and __size__
 - Colorful __Fade-In__ and __Fade-Out__ effects
-- Manage and set up your enhancement- and render presets via the settings page
+- Manage and set up your __enhancement- and render presets__ via the settings page
 - Snapshots are stored in __Frame Collections__, so you can re-render them at any time with different settings and presets
 - __Preview__ the __snapshot capturing__ live while printing
 - Multiple __Output Formats__ and __Codecs__ with different __Quality Presets__
@@ -58,6 +58,7 @@ Check out the [_Examples Page_](https://github.com/cmuche/octoprint-timelapseplu
   - __MJPEG__ Streams
   - __MP4__ Streams
   - __HLS__ Streams
+  - Custom __Scripts__
 - __Purge__ Videos and Frame Collections after `n` days
 - Timelapse+ __doesn't modify your GCODE__ and __doesn't affect your printer's movements__!
 
