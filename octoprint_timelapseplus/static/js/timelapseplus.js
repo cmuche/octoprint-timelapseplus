@@ -69,6 +69,9 @@ $(function() {
 
         self.isUploadingFrameZip = ko.observable(false);
 
+        self.editPreEnhancement = ko.observable(null);
+        self.editPreRender = ko.observable(null);
+
         self.videoFormats.subscribe(function(data) {
             const groups = {};
             for (const obj of data) {
@@ -458,6 +461,20 @@ $(function() {
                     });
                 });
 
+            });
+        };
+
+        self.openSettingsEnhancementPreset = function(preset) {
+            self.editPreEnhancement(preset);
+            $("div#tlp-modal-edit-enhancement-preset").modal({
+                width: "auto"
+            });
+        };
+
+        self.openSettingsRenderPreset = function(preset) {
+            self.editPreRender(preset);
+            $("div#tlp-modal-edit-render-preset").modal({
+                width: "auto"
             });
         };
 

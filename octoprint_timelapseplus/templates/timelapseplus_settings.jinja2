@@ -227,137 +227,14 @@
                         <div class="preset">
                             <h4 style="margin: 0">Preset #<span data-bind="text: $parent.parent.itemIndex($parent.settings.plugins.timelapseplus.enhancementPresets, $data) + 1"></span></h4>
 
-                            <div>
-                                <label class="sub">Name</label>
-                                <input type="text" class="input-block-level" data-bind="value: $data.name">
-                            </div>
-
-                            <div>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.enhance">
-                                    Enable Enhancing
-                                </label>
-                            </div>
-
-                            <div class="sub-settings">
-                                <div data-bind="visible: $data.enhance">
-                                    <label class="sub">Brightness Factor</label>
-                                    <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.brightness">
-                                </div>
-
-                                <div data-bind="visible: $data.enhance">
-                                    <label class="sub">Contrast Factor</label>
-                                    <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: $data.contrast">
-                                </div>
-
-                                <div data-bind="visible: $data.enhance">
-                                    <label class="sub checkbox">
-                                        <input type="checkbox" data-bind="checked: $data.equalize">
-                                        Equalize Histogram
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.blur">
-                                    Enable Blur
-                                </label>
-                            </div>
-
-                            <div class="sub-settings">
-                                <div data-bind="visible: $data.blur">
-                                    <label class="sub">Blur Radius</label>
-                                    <input type="number" step='1' placeholder='0' min="1" max="500" width="5" data-bind="value: $data.blurRadius">
-                                    <span class="help-block">The Blur Radius (in Pixels) defines how blurry the masked areas will be.</span>
-                                </div>
-
-                                <div data-bind="visible: $data.blur">
-                                    <label class="sub">Mask</label>
-                                    <div>
-                                        <img style="width:8em" data-bind="visible: $data.blurMask() != null, attr: {src: $data.blurMask() == null ? '' : '/plugin/timelapseplus/maskPreview?id=' + $data.blurMask()}">
-                                        <div data-bind="visible: $data.blurMask() == null" style="color: red !important">
-                                            With Blur enabled you must provide a grayscale blur mask!
-                                        </div>
-                                    </div>
-                                    <button style="margin-top: 1em" class="btn" data-bind="click: $parent.parent.openBlurMask">Import Blur Mask</button>
-                                    <span class="help-block">Requires a grayscale image, ideally the same resolution as your webcam image. White areas define where the blur is applied on the frames, black areas mean no blur.</span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.timecode">
-                                    Add Timecodes
-                                </label>
-                            </div>
-                            <div class="sub-settings" data-bind="visible: $data.timecode">
-                                <div>
-                                    <label class="sub">Size</label>
-                                    <input type="number" step='1' placeholder='0' min="1" max="100" width="5" data-bind="value: $data.timecodeSize">
-                                </div>
-
-                                <div>
-                                    <label class="sub">Margin</label>
-                                    <input type="number" step='1' placeholder='0' min="0" max="50" width="5" data-bind="value: $data.timecodeMargin">
-                                </div>
-
-                                <div>
-                                    <label class="sub">Position</label>
-                                    <select data-bind="value: $data.timecodeSnap">
-                                        <option value="TOP_LEFT">Top Left</option>
-                                        <option value="TOP_CENTER">Top Center</option>
-                                        <option value="TOP_RIGHT">Top Right</option>
-                                        <option value="CENTER_RIGHT">Center Right</option>
-                                        <option value="BOTTOM_RIGHT">Bottom Right</option>
-                                        <option value="BOTTOM_CENTER">Bottom Center</option>
-                                        <option value="BOTTOM_LEFT">Bottom Left</option>
-                                        <option value="CENTER_LEFT">Center Left</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label class="sub">Type</label>
-                                    <select data-bind="value: $data.timecodeType">
-                                        <option value="PRINTTIME_HMS">Print Time (H:M:S)</option>
-                                        <option value="PRINTTIME_HM">Print Time (H:M)</option>
-                                        <option value="PRINTTIME_HMS_LETTERS">Print Time (Hh Mm Ss)</option>
-                                        <option value="PRINTTIME_HM_LETTERS">Print Time (Hh Mm)</option>
-                                        <option value="TIME_HMS_24">Time 24 Hours (H:M:S)</option>
-                                        <option value="TIME_HM_24">Time 24 Hours (H:M)</option>
-                                        <option value="TIME_HMS_12">Time 12 Hours (H:M:S)</option>
-                                        <option value="TIME_HM_12">Time 12 Hours (H:M)</option>
-                                        <option value="PERCENT">Percent</option>
-                                        <option value="BAR">Progress Bar</option>
-                                        <option value="CLOCK_NOSECONDS">Analog Clock</option>
-                                        <option value="CLOCK">Analog Clock (with Seconds)</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label class="sub">Primary Color</label>
-                                    <input type="color" maxlength="7" data-bind="value: $data.timecodeColorPrimary">
-                                </div>
-
-                                <div>
-                                    <label class="sub">Secondary Color</label>
-                                    <input type="color" maxlength="7" data-bind="value: $data.timecodeColorSecondary">
-                                </div>
-                            </div>
+                            <button data-bind="click: $parent.parent.openSettingsEnhancementPreset">EDIT</button>
 
                             <button class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data), click: function(){$parent.parent.moveItemUp($parent.settings.plugins.timelapseplus.enhancementPresets, $data)}">
                                 <i class="fa fa-chevron-up"></i>
                             </button>
-
                             <button style="margin-right: 1em" class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemDown($parent.settings.plugins.timelapseplus.enhancementPresets, $data), click: function(){$parent.parent.moveItemDown($parent.settings.plugins.timelapseplus.enhancementPresets, $data)}">
                                 <i class="fa fa-chevron-down"></i>
                             </button>
-
-                            <button class="btn btn-mini" data-bind="click: $parent.parent.openEnhancementPresetPreview">
-                                <i class="fa fa-eye"></i>
-                                Live Preview
-                            </button>
-
                             <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.timelapseplus.enhancementPresets.remove($data)}, enable: $parent.settings.plugins.timelapseplus.enhancementPresets().length > 1">
                                 <i class="fa fa-trash"></i>
                                 Remove this Preset
@@ -384,275 +261,14 @@
                         <div class="preset">
                             <h4 style="margin: 0">Preset #<span data-bind="text: $parent.parent.itemIndex($parent.settings.plugins.timelapseplus.renderPresets, $data) + 1"></span></h4>
 
-                            <div>
-                                <label class="sub">Name</label>
-                                <input type="text" class="input-block-level" data-bind="value: $data.name">
-                            </div>
-
-                            <div>
-                                <label class="sub">Framerate</label>
-                                <input type="number" step='1' min="1" max="120" width="5" data-bind="value: $data.framerate">
-                            </div>
-
-                            <div>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.resize">
-                                    Enable Resizing
-                                </label>
-                            </div>
-                            <div class="sub-settings">
-                                <div data-bind="visible: $data.resize">
-                                    <label class="sub">Width</label>
-                                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeW">
-                                </div>
-
-                                <div data-bind="visible: $data.resize">
-                                    <label class="sub">Height</label>
-                                    <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: $data.resizeH">
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.combine">
-                                    Combine Frames
-                                </label>
-                                <span class="help-block">Before rendering, multiple frames will be combined to reduce the number of total frames and by that the length of the final video.</span>
-                            </div>
-
-                            <div class="sub-settings">
-                                <div data-bind="visible: $data.combine">
-                                    <label class="sub">Chunk Size</label>
-                                    <input type="number" step='1' min="2" max="100" width="5" data-bind="value: $data.combineSize">
-                                    <span class="help-block">Defines how many frames should be combined into one chunk.</span>
-                                </div>
-
-                                <div data-bind="visible: $data.combine">
-                                    <label class="sub">Method</label>
-                                    <select data-bind="value: $data.combineMethod">
-                                        <option value="DROP">Drop Frames</option>
-                                        <option value="BLEND">Blend</option>
-                                        <option value="BLEND_WEIGHTED">Weighted Blend</option>
-                                    </select>
-                                    <span class="help-block">When dropping frames, only the last frame of a combined chunk will be used, blending creates a combined frame by mixing all chunk frames into one.</span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.fade">
-                                    Enable Fade
-                                </label>
-                            </div>
-
-                            <div class="sub-settings">
-                                <div data-bind="visible: $data.fade">
-                                    <label class="sub">Fade-In Duration (ms)</label>
-                                    <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.fadeInDuration">
-                                </div>
-
-                                <div data-bind="visible: $data.fade">
-                                    <label class="sub">Fade-Out Duration (ms)</label>
-                                    <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.fadeOutDuration">
-                                </div>
-
-                                <div data-bind="visible: $data.fade">
-                                    <label class="sub">Color</label>
-                                    <input type="color" maxlength="7" data-bind="value: $data.fadeColor">
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.ppRoll">
-                                    Pre/Post Roll
-                                </label>
-                            </div>
-
-                            <div class="sub-settings" data-bind="visible: $data.ppRoll">
-                                <div>
-                                    <label class="sub">Max Blur Radius</label>
-                                    <input type="number" step='1' min="0" max="500" width="5" data-bind="value: $data.ppRollBlurRadius">
-                                </div>
-
-                                <div>
-                                    <label class="sub">Max Zoom Factor</label>
-                                    <input type="number" step='0.01' min="0.0" max="5.0" width="5" data-bind="value: $data.ppRollZoomFactor">
-                                </div>
-
-                                <h4>Pre-Roll</h4>
-                                <div class="sub-settings">
-                                    <div>
-                                        <label class="sub">Duration (ms)</label>
-                                        <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.ppRollPreDuration">
-                                    </div>
-                                    <div>
-                                        <label class="sub">Type</label>
-                                        <select data-bind="value: $data.ppRollPreType">
-                                            <option value="STILL">Still Frame</option>
-                                            <option value="STILL_FINAL">Still Frame (Final)</option>
-                                            <option value="LAPSE">Short Timelapse</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="sub">Ease Function</label>
-                                        <select data-bind="value: $data.ppRollPreEaseFn">
-                                            <option value="LINEAR">Linear</option>
-                                            <option value="EASE_IN">Ease-In</option>
-                                            <option value="EASE_IN_OUT">Ease-In-Out</option>
-                                            <span class="help-block">Animations during the Pre-Roll will be mapped by this function. Ease-In and Ease-In-Out will generate a much smoother transition between the Pre-Roll and the timelapse.</span>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="sub checkbox">
-                                            <input type="checkbox" data-bind="checked: $data.ppRollPreZoom">
-                                            Zoom Animation
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label class="sub checkbox">
-                                            <input type="checkbox" data-bind="checked: $data.ppRollPreBlur">
-                                            Blur Animation
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <h4>Post-Roll</h4>
-                                <div class="sub-settings">
-                                    <div>
-                                        <label class="sub">Duration (ms)</label>
-                                        <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: $data.ppRollPostDuration">
-                                    </div>
-                                    <div>
-                                        <label class="sub">Type</label>
-                                        <select data-bind="value: $data.ppRollPostType">
-                                            <option value="STILL">Still Frame</option>
-                                            <option value="STILL_FINAL">Still Frame (Final)</option>
-                                            <option value="LAPSE">Short Timelapse</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="sub">Ease Function</label>
-                                        <select data-bind="value: $data.ppRollPostEaseFn">
-                                            <option value="LINEAR">Linear</option>
-                                            <option value="EASE_IN">Ease-In</option>
-                                            <option value="EASE_IN_OUT">Ease-In-Out</option>
-                                            <span class="help-block">Animations during the Post-Roll will be mapped by this function. Ease-In and Ease-In-Out will generate a much smoother transition between the timelapse and the Post-Roll.</span>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="sub checkbox">
-                                            <input type="checkbox" data-bind="checked: $data.ppRollPostZoom">
-                                            Zoom Animation
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label class="sub checkbox">
-                                            <input type="checkbox" data-bind="checked: $data.ppRollPostBlur">
-                                            Blur Animation
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <h4>Text</h4>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.ppRollText">
-                                    Enable Pre-Roll Text
-                                    <span class="help-block">Show the source print file name or parts of it as a Pre-Roll text overlay</span>
-                                </label>
-                                <div class="sub-settings" data-bind="visible: $data.ppRollText">
-                                    <div>
-                                        <label class="sub">Size</label>
-                                        <input type="number" step='1' min="1" max="100" width="5" data-bind="value: $data.ppRollTextSize">
-                                    </div>
-                                    <div>
-                                        <label class="sub">Text Color</label>
-                                        <input type="color" maxlength="7" data-bind="value: $data.ppRollTextForeground">
-                                    </div>
-                                    <div>
-                                        <label class="sub">Background Color</label>
-                                        <input type="color" maxlength="7" data-bind="value: $data.ppRollTextBackground">
-                                    </div>
-                                    <div>
-                                        <label class="sub">RegEx</label>
-                                        <input type="text" data-bind="value: $data.ppRollTextRegex">
-                                        <span class="help-block">
-                                    This RegEx is applied to the file name. Every matching group creates a new line of text.
-                                    By that you can extract multiple information (name, filament, temperature, ...) out of the print file name.
-                                    You can use <a target="_blank" href="https://regex101.com">this tool</a> to verify your RegEx string.
-                                </span>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div>
-                                <label class="sub checkbox">
-                                    <input type="checkbox" data-bind="checked: $data.interpolate">
-                                    Enable Frame Interpolation
-                                </label>
-                            </div>
-
-                            <div class="sub-settings">
-                                <div data-bind="visible: $data.interpolate">
-                                    <label class="sub">Interpolated Framerate</label>
-                                    <input type="number" step='1' min="1" max="120" width="5" data-bind="value: $data.interpolateFramerate">
-                                </div>
-
-                                <div data-bind="visible: $data.interpolate">
-                                    <label class="sub">Mode</label>
-                                    <select data-bind="value: $data.interpolateMode">
-                                        <option value="blend">Blending Frames</option>
-                                        <option value="mci">Motion Compensated</option>
-                                    </select>
-                                </div>
-
-                                <div class="alert alert-block" style="margin-top: 1em" data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
-                                    <strong>Note: </strong>
-                                    <a href="http://underpop.online.fr/f/ffmpeg/help/minterpolate.htm.gz" target="_blank">Click here</a>
-                                    for more information about the interpolation parameters. If you are not sure, you can just keep the default settings.
-                                </div>
-
-                                <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
-                                    <label class="sub">Motion Estimation</label>
-                                    <select data-bind="value: $data.interpolateEstimation">
-                                        <option value="bidir">Bidirectional</option>
-                                        <option value="bilat">Bilateral</option>
-                                    </select>
-                                </div>
-
-                                <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
-                                    <label class="sub">Motion Search Algorithm</label>
-                                    <select data-bind="value: $data.interpolateAlgorithm">
-                                        <option value="esa">Exhaustive</option>
-                                        <option value="tss">Three step</option>
-                                        <option value="tdls">Two dimensional logarithmic</option>
-                                        <option value="ntss">New three step</option>
-                                        <option value="fss">Four step</option>
-                                        <option value="ds">Diamond</option>
-                                        <option value="hexbs">Hexagon-based</option>
-                                        <option value="epzs">Enhanced predictive zonal</option>
-                                        <option value="umh">Uneven multi-hexagon</option>
-                                    </select>
-                                </div>
-
-                                <div data-bind="visible: $data.interpolate() && $data.interpolateMode() == 'mci'">
-                                    <label class="sub">Motion Compensation</label>
-                                    <select data-bind="value: $data.interpolateCompensation">
-                                        <option value="obmc">Normal</option>
-                                        <option value="aobmc">Adaptive</option>
-                                    </select>
-                                </div>
-                            </div>
+                            <button data-bind="click: $parent.parent.openSettingsRenderPreset">EDIT</button>
 
                             <button class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemUp($parent.settings.plugins.timelapseplus.renderPresets, $data), click: function(){$parent.parent.moveItemUp($parent.settings.plugins.timelapseplus.renderPresets, $data)}">
                                 <i class="fa fa-chevron-up"></i>
                             </button>
-
                             <button style="margin-right: 1em" class="btn btn-mini" data-bind="enable: $parent.parent.canMoveItemDown($parent.settings.plugins.timelapseplus.renderPresets, $data), click: function(){$parent.parent.moveItemDown($parent.settings.plugins.timelapseplus.renderPresets, $data)}">
                                 <i class="fa fa-chevron-down"></i>
                             </button>
-
                             <button class="btn btn-mini" data-bind="click: function(){$parent.settings.plugins.timelapseplus.renderPresets.remove($data)}, enable: $parent.settings.plugins.timelapseplus.renderPresets().length > 1">
                                 <i class="fa fa-trash"></i>
                                 Remove this Preset
@@ -661,6 +277,420 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!------------------------------------------------------->
+
+    <div id="tlp-modal-edit-enhancement-preset" class="modal hide fade preset-modal">
+        <div class="modal-header">
+            <a href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+            <h3>Edit Enhancement Preset</h3>
+        </div>
+        <div class="modal-body">
+            <div class="row-fluid" data-bind="if: parent.editPreEnhancement() != null">
+                <div>
+                    <label class="sub">Name</label>
+                    <input type="text" data-bind="value: parent.editPreEnhancement().name">
+                </div>
+
+                <div>
+                    <label class="sub checkbox">
+                        <input type="checkbox" data-bind="checked: parent.editPreEnhancement().enhance">
+                        Enable Enhancing
+                    </label>
+                </div>
+
+                <div class="sub-settings">
+                    <div data-bind="visible: parent.editPreEnhancement().enhance">
+                        <label class="sub">Brightness Factor</label>
+                        <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: parent.editPreEnhancement().brightness">
+                    </div>
+
+                    <div data-bind="visible: parent.editPreEnhancement().enhance">
+                        <label class="sub">Contrast Factor</label>
+                        <input type="number" step='0.01' min="0.01" max="5" width="5" data-bind="value: parent.editPreEnhancement().contrast">
+                    </div>
+
+                    <div data-bind="visible: parent.editPreEnhancement().enhance">
+                        <label class="sub checkbox">
+                            <input type="checkbox" data-bind="checked: parent.editPreEnhancement().equalize">
+                            Equalize Histogram
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="sub checkbox">
+                        <input type="checkbox" data-bind="checked: parent.editPreEnhancement().blur">
+                        Enable Blur
+                    </label>
+                </div>
+
+                <div class="sub-settings">
+                    <div data-bind="visible: parent.editPreEnhancement().blur">
+                        <label class="sub">Blur Radius</label>
+                        <input type="number" step='1' placeholder='0' min="1" max="500" width="5" data-bind="value: parent.editPreEnhancement().blurRadius">
+                        <span class="help-block">The Blur Radius (in Pixels) defines how blurry the masked areas will be.</span>
+                    </div>
+
+                    <div data-bind="visible: parent.editPreEnhancement().blur">
+                        <label class="sub">Mask</label>
+                        <div>
+                            <img style="width:8em" data-bind="visible: parent.editPreEnhancement().blurMask() != null, attr: {src: parent.editPreEnhancement().blurMask() == null ? '' : '/plugin/timelapseplus/maskPreview?id=' + parent.editPreEnhancement().blurMask()}">
+                            <div data-bind="visible: parent.editPreEnhancement().blurMask() == null" style="color: red !important">
+                                With Blur enabled you must provide a grayscale blur mask!
+                            </div>
+                        </div>
+                        <button style="margin-top: 1em" class="btn" data-bind="click: parent.openBlurMask">Import Blur Mask</button>
+                        <span class="help-block">Requires a grayscale image, ideally the same resolution as your webcam image. White areas define where the blur is applied on the frames, black areas mean no blur.</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="sub checkbox">
+                        <input type="checkbox" data-bind="checked: parent.editPreEnhancement().timecode">
+                        Add Timecodes
+                    </label>
+                </div>
+                <div class="sub-settings" data-bind="visible: parent.editPreEnhancement().timecode">
+                    <div>
+                        <label class="sub">Size</label>
+                        <input type="number" step='1' placeholder='0' min="1" max="100" width="5" data-bind="value: parent.editPreEnhancement().timecodeSize">
+                    </div>
+
+                    <div>
+                        <label class="sub">Margin</label>
+                        <input type="number" step='1' placeholder='0' min="0" max="50" width="5" data-bind="value: parent.editPreEnhancement().timecodeMargin">
+                    </div>
+
+                    <div>
+                        <label class="sub">Position</label>
+                        <select data-bind="value: parent.editPreEnhancement().timecodeSnap">
+                            <option value="TOP_LEFT">Top Left</option>
+                            <option value="TOP_CENTER">Top Center</option>
+                            <option value="TOP_RIGHT">Top Right</option>
+                            <option value="CENTER_RIGHT">Center Right</option>
+                            <option value="BOTTOM_RIGHT">Bottom Right</option>
+                            <option value="BOTTOM_CENTER">Bottom Center</option>
+                            <option value="BOTTOM_LEFT">Bottom Left</option>
+                            <option value="CENTER_LEFT">Center Left</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="sub">Type</label>
+                        <select data-bind="value: parent.editPreEnhancement().timecodeType">
+                            <option value="PRINTTIME_HMS">Print Time (H:M:S)</option>
+                            <option value="PRINTTIME_HM">Print Time (H:M)</option>
+                            <option value="PRINTTIME_HMS_LETTERS">Print Time (Hh Mm Ss)</option>
+                            <option value="PRINTTIME_HM_LETTERS">Print Time (Hh Mm)</option>
+                            <option value="TIME_HMS_24">Time 24 Hours (H:M:S)</option>
+                            <option value="TIME_HM_24">Time 24 Hours (H:M)</option>
+                            <option value="TIME_HMS_12">Time 12 Hours (H:M:S)</option>
+                            <option value="TIME_HM_12">Time 12 Hours (H:M)</option>
+                            <option value="PERCENT">Percent</option>
+                            <option value="BAR">Progress Bar</option>
+                            <option value="CLOCK_NOSECONDS">Analog Clock</option>
+                            <option value="CLOCK">Analog Clock (with Seconds)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="sub">Primary Color</label>
+                        <input type="color" maxlength="7" data-bind="value: parent.editPreEnhancement().timecodeColorPrimary">
+                    </div>
+
+                    <div>
+                        <label class="sub">Secondary Color</label>
+                        <input type="color" maxlength="7" data-bind="value: parent.editPreEnhancement().timecodeColorSecondary">
+                    </div>
+                </div>
+
+                <button class="btn btn-mini" data-bind="click: parent.openEnhancementPresetPreview">
+                    <i class="fa fa-eye"></i>
+                    Live Preview
+                </button>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary pull-right" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+
+    <div id="tlp-modal-edit-render-preset" class="modal hide fade preset-modal">
+        <div class="modal-header">
+            <a href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+            <h3>Edit Render Preset</h3>
+        </div>
+        <div class="modal-body">
+            <div class="row-fluid" data-bind="if: parent.editPreRender() != null">
+                <div>
+                    <label class="sub">Name</label>
+                    <input type="text" class="input-block-level" data-bind="value: parent.editPreRender().name">
+                </div>
+
+                <div>
+                    <label class="sub">Framerate</label>
+                    <input type="number" step='1' min="1" max="120" width="5" data-bind="value: parent.editPreRender().framerate">
+                </div>
+
+                <div>
+                    <label class="sub checkbox">
+                        <input type="checkbox" data-bind="checked: parent.editPreRender().resize">
+                        Enable Resizing
+                    </label>
+                </div>
+                <div class="sub-settings">
+                    <div data-bind="visible: parent.editPreRender().resize">
+                        <label class="sub">Width</label>
+                        <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: parent.editPreRender().resizeW">
+                    </div>
+
+                    <div data-bind="visible: parent.editPreRender().resize">
+                        <label class="sub">Height</label>
+                        <input type="number" step='1' placeholder='0' min="10" max="5000" width="5" data-bind="value: parent.editPreRender().resizeH">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="sub checkbox">
+                        <input type="checkbox" data-bind="checked: parent.editPreRender().combine">
+                        Combine Frames
+                    </label>
+                    <span class="help-block">Before rendering, multiple frames will be combined to reduce the number of total frames and by that the length of the final video.</span>
+                </div>
+
+                <div class="sub-settings">
+                    <div data-bind="visible: parent.editPreRender().combine">
+                        <label class="sub">Chunk Size</label>
+                        <input type="number" step='1' min="2" max="100" width="5" data-bind="value: parent.editPreRender().combineSize">
+                        <span class="help-block">Defines how many frames should be combined into one chunk.</span>
+                    </div>
+
+                    <div data-bind="visible: parent.editPreRender().combine">
+                        <label class="sub">Method</label>
+                        <select data-bind="value: parent.editPreRender().combineMethod">
+                            <option value="DROP">Drop Frames</option>
+                            <option value="BLEND">Blend</option>
+                            <option value="BLEND_WEIGHTED">Weighted Blend</option>
+                        </select>
+                        <span class="help-block">When dropping frames, only the last frame of a combined chunk will be used, blending creates a combined frame by mixing all chunk frames into one.</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="sub checkbox">
+                        <input type="checkbox" data-bind="checked: parent.editPreRender().fade">
+                        Enable Fade
+                    </label>
+                </div>
+
+                <div class="sub-settings">
+                    <div data-bind="visible: parent.editPreRender().fade">
+                        <label class="sub">Fade-In Duration (ms)</label>
+                        <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: parent.editPreRender().fadeInDuration">
+                    </div>
+
+                    <div data-bind="visible: parent.editPreRender().fade">
+                        <label class="sub">Fade-Out Duration (ms)</label>
+                        <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: parent.editPreRender().fadeOutDuration">
+                    </div>
+
+                    <div data-bind="visible: parent.editPreRender().fade">
+                        <label class="sub">Color</label>
+                        <input type="color" maxlength="7" data-bind="value: parent.editPreRender().fadeColor">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="sub checkbox">
+                        <input type="checkbox" data-bind="checked: parent.editPreRender().ppRoll">
+                        Pre/Post Roll
+                    </label>
+                </div>
+
+                <div class="sub-settings" data-bind="visible: parent.editPreRender().ppRoll">
+                    <div>
+                        <label class="sub">Max Blur Radius</label>
+                        <input type="number" step='1' min="0" max="500" width="5" data-bind="value: parent.editPreRender().ppRollBlurRadius">
+                    </div>
+
+                    <div>
+                        <label class="sub">Max Zoom Factor</label>
+                        <input type="number" step='0.01' min="0.0" max="5.0" width="5" data-bind="value: parent.editPreRender().ppRollZoomFactor">
+                    </div>
+
+                    <h4>Pre-Roll</h4>
+                    <div class="sub-settings">
+                        <div>
+                            <label class="sub">Duration (ms)</label>
+                            <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: parent.editPreRender().ppRollPreDuration">
+                        </div>
+                        <div>
+                            <label class="sub">Type</label>
+                            <select data-bind="value: parent.editPreRender().ppRollPreType">
+                                <option value="STILL">Still Frame</option>
+                                <option value="STILL_FINAL">Still Frame (Final)</option>
+                                <option value="LAPSE">Short Timelapse</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="sub">Ease Function</label>
+                            <select data-bind="value: parent.editPreRender().ppRollPreEaseFn">
+                                <option value="LINEAR">Linear</option>
+                                <option value="EASE_IN">Ease-In</option>
+                                <option value="EASE_IN_OUT">Ease-In-Out</option>
+                                <span class="help-block">Animations during the Pre-Roll will be mapped by this function. Ease-In and Ease-In-Out will generate a much smoother transition between the Pre-Roll and the timelapse.</span>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="sub checkbox">
+                                <input type="checkbox" data-bind="checked: parent.editPreRender().ppRollPreZoom">
+                                Zoom Animation
+                            </label>
+                        </div>
+                        <div>
+                            <label class="sub checkbox">
+                                <input type="checkbox" data-bind="checked: parent.editPreRender().ppRollPreBlur">
+                                Blur Animation
+                            </label>
+                        </div>
+                    </div>
+
+                    <h4>Post-Roll</h4>
+                    <div class="sub-settings">
+                        <div>
+                            <label class="sub">Duration (ms)</label>
+                            <input type="number" step='1' min="0" max="10000" width="5" data-bind="value: parent.editPreRender().ppRollPostDuration">
+                        </div>
+                        <div>
+                            <label class="sub">Type</label>
+                            <select data-bind="value: parent.editPreRender().ppRollPostType">
+                                <option value="STILL">Still Frame</option>
+                                <option value="STILL_FINAL">Still Frame (Final)</option>
+                                <option value="LAPSE">Short Timelapse</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="sub">Ease Function</label>
+                            <select data-bind="value: parent.editPreRender().ppRollPostEaseFn">
+                                <option value="LINEAR">Linear</option>
+                                <option value="EASE_IN">Ease-In</option>
+                                <option value="EASE_IN_OUT">Ease-In-Out</option>
+                                <span class="help-block">Animations during the Post-Roll will be mapped by this function. Ease-In and Ease-In-Out will generate a much smoother transition between the timelapse and the Post-Roll.</span>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="sub checkbox">
+                                <input type="checkbox" data-bind="checked: parent.editPreRender().ppRollPostZoom">
+                                Zoom Animation
+                            </label>
+                        </div>
+                        <div>
+                            <label class="sub checkbox">
+                                <input type="checkbox" data-bind="checked: parent.editPreRender().ppRollPostBlur">
+                                Blur Animation
+                            </label>
+                        </div>
+                    </div>
+
+                    <h4>Text</h4>
+                    <label class="sub checkbox">
+                        <input type="checkbox" data-bind="checked: parent.editPreRender().ppRollText">
+                        Enable Pre-Roll Text
+                        <span class="help-block">Show the source print file name or parts of it as a Pre-Roll text overlay</span>
+                    </label>
+                    <div class="sub-settings" data-bind="visible: parent.editPreRender().ppRollText">
+                        <div>
+                            <label class="sub">Size</label>
+                            <input type="number" step='1' min="1" max="100" width="5" data-bind="value: parent.editPreRender().ppRollTextSize">
+                        </div>
+                        <div>
+                            <label class="sub">Text Color</label>
+                            <input type="color" maxlength="7" data-bind="value: parent.editPreRender().ppRollTextForeground">
+                        </div>
+                        <div>
+                            <label class="sub">Background Color</label>
+                            <input type="color" maxlength="7" data-bind="value: parent.editPreRender().ppRollTextBackground">
+                        </div>
+                        <div>
+                            <label class="sub">RegEx</label>
+                            <input type="text" data-bind="value: parent.editPreRender().ppRollTextRegex">
+                            <span class="help-block">
+                            This RegEx is applied to the file name. Every matching group creates a new line of text.
+                            By that you can extract multiple information (name, filament, temperature, ...) out of the print file name.
+                            You can use <a target="_blank" href="https://regex101.com">this tool</a> to verify your RegEx string.
+                        </span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div>
+                    <label class="sub checkbox">
+                        <input type="checkbox" data-bind="checked: parent.editPreRender().interpolate">
+                        Enable Frame Interpolation
+                    </label>
+                </div>
+
+                <div class="sub-settings">
+                    <div data-bind="visible: parent.editPreRender().interpolate">
+                        <label class="sub">Interpolated Framerate</label>
+                        <input type="number" step='1' min="1" max="120" width="5" data-bind="value: parent.editPreRender().interpolateFramerate">
+                    </div>
+
+                    <div data-bind="visible: parent.editPreRender().interpolate">
+                        <label class="sub">Mode</label>
+                        <select data-bind="value: parent.editPreRender().interpolateMode">
+                            <option value="blend">Blending Frames</option>
+                            <option value="mci">Motion Compensated</option>
+                        </select>
+                    </div>
+
+                    <div class="alert alert-block" style="margin-top: 1em" data-bind="visible: parent.editPreRender().interpolate() && parent.editPreRender().interpolateMode() == 'mci'">
+                        <strong>Note: </strong>
+                        <a href="http://underpop.online.fr/f/ffmpeg/help/minterpolate.htm.gz" target="_blank">Click here</a>
+                        for more information about the interpolation parameters. If you are not sure, you can just keep the default settings.
+                    </div>
+
+                    <div data-bind="visible: parent.editPreRender().interpolate() && parent.editPreRender().interpolateMode() == 'mci'">
+                        <label class="sub">Motion Estimation</label>
+                        <select data-bind="value: parent.editPreRender().interpolateEstimation">
+                            <option value="bidir">Bidirectional</option>
+                            <option value="bilat">Bilateral</option>
+                        </select>
+                    </div>
+
+                    <div data-bind="visible: parent.editPreRender().interpolate() && parent.editPreRender().interpolateMode() == 'mci'">
+                        <label class="sub">Motion Search Algorithm</label>
+                        <select data-bind="value: parent.editPreRender().interpolateAlgorithm">
+                            <option value="esa">Exhaustive</option>
+                            <option value="tss">Three step</option>
+                            <option value="tdls">Two dimensional logarithmic</option>
+                            <option value="ntss">New three step</option>
+                            <option value="fss">Four step</option>
+                            <option value="ds">Diamond</option>
+                            <option value="hexbs">Hexagon-based</option>
+                            <option value="epzs">Enhanced predictive zonal</option>
+                            <option value="umh">Uneven multi-hexagon</option>
+                        </select>
+                    </div>
+
+                    <div data-bind="visible: parent.editPreRender().interpolate() && parent.editPreRender().interpolateMode() == 'mci'">
+                        <label class="sub">Motion Compensation</label>
+                        <select data-bind="value: parent.editPreRender().interpolateCompensation">
+                            <option value="obmc">Normal</option>
+                            <option value="aobmc">Adaptive</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary pull-right" data-dismiss="modal">Close</button>
         </div>
     </div>
 
