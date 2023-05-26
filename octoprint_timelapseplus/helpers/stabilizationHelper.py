@@ -13,7 +13,7 @@ class StabilizationHelper:
                 cmd.append('G0 X' + str(ppX) + ' Y' + str(ppY) + ' F' + str(spMove * 60))
                 cmd.append('M400')
                 cmd.append('G4 P200')
-                cmd.append('@SNAPSHOT-RAW')
+                cmd.append('@SNAPSHOT-UNSTABLE')
                 cmd.append('G4 P200')
                 cmd.append('G0 X' + str(positionTracker.POS_X) + ' Y' + str(positionTracker.POS_Y) + ' F' + str(spMove * 60))
                 cmd.append('G1 G1 E1.2 F' + str(spRetract * 60))
