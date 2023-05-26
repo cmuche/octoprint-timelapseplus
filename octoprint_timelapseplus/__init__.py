@@ -17,7 +17,6 @@ from .model.captureMode import CaptureMode
 from .model.enhancementPreset import EnhancementPreset
 from .model.frameZip import FrameZip
 from .model.mask import Mask
-from .model.positionTracker import PositionTracker
 from .model.printJob import PrintJob
 from .model.renderJob import RenderJob
 from .model.renderJobState import RenderJobState
@@ -45,9 +44,7 @@ class TimelapsePlusPlugin(
 
         self.SUFFIX_PRINT_PAUSE = 'PAUSE'
         self.SUFFIX_PRINT_RESUME = 'RESUME'
-        self.SUFFIX_PRINT_RAW = 'RAW'
-
-        self.POSITION_TRACKER = PositionTracker()
+        self.SUFFIX_PRINT_UNSTABLE = 'UNSTABLE'
 
     @octoprint.plugin.BlueprintPlugin.route("/webcamCapturePreview", methods=["POST"])
     def apiWebcamCapturePreview(self):
@@ -359,40 +356,23 @@ class TimelapsePlusPlugin(
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
 
-        if self.isSnapshotCommand(cmd, self.SUFFIX_PRINT_RAW) and self.PRINTJOB.CAPTURE_MODE == CaptureMode.COMMAND:
-            self.PRINTJOB.doSnapshot()
+        if self.isSnapshotCommand(cmd, self.SUFFIX_PRINT_UNSTABLE):
+            self.PRINTJOB.doSnapshotUnstable()
         elif self.isSnapshotCommand(cmd) and self.PRINTJOB.CAPTURE_MODE == CaptureMode.COMMAND:
-            self.doSnapshotStable()
+            self.PRINTJOB.doSnapshot()
         elif self.isSnapshotCommand(cmd, self.SUFFIX_PRINT_PAUSE):
             self.printHaltedTo(True)
         elif self.isSnapshotCommand(cmd, self.SUFFIX_PRINT_RESUME):
             self.printHaltedTo(False)
 
-    def doSnapshotStable(self):
-        printer = self._printer
-        if printer.set_job_on_hold(True):
-            cmd = []
-            try:
-                spRetract = 30
-                spMove = 150
-                ppX = 30
-                ppY = 125
+    def processGcodeSent(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
+        return
 
-                cmd.append('G1 G1 E-1.2 F' + str(spRetract * 60))
-                cmd.append('G0 X' + str(ppX) + ' Y' + str(ppY) + ' F' + str(spMove * 60))
-                cmd.append('M400')
-                cmd.append('G4 P200')
-                cmd.append('@SNAPSHOT-RAW')
-                cmd.append('G4 P200')
-                cmd.append('G0 X' + str(self.POSITION_TRACKER.POS_X) + ' Y' + str(self.POSITION_TRACKER.POS_Y) + ' F' + str(spMove * 60))
-                cmd.append('G1 G1 E1.2 F' + str(spRetract * 60))
+    def processGcodeQueued(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
+        if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
+            return
 
-                printer.commands(cmd)
-            finally:
-                printer.set_job_on_hold(False)
-
-    def processGcode(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
-        self.POSITION_TRACKER.consumeGcode(gcode, cmd)
+        self.PRINTJOB.processGcode(gcode, cmd)
 
     def render(self, frameZip, enhancementPreset=None, renderPreset=None, videoFormat=None):
         job = RenderJob(self._basefolder, frameZip, self, self._logger, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset, videoFormat)
@@ -411,7 +391,7 @@ class TimelapsePlusPlugin(
         baseName = os.path.splitext(os.path.basename(printerFile))[0]
         id = self.getRandomString(32)
 
-        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self.get_plugin_data_folder(), self.WEBCAM_CONTROLLER)
+        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self.get_plugin_data_folder(), self.WEBCAM_CONTROLLER, self._printer)
         self.PRINTJOB.start()
         self.sendClientData()
 
@@ -512,5 +492,6 @@ def __plugin_load__():
         "octoprint.comm.protocol.atcommand.sending": __plugin_implementation__.atCommand,
         "octoprint.comm.protocol.action": __plugin_implementation__.atAction,
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.getUpdateInformation,
-        "octoprint.comm.protocol.gcode.sent": __plugin_implementation__.processGcode
+        "octoprint.comm.protocol.gcode.sent": __plugin_implementation__.processGcodeSent,
+        "octoprint.comm.protocol.gcode.queued": __plugin_implementation__.processGcodeQueued
     }

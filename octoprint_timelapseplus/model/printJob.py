@@ -11,18 +11,25 @@ from PIL import Image
 
 from octoprint.util import ResettableTimer
 from .captureMode import CaptureMode
+from ..helpers.positionTracker import PositionTracker
 from ..helpers.fileHelper import FileHelper
+from ..helpers.stabilizationHelper import StabilizationHelper
 from ..helpers.timeHelper import TimeHelper
 
 
 class PrintJob:
-    def __init__(self, id, baseName, parent, logger, settings, dataFolder, webcamController):
+    def __init__(self, id, baseName, parent, logger, settings, dataFolder, webcamController, printer):
         self.PARENT = parent
         self.ID = id
         self.WEBCAM_CONTROLLER = webcamController
 
         self._settings = settings
         self._logger = logger
+        self._printer = printer
+
+        self.STABILIZE = True
+        self.POSITION_TRACKER = PositionTracker()
+        self.STABILIZATION_HELPER = StabilizationHelper()
 
         self.METADATA = {'timestamps': {}, 'started': None, 'ended': None, 'success': False, 'baseName': baseName, 'pluginVersion': parent.PLUGIN_VERSION}
         self.BASE_NAME = baseName
@@ -41,6 +48,9 @@ class PrintJob:
         self.PREVIEW_IMAGE = None
 
         self.createFolder(dataFolder)
+
+    def processGcode(self, gcode, command):
+        self.POSITION_TRACKER.consumeGcode(gcode, command)
 
     def isCapturing(self):
         return self.RUNNING and not self.PAUSED and not self.HALTED
@@ -136,6 +146,12 @@ class PrintJob:
         return mdPath
 
     def doSnapshot(self):
+        if self.STABILIZE:
+            self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER)
+        else:
+            self.doSnapshotUnstable()
+
+    def doSnapshotUnstable(self):
         if self.PAUSED or self.HALTED:
             return
 
