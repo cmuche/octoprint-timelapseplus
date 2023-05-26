@@ -380,8 +380,10 @@ class TimelapsePlusPlugin(
 
                 cmd.append('G1 G1 E-1.2 F' + str(spRetract * 60))
                 cmd.append('G0 X' + str(ppX) + ' Y' + str(ppY) + ' F' + str(spMove * 60))
+                cmd.append('M400')
                 cmd.append('G4 P200')
                 cmd.append('@SNAPSHOT-RAW')
+                cmd.append('G4 P200')
                 cmd.append('G0 X' + str(self.POSITION_TRACKER.POS_X) + ' Y' + str(self.POSITION_TRACKER.POS_Y) + ' F' + str(spMove * 60))
                 cmd.append('G1 G1 E1.2 F' + str(spRetract * 60))
 
