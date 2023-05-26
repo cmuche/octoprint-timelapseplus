@@ -29,7 +29,7 @@ class PrintJob:
 
         self.STABILIZE = True
         self.POSITION_TRACKER = PositionTracker()
-        self.STABILIZATION_HELPER = StabilizationHelper()
+        self.STABILIZATION_HELPER = StabilizationHelper(settings)
 
         self.METADATA = {'timestamps': {}, 'started': None, 'ended': None, 'success': False, 'baseName': baseName, 'pluginVersion': parent.PLUGIN_VERSION}
         self.BASE_NAME = baseName
