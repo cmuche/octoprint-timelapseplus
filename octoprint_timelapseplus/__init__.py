@@ -372,13 +372,13 @@ class TimelapsePlusPlugin(
             self.printHaltedTo(False)
 
     def processGcodeSent(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
-        return
-
-    def processGcodeQueued(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
 
         self.PRINTJOB.processGcode(gcode, cmd)
+
+    def processGcodeQueued(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
+        return
 
     def render(self, frameZip, enhancementPreset=None, renderPreset=None, videoFormat=None):
         job = RenderJob(self._basefolder, frameZip, self, self._logger, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset, videoFormat)
