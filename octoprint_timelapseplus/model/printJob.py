@@ -149,13 +149,16 @@ class PrintJob:
         return mdPath
 
     def doSnapshot(self):
+        if not self.isCapturing():
+            return
+
         if self.STABILIZE:
             self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER)
         else:
             self.doSnapshotUnstable()
 
     def doSnapshotUnstable(self):
-        if self.PAUSED or self.HALTED:
+        if not self.isCapturing():
             return
 
         thread = Thread(target=self.doSnapshotInner, daemon=True)
