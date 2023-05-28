@@ -293,6 +293,10 @@ class TimelapsePlusPlugin(
         defaultVideoFormat = FormatHelper.getVideoFormatById(defaultVideoFormatId)
         self._settings.set(["defaultVideoFormat"], defaultVideoFormat.ID)
 
+        webcamPluginName = self._settings.get(["webcamPluginName"])
+        if self.WEBCAM_CONTROLLER.getWebcamByName(webcamPluginName) is None:
+            self._settings.set(["webcamPluginName"], None)
+
         self.checkPrerequisites()
 
     def on_settings_save(self, data):
