@@ -50,6 +50,7 @@ $(function() {
         self.captureTimerInterval = ko.observable();
         self.isRunning = ko.observable(false);
         self.isCapturing = ko.observable(false);
+        self.isStabilized = ko.observable(false);
         self.currentFileSize = ko.observable(0);
         self.snapshotCount = ko.observable(0);
         self.previewImage = ko.observable(null);
@@ -530,6 +531,9 @@ $(function() {
 
             if ("isCapturing" in data)
                 self.isCapturing(data.isCapturing);
+
+            if ("isStabilized" in data)
+                self.isStabilized(data.isStabilized);
 
             if ("currentFileSize" in data)
                 self.currentFileSize(data.currentFileSize);

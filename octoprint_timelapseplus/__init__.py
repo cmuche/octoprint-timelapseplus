@@ -235,6 +235,7 @@ class TimelapsePlusPlugin(
             error=self.ERROR,
             isRunning=False,
             isCapturing=False,
+            isStabilized=False,
             currentFileSize=0,
             captureMode=None,
             captureTimerInterval=0,
@@ -256,6 +257,7 @@ class TimelapsePlusPlugin(
             data['isRunning'] = self.PRINTJOB.RUNNING
             data['isCapturing'] = self.PRINTJOB.isCapturing()
             data['snapshotCount'] = len(self.PRINTJOB.FRAMES)
+            data['isStabilized'] = self.PRINTJOB.STABILIZE
 
         self.CLIENT_CONTROLLER.enqueueData(data, force)
 
