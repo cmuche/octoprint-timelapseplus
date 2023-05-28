@@ -26,7 +26,7 @@ class StabilizationSettings:
         if 'parkZRelative' in d: self.PARK_Z_RELATIVE = d['parkZRelative']
         if 'waitForMovement' in d: self.WAIT_FOR_MOVEMENT = d['waitForMovement']
         if 'waitBefore' in d: self.WAIT_BEFORE = int(d['waitBefore'])
-        if 'waitAfter' in d: self.WAIT_BEFORE = int(d['waitAfter'])
+        if 'waitAfter' in d: self.WAIT_AFTER = int(d['waitAfter'])
 
     def getJSON(self):
         return dict(
