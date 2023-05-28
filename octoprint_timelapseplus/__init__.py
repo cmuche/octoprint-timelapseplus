@@ -22,6 +22,7 @@ from .model.printJob import PrintJob
 from .model.renderJob import RenderJob
 from .model.renderJobState import RenderJobState
 from .model.renderPreset import RenderPreset
+from .model.stabilizatonSettings import StabilizationSettings
 from .model.video import Video
 from .model.webcamType import WebcamType
 from .prerequisitesController import PrerequisitesController
@@ -163,7 +164,9 @@ class TimelapsePlusPlugin(
             purgeFrameCollections=False,
             purgeFrameCollectionsDays=90,
             purgeVideos=False,
-            purgeVideosDays=90
+            purgeVideosDays=90,
+            stabilization=False,
+            stabilizationSettings=StabilizationSettings().getJSON()
         )
 
     def get_template_vars(self):

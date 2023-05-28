@@ -11,6 +11,7 @@ from PIL import Image
 
 from octoprint.util import ResettableTimer
 from .captureMode import CaptureMode
+from .stabilizatonSettings import StabilizationSettings
 from ..helpers.positionTracker import PositionTracker
 from ..helpers.fileHelper import FileHelper
 from ..helpers.stabilizationHelper import StabilizationHelper
@@ -29,7 +30,9 @@ class PrintJob:
 
         self.STABILIZE = True
         self.POSITION_TRACKER = PositionTracker()
-        self.STABILIZATION_HELPER = StabilizationHelper(settings)
+
+        stabilizationSettings = StabilizationSettings(self._settings.get(["stabilizationSettings"]))
+        self.STABILIZATION_HELPER = StabilizationHelper(settings, stabilizationSettings)
 
         self.METADATA = {'timestamps': {}, 'started': None, 'ended': None, 'success': False, 'baseName': baseName, 'pluginVersion': parent.PLUGIN_VERSION}
         self.BASE_NAME = baseName
