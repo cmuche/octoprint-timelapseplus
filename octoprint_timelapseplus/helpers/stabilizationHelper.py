@@ -38,7 +38,6 @@ class StabilizationHelper:
                 if self.WAIT_BEFORE > 0:
                     cmd.append('G4 P' + int(self.WAIT_BEFORE))
 
-                # todo snapshot and suffix command from settings
                 cmd.append('@' + self.SNAPSHOT_COMMAND + '-' + Constants.SUFFIX_PRINT_UNSTABLE)
 
                 if self.WAIT_AFTER > 0:
