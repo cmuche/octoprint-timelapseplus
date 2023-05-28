@@ -26,12 +26,12 @@ class StabilizationHelper:
                     cmd.append('M400')
 
                 if self.STAB.WAIT_BEFORE > 0:
-                    cmd.append('G4 P' + int(self.STAB.WAIT_BEFORE))
+                    cmd.append('G4 P' + str(self.STAB.WAIT_BEFORE))
 
                 cmd.append('@' + self.SNAPSHOT_COMMAND + '-' + Constants.SUFFIX_PRINT_UNSTABLE)
 
                 if self.STAB.WAIT_AFTER > 0:
-                    cmd.append('G4 P' + int(self.STAB.WAIT_AFTER))
+                    cmd.append('G4 P' + str(self.STAB.WAIT_AFTER))
 
                 cmd.append('G0 X' + str(positionTracker.POS_X) + ' Y' + str(positionTracker.POS_Y) + ' Z' + str(positionTracker.POS_Z) + ' F' + str(self.STAB.MOVE_SPEED * 60))
 
