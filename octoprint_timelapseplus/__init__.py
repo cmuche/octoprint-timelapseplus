@@ -11,6 +11,7 @@ from octoprint.events import Events
 from .apiController import ApiController
 from .cacheController import CacheController
 from .cleanupController import CleanupController
+from .constants import Constants
 from .helpers.formatHelper import FormatHelper
 from .clientController import ClientController
 from .model.captureMode import CaptureMode
@@ -41,10 +42,6 @@ class TimelapsePlusPlugin(
         self.PRINTJOB = None
         self.RENDERJOBS = []
         self.ERROR = None
-
-        self.SUFFIX_PRINT_PAUSE = 'PAUSE'
-        self.SUFFIX_PRINT_RESUME = 'RESUME'
-        self.SUFFIX_PRINT_UNSTABLE = 'UNSTABLE'
 
     @octoprint.plugin.BlueprintPlugin.route("/webcamCapturePreview", methods=["POST"])
     def apiWebcamCapturePreview(self):
@@ -356,13 +353,13 @@ class TimelapsePlusPlugin(
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
 
-        if self.isSnapshotCommand(cmd, self.SUFFIX_PRINT_UNSTABLE):
+        if self.isSnapshotCommand(cmd, Constants.SUFFIX_PRINT_UNSTABLE):
             self.PRINTJOB.doSnapshotUnstable()
         elif self.isSnapshotCommand(cmd) and self.PRINTJOB.CAPTURE_MODE == CaptureMode.COMMAND:
             self.PRINTJOB.doSnapshot()
-        elif self.isSnapshotCommand(cmd, self.SUFFIX_PRINT_PAUSE):
+        elif self.isSnapshotCommand(cmd, Constants.SUFFIX_PRINT_PAUSE):
             self.printHaltedTo(True)
-        elif self.isSnapshotCommand(cmd, self.SUFFIX_PRINT_RESUME):
+        elif self.isSnapshotCommand(cmd, Constants.SUFFIX_PRINT_RESUME):
             self.printHaltedTo(False)
 
     def processGcodeSent(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
