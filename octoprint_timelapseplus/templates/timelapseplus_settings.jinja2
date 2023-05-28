@@ -218,6 +218,12 @@
         </div>
         <div class="tab-pane" id="timelapseplus-settings-tab-stabilization">
             <h3>Stabilization (Beta)</h3>
+            <div class="alert alert-block">
+                <strong>Note:</strong>
+                This feature is currently under development. Please keep in mind that problems can occur or some things may not work properly.
+                If you have feedback, encounter problems or have suggestions for improvement, please share them in a GitHub Issue.
+                That would help a lot to improve and push this feature forward. Thank you!
+            </div>
             <div class="control-group">
                 <label class="control-label">Stabilize Print Head</label>
                 <div class="controls">
@@ -229,19 +235,28 @@
                 <div class="control-group">
                     <label class="control-label">Park X</label>
                     <div class="controls">
-                        <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkX">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkX">
+                        <span class="add-on">mm</span>
+                        </span>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">Park Y</label>
                     <div class="controls">
-                        <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkY">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkY">
+                        <span class="add-on">mm</span>
+                        </span>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">Park Z</label>
                     <div class="controls">
-                        <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkZ">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkZ">
+                        <span class="add-on">mm</span>
+                        </span>
                     </div>
                 </div>
                 <div class="control-group">
@@ -254,7 +269,10 @@
                 <div class="control-group">
                     <label class="control-label">Move Speed</label>
                     <div class="controls">
-                        <input type="number" step='1' min="1" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.moveSpeed">
+                        <span class="input-append">
+                            <input type="number" step='1' min="1" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.moveSpeed">
+                            <span class="add-on">mm/s</span>
+                        </span>
                     </div>
                 </div>
                 <div class="control-group">
@@ -266,32 +284,47 @@
                 <div class="control-group">
                     <label class="control-label">Wait before</label>
                     <div class="controls">
-                        <input type="number" step='1' min="0" max="5000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.waitBefore">
+                        <span class="input-append">
+                            <input type="number" step='1' min="0" max="5000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.waitBefore">
+                            <span class="add-on">ms</span>
+                        </span>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">Wait after</label>
                     <div class="controls">
-                        <input type="number" step='1' min="0" max="5000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.waitAfter">
+                        <span class="input-append">
+                            <input type="number" step='1' min="0" max="5000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.waitAfter">
+                            <span class="add-on">ms</span>
+                        </span>
                     </div>
                 </div>
                 <h4>Retraction</h4>
                 <div class="control-group">
                     <label class="control-label">Retraction Speed</label>
                     <div class="controls">
-                        <input type="number" step='1' min="1" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.retractSpeed">
+                        <span class="input-append">
+                            <input type="number" step='1' min="1" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.retractSpeed">
+                            <span class="add-on">mm/s</span>
+                        </span>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">Retraction Amount</label>
                     <div class="controls">
-                        <input type="number" step='0.01' min="0.12" max="10" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.retractAmount">
+                        <span class="input-append">
+                            <input type="number" step='0.01' min="0.12" max="10" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.retractAmount">
+                            <span class="add-on">mm</span>
+                        </span>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">Retraction Z-Hop</label>
                     <div class="controls">
-                        <input type="number" step='0.01' min="0.02" max="10" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.retractZHop">
+                        <span class="input-append">
+                            <input type="number" step='0.01' min="0.02" max="10" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.retractZHop">
+                            <span class="add-on">mm</span>
+                        </span>
                     </div>
                 </div>
             </div>
