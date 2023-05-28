@@ -178,6 +178,8 @@ class TimelapsePlusPlugin(
         rpList = list(map(lambda x: RenderPreset(x), rpRaw))
         rpNew = list(map(lambda x: x.getJSON(), rpList))
 
+        stabilizationSettings = StabilizationSettings(self._settings.get(["stabilizationSettings"])).getJSON()
+
         return dict(
             ffmpegPath=self._settings.get(["ffmpegPath"]),
             ffprobePath=self._settings.get(["ffprobePath"]),
@@ -195,7 +197,9 @@ class TimelapsePlusPlugin(
             purgeFrameCollections=self._settings.get(["purgeFrameCollections"]),
             purgeFrameCollectionsDays=self._settings.get(["purgeFrameCollectionsDays"]),
             purgeVideos=self._settings.get(["purgeVideos"]),
-            purgeVideosDays=self._settings.get(["purgeVideosDays"])
+            purgeVideosDays=self._settings.get(["purgeVideosDays"]),
+            stabilization=self._settings.get(["stabilization"]),
+            stabilizationSettings=stabilizationSettings
         )
 
     def listFrameZips(self):
