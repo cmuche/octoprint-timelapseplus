@@ -5,6 +5,7 @@
         <li><a data-toggle="tab" href="#timelapseplus-settings-tab-pathsandwebcam">Paths and Webcam</a></li>
         <li><a data-toggle="tab" href="#timelapseplus-settings-tab-general">General</a></li>
         <li><a data-toggle="tab" href="#timelapseplus-settings-tab-purging">Purging</a></li>
+        <li><a data-toggle="tab" href="#timelapseplus-settings-tab-stabilization">Stabilization</a></li>
         <li><a data-toggle="tab" href="#timelapseplus-settings-tab-enhancement">Enhancement</a></li>
         <li><a data-toggle="tab" href="#timelapseplus-settings-tab-rendering">Rendering</a></li>
     </ul>
@@ -212,6 +213,86 @@
                 <strong data-bind="text: settings.plugins.timelapseplus.purgeFrameCollectionsDays"></strong>
                 <span>days will be automatically removed.</span>
             </span>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="timelapseplus-settings-tab-stabilization">
+            <h3>Stabilization (Beta)</h3>
+            <div class="control-group">
+                <label class="control-label">Stabilize Print Head</label>
+                <div class="controls">
+                    <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilize">
+                </div>
+            </div>
+            <div data-bind="visible: settings.plugins.timelapseplus.stabilize">
+                <h4>Park Position</h4>
+                <div class="control-group">
+                    <label class="control-label">Park X</label>
+                    <div class="controls">
+                        <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkX">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Park Y</label>
+                    <div class="controls">
+                        <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkY">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Park Z</label>
+                    <div class="controls">
+                        <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkZ">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Park Z Relative</label>
+                    <div class="controls">
+                        <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilizationSettings.parkZRelative">
+                    </div>
+                </div>
+                <h4>Movement</h4>
+                <div class="control-group">
+                    <label class="control-label">Move Speed</label>
+                    <div class="controls">
+                        <input type="number" step='1' min="1" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.moveSpeed">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Wait for Movement (M400)</label>
+                    <div class="controls">
+                        <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilizationSettings.waitForMovement">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Wait before</label>
+                    <div class="controls">
+                        <input type="number" step='1' min="0" max="5000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.waitBefore">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Wait after</label>
+                    <div class="controls">
+                        <input type="number" step='1' min="0" max="5000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.waitAfter">
+                    </div>
+                </div>
+                <h4>Retraction</h4>
+                <div class="control-group">
+                    <label class="control-label">Retraction Speed</label>
+                    <div class="controls">
+                        <input type="number" step='1' min="1" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.retractSpeed">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Retraction Amount</label>
+                    <div class="controls">
+                        <input type="number" step='0.01' min="0.12" max="10" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.retractAmount">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Retraction Z-Hop</label>
+                    <div class="controls">
+                        <input type="number" step='0.01' min="0.02" max="10" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.retractZHop">
+                    </div>
                 </div>
             </div>
         </div>
