@@ -38,6 +38,7 @@ $(function() {
 
         self.settings = parameters[0];
         self.settings.parent = self;
+        self.allWebcams = ko.observable([]);
 
         self.error = ko.observable(null);
         self.hasError = ko.observable(false);
@@ -504,6 +505,9 @@ $(function() {
                 });
                 return;
             }
+
+            if ("allWebcams" in data)
+                self.allWebcams(data.allWebcams);
 
             if ("videos" in data)
                 self.videos.updateItems(data.videos);

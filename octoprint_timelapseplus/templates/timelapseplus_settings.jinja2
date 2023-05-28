@@ -51,6 +51,7 @@
                 <label class="control-label">Webcam Type</label>
                 <div class="controls">
                     <select data-bind="value: settings.plugins.timelapseplus.webcamType">
+                        <option value="PLUGIN">Webcam Plugin</option>
                         <option value="IMAGE_JPEG">JPEG Image</option>
                         <option value="STREAM_MJPEG">MJPEG Stream</option>
                         <option value="STREAM_MP4">MP4 Stream (via FFmpeg)</option>
@@ -58,13 +59,24 @@
                         <option value="SCRIPT">Custom Script</option>
                     </select>
                     <span class="help-block">
-                Stream-based capturing might take some extra time to be processed and converted which could have an impact on your snapshot timing.<br>
-                <strong>The image snapshot type should therefore be your first choice (if possible) since it doesn't require any transcoding by Timelapse+.</strong>
-            </span>
+                        Stream-based capturing might take some extra time to be processed and converted which could have an impact on your snapshot timing.<br>
+                        <strong>The image snapshot type should therefore be your first choice (if possible) since it doesn't require any transcoding by Timelapse+.</strong>
+                    </span>
                 </div>
             </div>
 
-            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.webcamType() != 'SCRIPT'">
+            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.webcamType() == 'PLUGIN'">
+                <label class="control-label">Plugin</label>
+                <div class="controls">
+                    <select data-bind="value: settings.plugins.timelapseplus.webcamPluginName, options: parent.allWebcams, optionsText: 'name'">
+                    </select>
+                    <span class="help-block">
+                        The selected Webcam Plugin needs to implement Snapshot Capturing
+                    </span>
+                </div>
+            </div>
+
+            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.webcamType() != 'SCRIPT' && settings.plugins.timelapseplus.webcamType() != 'PLUGIN'">
                 <label class="control-label">Webcam URL</label>
                 <div class="controls">
                     <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamUrl">

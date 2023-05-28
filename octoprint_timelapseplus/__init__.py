@@ -153,6 +153,7 @@ class TimelapsePlusPlugin(
             ffprobePath='',
             webcamType=WebcamType.IMAGE_JPEG.name,
             webcamUrl='',
+            webcamPluginName=None,
             captureMode=CaptureMode.COMMAND.name,
             captureTimerInterval=10,
             snapshotCommand="SNAPSHOT",
@@ -182,6 +183,7 @@ class TimelapsePlusPlugin(
             ffprobePath=self._settings.get(["ffprobePath"]),
             webcamType=self._settings.get(["webcamType"]),
             webcamUrl=self._settings.get(["webcamUrl"]),
+            webcamPluginName=self._settings.get(["webcamPluginName"]),
             captureMode=self._settings.get(["captureMode"]),
             captureTimerInterval=self._settings.get(["captureTimerInterval"]),
             snapshotCommand=self._settings.get(["snapshotCommand"]),
@@ -234,6 +236,7 @@ class TimelapsePlusPlugin(
         allFrameZips = self.listFrameZips()
         allVideos = self.listVideos()
         data = dict(
+            allWebcams=self.WEBCAM_CONTROLLER.getWebcamIdsAndNames(),
             error=self.ERROR,
             isRunning=False,
             isCapturing=False,
