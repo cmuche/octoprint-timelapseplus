@@ -12,12 +12,13 @@ from .model.webcamType import WebcamType
 
 
 class WebcamController:
-    def __init__(self, parent, logger, dataFolder, settings):
+    def __init__(self, parent, logger, dataFolder, settings, webcams):
         self.PARENT = parent
         self._logger = logger
         self._settings = settings
         self.TMP_FOLDER = dataFolder + '/webcam-tmp'
         self.prepareFolder()
+        self.WEBCAMS = webcams
 
         self.TIMEOUT = 2
 
@@ -26,6 +27,23 @@ class WebcamController:
         files = glob.glob(self.TMP_FOLDER + '/*')
         for f in files:
             os.remove(f)
+
+    def getWebcamByName(self, name):
+        if name is None:
+            return None
+
+        if name in self.WEBCAMS:
+            return self.WEBCAMS[name]
+
+        return None
+
+    def getWebcamIdsAndNames(self):
+        ret = []
+        for k in self.WEBCAMS:
+            thisWebcam = dict(id=k, name=self.WEBCAMS[k].config.displayName)
+            ret.append(thisWebcam)
+
+        return ret
 
     def getSnapshotStreamMp4OrHls(self, path, ffmpegPath, webcamUrl):
         cmd = [ffmpegPath, '-r', '1', '-i', webcamUrl, '-frames:v', '1', '-q:v', '1', '-f', 'image2', '-']
