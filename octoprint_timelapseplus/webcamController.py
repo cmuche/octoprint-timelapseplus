@@ -130,6 +130,9 @@ class WebcamController:
 
         webcam = self.getWebcamByPluginId(pluginId)
 
+        if not webcam.config.canSnapshot:
+            raise Exception('The Webcam Plugin doesn\'t support Snapshots')
+
         if webcam is None:
             raise Exception('Could not find Webcam Plugin with the ID \'' + str(pluginId) + '\'')
 
