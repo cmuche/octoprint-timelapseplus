@@ -235,7 +235,14 @@ class TimelapsePlusPlugin(
     def sendClientDataInner(self, force):
         allFrameZips = self.listFrameZips()
         allVideos = self.listVideos()
+        configData = dict(
+            enabled=self._settings.get(["enabled"]),
+            captureMode=CaptureMode[self._settings.get(["captureMode"])].name,
+            captureTimerInterval=int(self._settings.get(["captureTimerInterval"])),
+            snapshotCommand=self._settings.get(["snapshotCommand"]),
+        )
         data = dict(
+            config=configData,
             error=self.ERROR,
             isRunning=False,
             isCapturing=False,
