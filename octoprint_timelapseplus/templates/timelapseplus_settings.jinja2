@@ -68,7 +68,7 @@
             <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.webcamType() == 'PLUGIN'">
                 <label class="control-label">Plugin</label>
                 <div class="controls">
-                    <select data-bind="value: settings.plugins.timelapseplus.webcamPluginName, options: parent.allWebcams, optionsText: 'name'">
+                    <select data-bind="value: settings.plugins.timelapseplus.webcamPluginId, options: parent.allWebcams, optionsText: 'name', optionsValue: 'id', valueAllowUnset: true">
                     </select>
                     <span class="help-block">
                         The selected Webcam Plugin needs to implement Snapshot Capturing
