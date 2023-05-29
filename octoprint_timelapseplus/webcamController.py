@@ -130,18 +130,28 @@ class WebcamController:
 
         webcam = self.getWebcamByPluginId(pluginId)
 
-        if not webcam.config.canSnapshot:
-            raise Exception('The Webcam Plugin doesn\'t support Snapshots')
-
         if webcam is None:
-            raise Exception('Could not find Webcam Plugin with the ID \'' + str(pluginId) + '\'')
+            raise Exception('Couldn\'t find a Webcam Plugin with the ID \'' + str(pluginId) + '\'')
 
-        snapshot = webcam.providerPlugin.take_webcam_snapshot(webcam)
-        with open(fileName, "wb") as f:
-            for chunk in snapshot:
-                if chunk:
-                    f.write(chunk)
-                    f.flush()
+        webcamName = webcam.config.displayName
+
+        if not webcam.config.canSnapshot:
+            raise Exception('The Webcam Plugin \''+webcamName+'\' doesn\'t support Snapshots')
+
+        try:
+            snapshot = webcam.providerPlugin.take_webcam_snapshot(webcam)
+        except Exception as ex:
+            raise Exception('The Webcam Plugin \''+webcamName+'\' failed creating a Snapshot: ' + str(ex))
+
+        try:
+            with open(fileName, 'wb') as f:
+                for chunk in snapshot:
+                    if chunk:
+                        f.write(chunk)
+                        f.flush()
+        except Exception as ex:
+            raise Exception('The Webcam Plugin \''+webcamName+'\' didn\'t return a valid Snapshot: ' + str(ex))
+
 
     def getSnapshot(self, ffmpegPath=None, webcamType=None, webcamUrl=None, pluginId=None):
         if ffmpegPath is None:
