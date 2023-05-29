@@ -153,7 +153,7 @@ class TimelapsePlusPlugin(
             ffprobePath='',
             webcamType=WebcamType.IMAGE_JPEG.name,
             webcamUrl='',
-            webcamPluginName=None,
+            webcamPluginId=None,
             captureMode=CaptureMode.COMMAND.name,
             captureTimerInterval=10,
             snapshotCommand="SNAPSHOT",
@@ -183,7 +183,7 @@ class TimelapsePlusPlugin(
             ffprobePath=self._settings.get(["ffprobePath"]),
             webcamType=self._settings.get(["webcamType"]),
             webcamUrl=self._settings.get(["webcamUrl"]),
-            webcamPluginName=self._settings.get(["webcamPluginName"]),
+            webcamPluginId=self._settings.get(["webcamPluginId"]),
             captureMode=self._settings.get(["captureMode"]),
             captureTimerInterval=self._settings.get(["captureTimerInterval"]),
             snapshotCommand=self._settings.get(["snapshotCommand"]),
@@ -296,9 +296,9 @@ class TimelapsePlusPlugin(
         defaultVideoFormat = FormatHelper.getVideoFormatById(defaultVideoFormatId)
         self._settings.set(["defaultVideoFormat"], defaultVideoFormat.ID)
 
-        webcamPluginName = self._settings.get(["webcamPluginName"])
-        if self.WEBCAM_CONTROLLER.getWebcamByName(webcamPluginName) is None:
-            self._settings.set(["webcamPluginName"], None)
+        webcamPluginId = self._settings.get(["webcamPluginId"])
+        if self.WEBCAM_CONTROLLER.getWebcamByPluginId(webcamPluginId) is None:
+            self._settings.set(["webcamPluginId"], None)
 
         self.checkPrerequisites()
 

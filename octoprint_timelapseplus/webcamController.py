@@ -28,12 +28,12 @@ class WebcamController:
         for f in files:
             os.remove(f)
 
-    def getWebcamByName(self, name):
-        if name is None:
+    def getWebcamByPluginId(self, id):
+        if id is None:
             return None
 
-        if name in self.WEBCAMS:
-            return self.WEBCAMS[name]
+        if id in self.WEBCAMS:
+            return self.WEBCAMS[id]
 
         return None
 
