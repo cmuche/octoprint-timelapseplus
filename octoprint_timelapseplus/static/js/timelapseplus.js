@@ -39,6 +39,7 @@ $(function() {
         self.settings = parameters[0];
         self.settings.parent = self;
 
+        self.config = ko.observable(null);
         self.error = ko.observable(null);
         self.hasError = ko.observable(false);
 
@@ -510,6 +511,10 @@ $(function() {
 
             if ("frameCollections" in data)
                 self.frameCollections.updateItems(data.frameCollections);
+
+            if ("config" in data) {
+                self.config(data.config);
+            }
 
             if ("error" in data) {
                 self.error(data.error);
