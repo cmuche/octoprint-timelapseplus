@@ -84,8 +84,13 @@ class PrerequisitesController:
                 continue
             encoders += [match.group(1)]
 
+        missingEncoders = []
         videoFormats = FormatHelper.getVideoFormats()
         for vf in videoFormats:
             for vc in vf.getCodecIdsList():
-                if vc not in encoders:
-                    raise Exception('The Encoder \'' + vc + '\'  is not supported by your FFmpeg Version')
+                if vc not in encoders and vc not in missingEncoders:
+                    missingEncoders.append(vc)
+        if len(missingEncoders) == 1:
+            raise Exception('The Encoder \'' + missingEncoders[0] + '\' is not supported by your FFmpeg Version')
+        elif len(missingEncoders) > 0:
+            raise Exception('The Encoders ' + ', '.join(missingEncoders) + ' are not supported by your FFmpeg Version')
