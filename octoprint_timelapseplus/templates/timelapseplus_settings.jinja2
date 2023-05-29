@@ -58,7 +58,7 @@
                         <option value="STREAM_HLS">HLS Stream (Via FFmpeg)</option>
                         <option value="SCRIPT">Custom Script</option>
                     </select>
-                    <span class="help-block">
+                    <span class="help-block" data-bind="visible: (settings.plugins.timelapseplus.webcamType() == 'STREAM_MP4' || settings.plugins.timelapseplus.webcamType() == 'STREAM_HLS' || settings.plugins.timelapseplus.webcamType() == 'STREAM_MJPEG')">
                         Stream-based capturing might take some extra time to be processed and converted which could have an impact on your snapshot timing.<br>
                     </span>
                 </div>
