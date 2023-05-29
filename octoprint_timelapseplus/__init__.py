@@ -149,6 +149,7 @@ class TimelapsePlusPlugin(
 
     def get_settings_defaults(self):
         return dict(
+            enabled=True,
             ffmpegPath='',
             ffprobePath='',
             webcamType=WebcamType.IMAGE_JPEG.name,
@@ -178,6 +179,7 @@ class TimelapsePlusPlugin(
         rpNew = list(map(lambda x: x.getJSON(), rpList))
 
         return dict(
+            enabled=self._settings.get(["enabled"]),
             ffmpegPath=self._settings.get(["ffmpegPath"]),
             ffprobePath=self._settings.get(["ffprobePath"]),
             webcamType=self._settings.get(["webcamType"]),
@@ -368,6 +370,9 @@ class TimelapsePlusPlugin(
         self.RENDERJOBS.append(job)
 
     def printStarted(self):
+        if not self._settings.get(["enabled"]):
+            return
+
         if self.PRINTJOB is not None and self.PRINTJOB.RUNNING:
             return
 
