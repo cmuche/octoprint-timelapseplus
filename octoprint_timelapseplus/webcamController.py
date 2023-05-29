@@ -124,13 +124,31 @@ class WebcamController:
             scriptOutput = proc.stdout.decode(errors='ignore')
             raise Exception('Webcam Script did not create the requested Output File.\n\nReturn Code: ' + str(proc.returncode) + '\n\nOutput: ' + str(scriptOutput))
 
-    def getSnapshot(self, ffmpegPath=None, webcamType=None, webcamUrl=None):
+    def getSnapshotFromPlugin(self, pluginId, fileName):
+        if pluginId is None:
+            raise Exception('Webcam Plugin is not set')
+
+        webcam = self.getWebcamByPluginId(pluginId)
+
+        if webcam is None:
+            raise Exception('Could not find Webcam Plugin with the ID \'' + str(pluginId) + '\'')
+
+        snapshot = webcam.providerPlugin.take_webcam_snapshot(webcam)
+        with open(fileName, "wb") as f:
+            for chunk in snapshot:
+                if chunk:
+                    f.write(chunk)
+                    f.flush()
+
+    def getSnapshot(self, ffmpegPath=None, webcamType=None, webcamUrl=None, pluginId=None):
         if ffmpegPath is None:
             ffmpegPath = self._settings.get(["ffmpegPath"])
         if webcamType is None:
             webcamType = WebcamType[self._settings.get(["webcamType"])]
         if webcamUrl is None:
             webcamUrl = self._settings.get(["webcamUrl"])
+        if pluginId is None:
+            pluginId = self._settings.get(["webcamPluginId"])
 
         fileName = self.TMP_FOLDER + '/' + self.PARENT.getRandomString(32) + ".jpg"
 
@@ -143,6 +161,8 @@ class WebcamController:
                 self.getSnapshotStreamMp4OrHls(fileName, ffmpegPath, webcamUrl)
             if webcamType == WebcamType.SCRIPT:
                 self.getSnapshotFromScript(webcamUrl, fileName)
+            if webcamType == WebcamType.PLUGIN:
+                self.getSnapshotFromPlugin(pluginId, fileName)
 
             if not os.path.isfile(fileName):
                 raise Exception('An Error occured during Snapshot Capturing')
