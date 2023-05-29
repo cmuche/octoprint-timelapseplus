@@ -23,12 +23,13 @@
     <div class="quick-actions" data-bind="if: config() != null">
         <div class="action clickable">
             <div class="icon">
-                <i class="fa fa-power-off"></i>
+                <i class="fa fa-power-off positive" data-bind="visible: config().enabled"></i>
+                <i class="fa fa-power-off negative" data-bind="visible: !config().enabled"></i>
             </div>
             <div class="description">
                 <div class="name">Enabled</div>
-                <div class="value" data-bind="if: config().enabled">Yes</div>
-                <div class="value" data-bind="if: !config().enabled">No</div>
+                <div class="value positive" data-bind="visible: config().enabled">Yes</div>
+                <div class="value negative" data-bind="visible: !config().enabled">No</div>
             </div>
         </div>
 
@@ -43,7 +44,7 @@
             </div>
         </div>
 
-        <div data-bind="if: config().captureMode == 'TIMER'">
+        <div data-bind="visible: config().captureMode == 'TIMER'">
             <div class="action">
                 <div class="icon">
                     <i class="fa fa-stopwatch"></i>

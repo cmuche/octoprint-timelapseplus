@@ -15,7 +15,7 @@
 }
 
 #timelapseplus .quick-actions .action {
-    background: rgba(127, 127, 127, 0.05);
+    background: rgba(127, 127, 127, 0.1);
     border: 1px solid rgba(127, 127, 127, 0.35);
     display: flex;
     width: 8em;
@@ -42,6 +42,15 @@
     font-size: 1.2em;
     margin-left: 0.75em;
     margin-right: 0.75em;
+    text-shadow: 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.15);
+}
+
+#timelapseplus .quick-actions .action .icon i.positive {
+    color: rgb(64, 192, 64, 1);
+}
+
+#timelapseplus .quick-actions .action .icon i.negative {
+    color: rgba(215, 64, 64, 1);
 }
 
 #timelapseplus .quick-actions .action .description {
@@ -66,6 +75,14 @@
     align-items: center;
     padding-left: 0.5em;
     padding-right: 0.5em;
+}
+
+#timelapseplus .quick-actions .action .description .value.positive {
+    background: rgb(127, 200, 127, 0.35);
+}
+
+#timelapseplus .quick-actions .action .description .value.negative {
+    background: rgba(230, 127, 127, 0.35);
 }
 
 #timelapseplus .current {
