@@ -52,20 +52,28 @@
                 <label class="control-label">Webcam Type</label>
                 <div class="controls">
                     <select data-bind="value: settings.plugins.timelapseplus.webcamType">
+                        <option value="PLUGIN">Webcam Plugin</option>
                         <option value="IMAGE_JPEG">JPEG Image</option>
                         <option value="STREAM_MJPEG">MJPEG Stream</option>
                         <option value="STREAM_MP4">MP4 Stream (via FFmpeg)</option>
                         <option value="STREAM_HLS">HLS Stream (Via FFmpeg)</option>
                         <option value="SCRIPT">Custom Script</option>
                     </select>
-                    <span class="help-block">
-                Stream-based capturing might take some extra time to be processed and converted which could have an impact on your snapshot timing.<br>
-                <strong>The image snapshot type should therefore be your first choice (if possible) since it doesn't require any transcoding by Timelapse+.</strong>
-            </span>
+                    <span class="help-block" data-bind="visible: (settings.plugins.timelapseplus.webcamType() == 'STREAM_MP4' || settings.plugins.timelapseplus.webcamType() == 'STREAM_HLS' || settings.plugins.timelapseplus.webcamType() == 'STREAM_MJPEG')">
+                        Stream-based capturing might take some extra time to be processed and converted which could have an impact on your snapshot timing.<br>
+                    </span>
                 </div>
             </div>
 
-            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.webcamType() != 'SCRIPT'">
+            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.webcamType() == 'PLUGIN'">
+                <label class="control-label">Plugin</label>
+                <div class="controls">
+                    <select data-bind="value: settings.plugins.timelapseplus.webcamPluginId, options: parent.allWebcams, optionsText: 'name', optionsValue: 'id', valueAllowUnset: true">
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.webcamType() != 'SCRIPT' && settings.plugins.timelapseplus.webcamType() != 'PLUGIN'">
                 <label class="control-label">Webcam URL</label>
                 <div class="controls">
                     <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamUrl">
@@ -94,7 +102,7 @@
                 <label class="control-label">Test Settings</label>
                 <div class="controls">
                     <span class="help-block">You can test the FFmpeg and FFprobe paths as well as the snapshot capture here:</span>
-                    <button id="tlp-button-webcam-preview" style="margin-top: 1em" class="btn btn-mini" data-bind="click: function(){parent.openWebcamCapturePreview(settings.plugins.timelapseplus.ffmpegPath, settings.plugins.timelapseplus.ffprobePath, settings.plugins.timelapseplus.webcamType, settings.plugins.timelapseplus.webcamUrl)}">
+                    <button id="tlp-button-webcam-preview" style="margin-top: 1em" class="btn btn-mini" data-bind="click: function(){parent.openWebcamCapturePreview(settings.plugins.timelapseplus.ffmpegPath, settings.plugins.timelapseplus.ffprobePath, settings.plugins.timelapseplus.webcamType, settings.plugins.timelapseplus.webcamUrl, settings.plugins.timelapseplus.webcamPluginId)}">
                         <i class="fa fa-check"></i>
                         Test Paths and Webcam Settings
                     </button>
@@ -103,6 +111,15 @@
         </div>
         <div class="tab-pane" id="timelapseplus-settings-tab-general">
             <h3>General</h3>
+            <div class="control-group">
+                <label class="control-label">Enable Capturing</label>
+                <div class="controls">
+                    <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.enabled">
+                </div>
+            </div>
+
+            <hr>
+
             <div class="control-group">
                 <label class="control-label">Capture Mode</label>
                 <div class="controls">
