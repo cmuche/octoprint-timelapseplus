@@ -21,7 +21,7 @@
     </div>
 
     <div class="quick-actions" data-bind="if: config() != null">
-        <div class="action clickable">
+        <div class="action clickable" data-bind="click: editQuickSettingsEnabled">
             <div class="icon">
                 <i class="fa fa-power-off positive" data-bind="visible: config().enabled"></i>
                 <i class="fa fa-power-off negative" data-bind="visible: !config().enabled"></i>
@@ -33,7 +33,7 @@
             </div>
         </div>
 
-        <div class="action clickable">
+        <div class="action clickable" data-bind="click: editQuickSettingsCaptureMode">
             <div class="icon">
                 <i class="fa fa-camera"></i>
             </div>

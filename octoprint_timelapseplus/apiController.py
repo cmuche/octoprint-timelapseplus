@@ -10,6 +10,7 @@ from zipfile import ZipFile
 from PIL import Image
 from flask import make_response, send_file
 
+from .model.captureMode import CaptureMode
 from .helpers.fileHelper import FileHelper
 from .helpers.timecodeRenderer import TimecodeRenderer
 from .model.frameTimecodeInfo import FrameTimecodeInfo
@@ -263,4 +264,17 @@ class ApiController:
         newFileName = FileHelper.getUniqueFileName(newFileName)
 
         shutil.move(fileTemp, newFileName)
+        self.PARENT.sendClientData()
+
+    def editQuickSettings(self):
+        import flask
+        data = flask.request.get_json()
+
+        if 'enabled' in data:
+            self._settings.set(["enabled"], bool(data['enabled']))
+
+        if 'captureMode' in data:
+            self._settings.set(["captureMode"], CaptureMode[data['captureMode']].name)
+
+        self._settings.save(trigger_event=True)
         self.PARENT.sendClientData()

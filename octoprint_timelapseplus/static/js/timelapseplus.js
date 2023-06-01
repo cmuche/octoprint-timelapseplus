@@ -490,6 +490,28 @@ $(function() {
             $("div#tlp-modal-render").modal("hide");
         };
 
+        self.editQuickSettingsEnabled = function() {
+            let newVal = !self.config().enabled;
+            self.editQuickSettings({enabled: newVal}, function(cfg) {
+                cfg.enabled = newVal;
+            });
+        };
+
+        self.editQuickSettingsCaptureMode = function() {
+            let newVal = self.config().captureMode == "COMMAND" ? "TIMED" : "COMMAND";
+            self.editQuickSettings({captureMode: newVal}, function(cfg) {
+                cfg.captureMode = newVal;
+            });
+        };
+
+        self.editQuickSettings = function(data, cfgEditFn) {
+            self.api("editQuickSettings", data, function() {
+                let cfg = self.config();
+                cfgEditFn(cfg);
+                self.config(cfg);
+            });
+        };
+
         self.onDataUpdaterPluginMessage = function(plugin, data) {
             if (plugin != "timelapseplus")
                 return;

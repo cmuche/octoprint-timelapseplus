@@ -118,6 +118,11 @@ class TimelapsePlusPlugin(
         self.API_CONTROLLER.uploadFrameZip()
         return self.API_CONTROLLER.emptyResponse()
 
+    @octoprint.plugin.BlueprintPlugin.route("/editQuickSettings", methods=["POST"])
+    def apiEditQuickSettings(self):
+        self.API_CONTROLLER.editQuickSettings()
+        return self.API_CONTROLLER.emptyResponse()
+
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
         buf = io.BytesIO()
