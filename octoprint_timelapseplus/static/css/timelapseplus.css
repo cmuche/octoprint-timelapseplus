@@ -224,6 +224,7 @@
 
 #timelapseplus .file .info .name {
     font-style: italic;
+    word-break: break-word;
 }
 
 #timelapseplus .file .info .properties {
