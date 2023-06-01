@@ -40,11 +40,11 @@
             <div class="description">
                 <div class="name">Mode</div>
                 <div class="value" data-bind="if: config().captureMode == 'COMMAND'">Command</div>
-                <div class="value" data-bind="if: config().captureMode == 'TIMER'">Timer</div>
+                <div class="value" data-bind="if: config().captureMode == 'TIMED'">Timer</div>
             </div>
         </div>
 
-        <div data-bind="visible: config().captureMode == 'TIMER'">
+        <div data-bind="visible: config().captureMode == 'TIMED'">
             <div class="action">
                 <div class="icon">
                     <i class="fa fa-stopwatch"></i>
