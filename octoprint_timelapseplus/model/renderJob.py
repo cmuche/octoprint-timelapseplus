@@ -139,6 +139,7 @@ class RenderJob:
         imgName = "C_{:05d}".format(i + 1) + ".jpg"
         imgPath = self.FOLDER + '/' + imgName
         img.save(imgPath, quality=100, subsampling=0)
+        img.close()
 
         for f in chunk:
             os.remove(f)
@@ -162,6 +163,7 @@ class RenderJob:
         img = Image.open(frame)
         imgRes = preset.applyBlur(img)
         imgRes.save(frame, quality=100, subsampling=0)
+        imgRes.close()
 
     def enhanceImages(self, preset):
         if not preset.ENHANCE:
@@ -178,6 +180,7 @@ class RenderJob:
         img = Image.open(frame)
         imgRes = preset.applyEnhance(img)
         imgRes.save(frame, quality=100, subsampling=0)
+        imgRes.close()
 
     def resizeImages(self, preset):
         if not preset.RESIZE:
@@ -194,6 +197,7 @@ class RenderJob:
         img = Image.open(frame)
         imgRes = preset.applyResize(img)
         imgRes.save(frame, quality=100, subsampling=0)
+        imgRes.close()
 
     def addTimecodes(self, preset):
         if not preset.TIMECODE:
@@ -217,6 +221,9 @@ class RenderJob:
         img = Image.open(frame)
         imgRes = timecodeRenderer.applyTimecode(img, preset, frameInfo)
         imgRes.save(frame, quality=100, subsampling=0)
+
+        img.close()
+        imgRes.close()
 
     def createPPRoll(self, preset):
         if not preset.PPROLL:
@@ -244,6 +251,7 @@ class RenderJob:
         thisRatio, frameFiles, thisOutFile, preset, phase = j
         img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset, PPRollPhase.POST, self.METADATA, self._basefolder)
         img.save(thisOutFile, quality=100, subsampling=0)
+        img.close()
 
     def generateFade(self, preset):
         if not preset.FADE:
@@ -278,6 +286,7 @@ class RenderJob:
         img = Image.alpha_composite(img, overlay).convert('RGB')
         img.save(imgFile, quality=100, subsampling=0)
         overlay.close()
+        img.close()
 
     def createPalette(self, format):
         if not format.CREATE_PALETTE:

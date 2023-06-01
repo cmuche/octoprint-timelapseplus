@@ -42,6 +42,10 @@ class EnhancementPreset:
 
         imgBlurred = img.filter(ImageFilter.GaussianBlur(self.BLUR_RADIUS))
         imgOut = Image.composite(imgBlurred, img, imgMask)
+
+        imgBlurred.close()
+        imgMask.close()
+
         return imgOut
 
     def applyEnhance(self, img):
