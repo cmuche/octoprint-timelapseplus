@@ -12,7 +12,7 @@ class PrerequisitesController:
     ENCODERS_TEST_REGEX = '^[ ]*V[VASFXBD\\.]{5} ([a-zA-Z0-9-_]+) [ ]+.*'
 
     @staticmethod
-    def check(settings, webcamController, ffmpegPath=None, ffprobePath=None, webcamType=None, webcamUrl=None):
+    def check(settings, webcamController, ffmpegPath=None, ffprobePath=None, webcamType=None, webcamUrl=None, pluginId=None):
         if ffmpegPath is None:
             ffmpegPath = settings.get(["ffmpegPath"])
         if ffprobePath is None:
@@ -21,6 +21,8 @@ class PrerequisitesController:
             webcamType = WebcamType[settings.get(["webcamType"])]
         if webcamUrl is None:
             webcamUrl = settings.get(["webcamUrl"])
+        if pluginId is None:
+            pluginId = settings.get(["webcamPluginId"])
 
         if ffmpegPath is None or ffmpegPath.strip() == '':
             raise Exception('FFmpeg Path is not set')
@@ -52,7 +54,7 @@ class PrerequisitesController:
             raise Exception('Webcam Snapshot URL is not set')
 
         try:
-            snapshot = webcamController.getSnapshot(ffmpegPath, webcamType, webcamUrl)
+            snapshot = webcamController.getSnapshot(ffmpegPath, webcamType, webcamUrl, pluginId)
         except Exception as e:
             raise Exception('Could not retrieve Webcam Snapshot: ' + str(e))
 

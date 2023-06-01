@@ -223,13 +223,14 @@ class ApiController:
         ffprobePath = data['ffprobePath']
         webcamType = WebcamType[data['webcamType']]
         webcamUrl = data['webcamUrl']
+        pluginId = data['pluginId']
 
         snapshot = None
         try:
-            PrerequisitesController.check(self._settings, self.PARENT.WEBCAM_CONTROLLER, ffmpegPath, ffprobePath, webcamType, webcamUrl)
+            PrerequisitesController.check(self._settings, self.PARENT.WEBCAM_CONTROLLER, ffmpegPath, ffprobePath, webcamType, webcamUrl, pluginId)
 
             startTime = time.time()
-            snapshot = self.PARENT.WEBCAM_CONTROLLER.getSnapshot(ffmpegPath, webcamType, webcamUrl)
+            snapshot = self.PARENT.WEBCAM_CONTROLLER.getSnapshot(ffmpegPath, webcamType, webcamUrl, pluginId)
             elapsedTime = int((time.time() - startTime) * 1000)
             size = os.path.getsize(snapshot)
 

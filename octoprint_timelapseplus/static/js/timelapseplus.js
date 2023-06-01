@@ -38,6 +38,7 @@ $(function() {
 
         self.settings = parameters[0];
         self.settings.parent = self;
+        self.allWebcams = ko.observable([]);
 
         self.config = ko.observable(null);
         self.error = ko.observable(null);
@@ -237,10 +238,14 @@ $(function() {
             }).click();
         };
 
-        self.openWebcamCapturePreview = function(ffmpegPath, ffprobePath, webcamType, webcamUrl) {
+        self.openWebcamCapturePreview = function(ffmpegPath, ffprobePath, webcamType, webcamUrl, webcamPluginId) {
             $("#tlp-button-webcam-preview").prop("disabled", true);
 
-            self.api("webcamCapturePreview", {ffmpegPath: ffmpegPath(), ffprobePath: ffprobePath(), webcamType: webcamType(), webcamUrl: webcamUrl()}, function(data) {
+            webcamPluginId = webcamPluginId();
+            if (!webcamPluginId)
+                webcamPluginId = null;
+
+            self.api("webcamCapturePreview", {ffmpegPath: ffmpegPath(), ffprobePath: ffprobePath(), webcamType: webcamType(), webcamUrl: webcamUrl(), pluginId: webcamPluginId}, function(data) {
                 if ("error" in data) {
                     $("div#tlp-modal-webcam-preview .error").show();
                     $("div#tlp-modal-webcam-preview img.preview").hide();
@@ -527,6 +532,9 @@ $(function() {
                 });
                 return;
             }
+
+            if ("allWebcams" in data)
+                self.allWebcams(data.allWebcams);
 
             if ("videos" in data)
                 self.videos.updateItems(data.videos);
