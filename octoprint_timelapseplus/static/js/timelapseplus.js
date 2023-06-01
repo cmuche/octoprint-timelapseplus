@@ -38,7 +38,9 @@ $(function() {
 
         self.settings = parameters[0];
         self.settings.parent = self;
+        self.allWebcams = ko.observable([]);
 
+        self.config = ko.observable(null);
         self.error = ko.observable(null);
         self.hasError = ko.observable(false);
 
@@ -236,10 +238,14 @@ $(function() {
             }).click();
         };
 
-        self.openWebcamCapturePreview = function(ffmpegPath, ffprobePath, webcamType, webcamUrl) {
+        self.openWebcamCapturePreview = function(ffmpegPath, ffprobePath, webcamType, webcamUrl, webcamPluginId) {
             $("#tlp-button-webcam-preview").prop("disabled", true);
 
-            self.api("webcamCapturePreview", {ffmpegPath: ffmpegPath(), ffprobePath: ffprobePath(), webcamType: webcamType(), webcamUrl: webcamUrl()}, function(data) {
+            webcamPluginId = webcamPluginId();
+            if (!webcamPluginId)
+                webcamPluginId = null;
+
+            self.api("webcamCapturePreview", {ffmpegPath: ffmpegPath(), ffprobePath: ffprobePath(), webcamType: webcamType(), webcamUrl: webcamUrl(), pluginId: webcamPluginId}, function(data) {
                 if ("error" in data) {
                     $("div#tlp-modal-webcam-preview .error").show();
                     $("div#tlp-modal-webcam-preview img.preview").hide();
@@ -359,7 +365,7 @@ $(function() {
                 "ADDING_TIMECODES": {title: "Adding Timecodes", showProgress: true, icon: "fas fa-stopwatch"},
                 "ENCODING": {title: "Encoding Video File", showProgress: true, icon: "fas fa-photo-video"},
                 "GENERATING_PPROLL": {title: "Generating Pre/Post Roll", showProgress: true, icon: "fas fa-tv"},
-                "APPLYING_FADE": {title: "Applying Fade Effect", showProgress: true, icon: "fas fa-sort"},
+                "APPLYING_FADE": {title: "Applying Fade Effect", showProgress: true, icon: "fas fa-fill"},
                 "MOVING_FRAMES": {title: "Moving Frames", showProgress: false, icon: "fas fa-copy"},
                 "INTERPOLATING": {title: "Interpolating Frames", showProgress: true, icon: "fas fa-object-group"}
             };
@@ -489,6 +495,28 @@ $(function() {
             $("div#tlp-modal-render").modal("hide");
         };
 
+        self.editQuickSettingsEnabled = function() {
+            let newVal = !self.config().enabled;
+            self.editQuickSettings({enabled: newVal}, function(cfg) {
+                cfg.enabled = newVal;
+            });
+        };
+
+        self.editQuickSettingsCaptureMode = function() {
+            let newVal = self.config().captureMode == "COMMAND" ? "TIMED" : "COMMAND";
+            self.editQuickSettings({captureMode: newVal}, function(cfg) {
+                cfg.captureMode = newVal;
+            });
+        };
+
+        self.editQuickSettings = function(data, cfgEditFn) {
+            self.api("editQuickSettings", data, function() {
+                let cfg = self.config();
+                cfgEditFn(cfg);
+                self.config(cfg);
+            });
+        };
+
         self.onDataUpdaterPluginMessage = function(plugin, data) {
             if (plugin != "timelapseplus")
                 return;
@@ -505,11 +533,18 @@ $(function() {
                 return;
             }
 
+            if ("allWebcams" in data)
+                self.allWebcams(data.allWebcams);
+
             if ("videos" in data)
                 self.videos.updateItems(data.videos);
 
             if ("frameCollections" in data)
                 self.frameCollections.updateItems(data.frameCollections);
+
+            if ("config" in data) {
+                self.config(data.config);
+            }
 
             if ("error" in data) {
                 self.error(data.error);

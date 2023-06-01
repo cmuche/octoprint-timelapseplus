@@ -10,6 +10,7 @@ from zipfile import ZipFile
 from PIL import Image
 from flask import make_response, send_file
 
+from .model.captureMode import CaptureMode
 from .helpers.fileHelper import FileHelper
 from .helpers.timecodeRenderer import TimecodeRenderer
 from .model.frameTimecodeInfo import FrameTimecodeInfo
@@ -222,13 +223,14 @@ class ApiController:
         ffprobePath = data['ffprobePath']
         webcamType = WebcamType[data['webcamType']]
         webcamUrl = data['webcamUrl']
+        pluginId = data['pluginId']
 
         snapshot = None
         try:
-            PrerequisitesController.check(self._settings, self.PARENT.WEBCAM_CONTROLLER, ffmpegPath, ffprobePath, webcamType, webcamUrl)
+            PrerequisitesController.check(self._settings, self.PARENT.WEBCAM_CONTROLLER, ffmpegPath, ffprobePath, webcamType, webcamUrl, pluginId)
 
             startTime = time.time()
-            snapshot = self.PARENT.WEBCAM_CONTROLLER.getSnapshot(ffmpegPath, webcamType, webcamUrl)
+            snapshot = self.PARENT.WEBCAM_CONTROLLER.getSnapshot(ffmpegPath, webcamType, webcamUrl, pluginId)
             elapsedTime = int((time.time() - startTime) * 1000)
             size = os.path.getsize(snapshot)
 
@@ -263,4 +265,17 @@ class ApiController:
         newFileName = FileHelper.getUniqueFileName(newFileName)
 
         shutil.move(fileTemp, newFileName)
+        self.PARENT.sendClientData()
+
+    def editQuickSettings(self):
+        import flask
+        data = flask.request.get_json()
+
+        if 'enabled' in data:
+            self._settings.set(["enabled"], bool(data['enabled']))
+
+        if 'captureMode' in data:
+            self._settings.set(["captureMode"], CaptureMode[data['captureMode']].name)
+
+        self._settings.save(trigger_event=True)
         self.PARENT.sendClientData()

@@ -118,6 +118,11 @@ class TimelapsePlusPlugin(
         self.API_CONTROLLER.uploadFrameZip()
         return self.API_CONTROLLER.emptyResponse()
 
+    @octoprint.plugin.BlueprintPlugin.route("/editQuickSettings", methods=["POST"])
+    def apiEditQuickSettings(self):
+        self.API_CONTROLLER.editQuickSettings()
+        return self.API_CONTROLLER.emptyResponse()
+
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
         buf = io.BytesIO()
@@ -149,10 +154,12 @@ class TimelapsePlusPlugin(
 
     def get_settings_defaults(self):
         return dict(
+            enabled=True,
             ffmpegPath='',
             ffprobePath='',
             webcamType=WebcamType.IMAGE_JPEG.name,
             webcamUrl='',
+            webcamPluginId=None,
             captureMode=CaptureMode.COMMAND.name,
             captureTimerInterval=10,
             snapshotCommand="SNAPSHOT",
@@ -178,10 +185,12 @@ class TimelapsePlusPlugin(
         rpNew = list(map(lambda x: x.getJSON(), rpList))
 
         return dict(
+            enabled=self._settings.get(["enabled"]),
             ffmpegPath=self._settings.get(["ffmpegPath"]),
             ffprobePath=self._settings.get(["ffprobePath"]),
             webcamType=self._settings.get(["webcamType"]),
             webcamUrl=self._settings.get(["webcamUrl"]),
+            webcamPluginId=self._settings.get(["webcamPluginId"]),
             captureMode=self._settings.get(["captureMode"]),
             captureTimerInterval=self._settings.get(["captureTimerInterval"]),
             snapshotCommand=self._settings.get(["snapshotCommand"]),
@@ -233,7 +242,15 @@ class TimelapsePlusPlugin(
     def sendClientDataInner(self, force):
         allFrameZips = self.listFrameZips()
         allVideos = self.listVideos()
+        configData = dict(
+            enabled=self._settings.get(["enabled"]),
+            captureMode=CaptureMode[self._settings.get(["captureMode"])].name,
+            captureTimerInterval=int(self._settings.get(["captureTimerInterval"])),
+            snapshotCommand=self._settings.get(["snapshotCommand"]),
+        )
         data = dict(
+            config=configData,
+            allWebcams=self.WEBCAM_CONTROLLER.getWebcamIdsAndNames(),
             error=self.ERROR,
             isRunning=False,
             isCapturing=False,
@@ -265,9 +282,14 @@ class TimelapsePlusPlugin(
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
 
     def on_after_startup(self):
+        allWebcams = []
+        if hasattr(octoprint, 'webcams'):
+            # Webcam support from 1.9.0
+            allWebcams = octoprint.webcams.get_webcams()
+
         self.PLUGIN_VERSION = self._plugin_version
         self.CACHE_CONTROLLER = CacheController(self, self.get_plugin_data_folder(), self._settings)
-        self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self.get_plugin_data_folder(), self._settings)
+        self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self.get_plugin_data_folder(), self._settings, allWebcams)
         self.API_CONTROLLER = ApiController(self, self.get_plugin_data_folder(), self._basefolder, self._settings, self.CACHE_CONTROLLER, self.WEBCAM_CONTROLLER)
         self.CLEANUP_CONTROLLER = CleanupController(self, self.get_plugin_data_folder(), self._settings)
         self.CLIENT_CONTROLLER = ClientController(self, self._identifier, self._plugin_manager)
@@ -287,6 +309,10 @@ class TimelapsePlusPlugin(
         defaultVideoFormatId = self._settings.get(["defaultVideoFormat"])
         defaultVideoFormat = FormatHelper.getVideoFormatById(defaultVideoFormatId)
         self._settings.set(["defaultVideoFormat"], defaultVideoFormat.ID)
+
+        webcamPluginId = self._settings.get(["webcamPluginId"])
+        if self.WEBCAM_CONTROLLER.getWebcamByPluginId(webcamPluginId) is None:
+            self._settings.set(["webcamPluginId"], None)
 
         self.checkPrerequisites()
 
@@ -368,6 +394,9 @@ class TimelapsePlusPlugin(
         self.RENDERJOBS.append(job)
 
     def printStarted(self):
+        if not self._settings.get(["enabled"]):
+            return
+
         if self.PRINTJOB is not None and self.PRINTJOB.RUNNING:
             return
 
