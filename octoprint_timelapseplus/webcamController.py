@@ -29,18 +29,12 @@ class WebcamController:
             os.remove(f)
 
     def getWebcamByPluginId(self, id):
-        if id is None:
-            return None
-
-        if id in self.WEBCAMS:
-            return self.WEBCAMS[id]
-
-        return None
+        return next((x for x in self.WEBCAMS.values() if x.config.name == id), None)
 
     def getWebcamIdsAndNames(self):
         ret = []
         for k in self.WEBCAMS:
-            thisWebcam = dict(id=k, name=self.WEBCAMS[k].config.displayName)
+            thisWebcam = dict(id=self.WEBCAMS[k].config.name, name=self.WEBCAMS[k].config.displayName)
             ret.append(thisWebcam)
 
         return ret
