@@ -252,6 +252,7 @@ class TimelapsePlusPlugin(
             captureMode=CaptureMode[self._settings.get(["captureMode"])].name,
             captureTimerInterval=int(self._settings.get(["captureTimerInterval"])),
             snapshotCommand=self._settings.get(["snapshotCommand"]),
+            stabilization=self._settings.get(["stabilization"])
         )
         data = dict(
             config=configData,

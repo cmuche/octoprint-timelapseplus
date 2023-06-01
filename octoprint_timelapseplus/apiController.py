@@ -274,6 +274,9 @@ class ApiController:
         if 'enabled' in data:
             self._settings.set(["enabled"], bool(data['enabled']))
 
+        if 'stabilization' in data:
+            self._settings.set(["stabilization"], bool(data['stabilization']))
+
         if 'captureMode' in data:
             self._settings.set(["captureMode"], CaptureMode[data['captureMode']].name)
 

@@ -503,6 +503,13 @@ $(function() {
             });
         };
 
+        self.editQuickSettingsStabilization = function() {
+            let newVal = !self.config().stabilization;
+            self.editQuickSettings({stabilization: newVal}, function(cfg) {
+                cfg.stabilization = newVal;
+            });
+        };
+
         self.editQuickSettingsCaptureMode = function() {
             let newVal = self.config().captureMode == "COMMAND" ? "TIMED" : "COMMAND";
             self.editQuickSettings({captureMode: newVal}, function(cfg) {
