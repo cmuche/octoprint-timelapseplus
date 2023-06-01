@@ -39,6 +39,7 @@ $(function() {
         self.settings = parameters[0];
         self.settings.parent = self;
 
+        self.config = ko.observable(null);
         self.error = ko.observable(null);
         self.hasError = ko.observable(false);
 
@@ -489,6 +490,28 @@ $(function() {
             $("div#tlp-modal-render").modal("hide");
         };
 
+        self.editQuickSettingsEnabled = function() {
+            let newVal = !self.config().enabled;
+            self.editQuickSettings({enabled: newVal}, function(cfg) {
+                cfg.enabled = newVal;
+            });
+        };
+
+        self.editQuickSettingsCaptureMode = function() {
+            let newVal = self.config().captureMode == "COMMAND" ? "TIMED" : "COMMAND";
+            self.editQuickSettings({captureMode: newVal}, function(cfg) {
+                cfg.captureMode = newVal;
+            });
+        };
+
+        self.editQuickSettings = function(data, cfgEditFn) {
+            self.api("editQuickSettings", data, function() {
+                let cfg = self.config();
+                cfgEditFn(cfg);
+                self.config(cfg);
+            });
+        };
+
         self.onDataUpdaterPluginMessage = function(plugin, data) {
             if (plugin != "timelapseplus")
                 return;
@@ -510,6 +533,10 @@ $(function() {
 
             if ("frameCollections" in data)
                 self.frameCollections.updateItems(data.frameCollections);
+
+            if ("config" in data) {
+                self.config(data.config);
+            }
 
             if ("error" in data) {
                 self.error(data.error);
