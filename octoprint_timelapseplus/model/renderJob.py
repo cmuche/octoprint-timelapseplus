@@ -249,7 +249,7 @@ class RenderJob:
 
     def createPPRollInner(self, j):
         thisRatio, frameFiles, thisOutFile, preset, phase = j
-        img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset, PPRollPhase.POST, self.METADATA, self._basefolder)
+        img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset, phase, self.METADATA, self._basefolder)
         img.save(thisOutFile, quality=100, subsampling=0)
         img.close()
 
