@@ -365,7 +365,7 @@ $(function() {
                 "ADDING_TIMECODES": {title: "Adding Timecodes", showProgress: true, icon: "fas fa-stopwatch"},
                 "ENCODING": {title: "Encoding Video File", showProgress: true, icon: "fas fa-photo-video"},
                 "GENERATING_PPROLL": {title: "Generating Pre/Post Roll", showProgress: true, icon: "fas fa-tv"},
-                "APPLYING_FADE": {title: "Applying Fade Effect", showProgress: true, icon: "fas fa-sort"},
+                "APPLYING_FADE": {title: "Applying Fade Effect", showProgress: true, icon: "fas fa-fill"},
                 "MOVING_FRAMES": {title: "Moving Frames", showProgress: false, icon: "fas fa-copy"},
                 "INTERPOLATING": {title: "Interpolating Frames", showProgress: true, icon: "fas fa-object-group"}
             };
