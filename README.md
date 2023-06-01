@@ -9,7 +9,7 @@ Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render y
 |------------------------------------------------------------------------------------------------------------------------------------------------|
 | Click the image to see the video                                                                                                               |                                                                                                               |
 
-ℹ️ Timelapse+ supports the new __Webcam Plugins__ in OctoPrint 1.9.0
+ℹ️ _Timelapse+ supports the new __Webcam Plugins__ in OctoPrint 1.9.0_
 
 # 👀 Examples 
 Check out the [_Examples Page_](https://github.com/cmuche/octoprint-timelapseplus/wiki/Examples)
