@@ -54,9 +54,7 @@ class ApiController:
         if data['type'] == 'video':
             cacheId = ['thumbnail', 'video', id]
 
-            if self.CACHE_CONTROLLER.isCached(cacheId):
-                thumb = self.CACHE_CONTROLLER.getBytes(cacheId)
-            else:
+            if not self.CACHE_CONTROLLER.isCached(cacheId):
                 allVideos = self.PARENT.listVideos()
                 video = next(x for x in allVideos if x.ID == id)
 
@@ -68,15 +66,16 @@ class ApiController:
                 thumb = self.PARENT.makeThumbnail(img)
                 self.CACHE_CONTROLLER.storeBytes(cacheId, thumb)
 
+                img.close()
+
+            thumb = self.CACHE_CONTROLLER.getBytes(cacheId)
             response = make_response(thumb)
             response.mimetype = 'image/jpeg'
             return response
         if data['type'] == 'frameZip':
             cacheId = ['thumbnail', 'framezip', id]
 
-            if self.CACHE_CONTROLLER.isCached(cacheId):
-                thumb = self.CACHE_CONTROLLER.getBytes(cacheId)
-            else:
+            if not self.CACHE_CONTROLLER.isCached(cacheId):
                 try:
                     allFrameZips = self.PARENT.listFrameZips()
                     frameZip = next(x for x in allFrameZips if x.ID == id)
@@ -88,17 +87,25 @@ class ApiController:
                 thumb = self.PARENT.makeThumbnail(img)
                 self.CACHE_CONTROLLER.storeBytes(cacheId, thumb)
 
+                img.close()
+
+            thumb = self.CACHE_CONTROLLER.getBytes(cacheId)
             response = make_response(thumb)
             response.mimetype = 'image/jpeg'
+
             return response
 
     def maskPreview(self):
         import flask
         data = flask.request.args
         mask = Mask(self.PARENT, self._data_folder, data['id'])
+
         img = Image.open(mask.PATH)
         thumb = self.PARENT.makeThumbnail(img)
         response = make_response(thumb)
+
+        img.close()
+
         response.mimetype = 'image/jpeg'
         return response
 
@@ -121,20 +128,20 @@ class ApiController:
         allFrameZips = self.PARENT.listFrameZips()
         frameZip = next(x for x in allFrameZips if x.ID == data['frameZipId'])
         frame = frameZip.getThumbnail()
-        img = Image.open(io.BytesIO(frame))
 
-        epRaw = self._settings.get(["enhancementPresets"])
-        epList = list(map(lambda x: EnhancementPreset(self.PARENT, x), epRaw))
-        preset = epList[int(data['presetIndex'])]
+        with Image.open(io.BytesIO(frame)) as img:
+            epRaw = self._settings.get(["enhancementPresets"])
+            epList = list(map(lambda x: EnhancementPreset(self.PARENT, x), epRaw))
+            preset = epList[int(data['presetIndex'])]
 
-        img = preset.applyEnhance(img)
-        img = preset.applyBlur(img)
+            img = preset.applyEnhance(img)
+            img = preset.applyBlur(img)
 
-        timecodeRenderer = TimecodeRenderer(self._basefolder)
-        img = timecodeRenderer.applyTimecode(img, preset, FrameTimecodeInfo.getDummy())
+            timecodeRenderer = TimecodeRenderer(self._basefolder)
+            with timecodeRenderer.applyTimecode(img, preset, FrameTimecodeInfo.getDummy()) as imgTimecode:
+                res = self.PARENT.makeThumbnail(imgTimecode, (500, 500))
+                response = make_response(res)
 
-        res = self.PARENT.makeThumbnail(img, (500, 500))
-        response = make_response(res)
         response.mimetype = 'image/jpeg'
         return response
 
@@ -150,11 +157,10 @@ class ApiController:
                 img = preset.applyBlur(img)
 
                 timecodeRederer = TimecodeRenderer(self._basefolder)
-                img = timecodeRederer.applyTimecode(img, preset, FrameTimecodeInfo.getDummy())
-
-                res = self.PARENT.makeThumbnail(img, (500, 500))
-                resBase64 = base64.b64encode(res)
-                return dict(result=resBase64)
+                with timecodeRederer.applyTimecode(img, preset, FrameTimecodeInfo.getDummy()) as imgTimecode:
+                    res = self.PARENT.makeThumbnail(imgTimecode, (500, 500))
+                    resBase64 = base64.b64encode(res)
+                    return dict(result=resBase64)
         finally:
             if snapshot is not None and os.path.isfile(snapshot):
                 os.remove(snapshot)
@@ -236,6 +242,7 @@ class ApiController:
 
             with Image.open(snapshot) as img:
                 width, height = img.size
+
                 res = self.PARENT.makeThumbnail(img, (500, 500))
                 resBase64 = base64.b64encode(res)
                 return dict(time=elapsedTime, size=size, width=width, height=height, result=resBase64)
