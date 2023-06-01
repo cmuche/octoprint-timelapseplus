@@ -32,6 +32,9 @@ class ImageCombineHelper:
         for image in images:
             blendedImage = Image.blend(blendedImage, image, 1 / len(images))
 
+        for i in images:
+            i.close()
+
         return blendedImage.convert('RGB')
 
     @staticmethod
@@ -48,5 +51,8 @@ class ImageCombineHelper:
         for i, image in enumerate(images):
             weight = 2 ** (len(images) - i - 1) / totalWeight
             blendedImage = Image.blend(blendedImage, image, 2 * weight)
+
+        for i in images:
+            i.close()
 
         return blendedImage.convert('RGB')
