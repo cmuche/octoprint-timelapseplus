@@ -28,7 +28,7 @@ class PrintJob:
         self._logger = logger
         self._printer = printer
 
-        self.STABILIZE = self._settings.get(["stabilize"])
+        self.STABILIZE = self._settings.get(["stabilization"])
         self.POSITION_TRACKER = PositionTracker()
 
         stabilizationSettings = StabilizationSettings(self._settings.get(["stabilizationSettings"]))
