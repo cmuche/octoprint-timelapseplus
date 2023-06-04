@@ -38,6 +38,6 @@ class StabilizationHelper:
                 if shouldDoRetract:
                     cmd.append('G1 E' + str(self.STAB.RETRACT_AMOUNT) + ' Z-' + str(self.STAB.RETRACT_Z_HOP) + ' F' + str(self.STAB.RETRACT_SPEED * 60))
 
-                printer.commands(cmd)
+                printer.commands(cmd, force=True)
             finally:
                 printer.set_job_on_hold(False)
