@@ -70,6 +70,6 @@ class StabilizationHelper:
                 cmd += self.getMoveCommands(positionTracker, positionTracker.POS_X, positionTracker.POS_Y, positionTracker.POS_Z, self.STAB.getFeedrateMove())
                 cmd += self.getRetractionCommands(positionTracker, True)
 
-                printer.commands(cmd, force=True, tags=[Constants.GCODE_TAG_STABILIZATION])
+                printer.commands(cmd, force=True, tags={Constants.GCODE_TAG_STABILIZATION})
             finally:
                 printer.set_job_on_hold(False)
