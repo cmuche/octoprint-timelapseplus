@@ -69,22 +69,22 @@ class PositionTracker:
         propZ = self.getMatchForProp(gcode, command, 'Z')
         propE = self.getMatchForProp(gcode, command, 'E')
 
-        if command == 'G0' or command == 'G1':
+        if gcode == 'G0' or gcode == 'G1':
             # Linear Move https://marlinfw.org/docs/gcode/G000-G001.html
             self.setPosition(propX, propY, propZ, propE)
-        elif command == 'M82':
+        elif gcode == 'M82':
             # E Absolute https://marlinfw.org/docs/gcode/M083.html
             self.RELATIVE_MODE_EXTRUDER = False
-        elif command == 'M83':
+        elif gcode == 'M83':
             # E Relative https://marlinfw.org/docs/gcode/M083.html
             self.RELATIVE_MODE_EXTRUDER = True
-        elif command == 'G90':
+        elif gcode == 'G90':
             # Absolute Positioning https://marlinfw.org/docs/gcode/G090.html
             self.RELATIVE_MODE = False
-        elif command == 'G91':
+        elif gcode == 'G91':
             # Relative Positioning https://marlinfw.org/docs/gcode/G091.html
             self.RELATIVE_MODE = True
-        elif command == 'G92':
+        elif gcode == 'G92':
             # Set Position https://marlinfw.org/docs/gcode/G092.html
             self.setPosition(propX, propY, propZ, propE, True)
         else:
