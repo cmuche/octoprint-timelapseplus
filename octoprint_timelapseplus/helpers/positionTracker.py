@@ -14,6 +14,9 @@ class PositionTracker:
         self.RELATIVE_MODE_EXTRUDER = False
 
     def getMatchForProp(self, gcode, command, prop):
+        if gcode is None or command is None:
+            return None
+
         regex = '^' + gcode + ' .*' + prop + '([0-9\\.-]+).*'
         match = re.search(regex, command)
         if not match:
