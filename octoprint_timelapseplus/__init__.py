@@ -404,7 +404,7 @@ class TimelapsePlusPlugin(
         elif self.isSnapshotCommand(cmd, Constants.SUFFIX_PRINT_RESUME):
             self.printHaltedTo(False)
 
-    def processGcodeSent(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
+    def processGcodeSending(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
         if self.POSITION_TRACKER is not None:
             self.POSITION_TRACKER.consumeGcode(gcode, cmd, tags)
 
@@ -536,6 +536,6 @@ def __plugin_load__():
         "octoprint.comm.protocol.atcommand.sending": __plugin_implementation__.atCommand,
         "octoprint.comm.protocol.action": __plugin_implementation__.atAction,
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.getUpdateInformation,
-        "octoprint.comm.protocol.gcode.sent": __plugin_implementation__.processGcodeSent,
+        "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.processGcodeSending,
         "octoprint.comm.protocol.gcode.queued": __plugin_implementation__.processGcodeQueued
     }
