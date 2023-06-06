@@ -322,7 +322,11 @@ class TimelapsePlusPlugin(
         if self.WEBCAM_CONTROLLER.getWebcamByPluginId(webcamPluginId) is None:
             self._settings.set(["webcamPluginId"], None)
 
+        self.resetPositionTracker()
         self.checkPrerequisites()
+
+    def resetPositionTracker(self):
+        self.POSITION_TRACKER = PositionTracker()
 
     def on_settings_save(self, data):
         ret = super().on_settings_save(data)
@@ -399,10 +403,10 @@ class TimelapsePlusPlugin(
             self.printHaltedTo(False)
 
     def processGcodeSent(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
+        self.POSITION_TRACKER.consumeGcode(gcode, cmd)
+
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
-
-        self.PRINTJOB.processGcode(gcode, cmd)
 
     def processGcodeQueued(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
         return
@@ -436,6 +440,7 @@ class TimelapsePlusPlugin(
             return
 
         zipFileName = self.PRINTJOB.finish(success)
+        self.resetPositionTracker()
         self.sendClientData()
 
         if self._settings.get(["renderAfterPrint"]):

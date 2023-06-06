@@ -19,7 +19,7 @@ from ..helpers.timeHelper import TimeHelper
 
 
 class PrintJob:
-    def __init__(self, id, baseName, parent, logger, settings, dataFolder, webcamController, printer):
+    def __init__(self, id, baseName, parent, logger, settings, dataFolder, webcamController, printer, positionTracker):
         self.PARENT = parent
         self.ID = id
         self.WEBCAM_CONTROLLER = webcamController
@@ -29,7 +29,7 @@ class PrintJob:
         self._printer = printer
 
         self.STABILIZE = self._settings.get(["stabilization"])
-        self.POSITION_TRACKER = PositionTracker()
+        self.POSITION_TRACKER = positionTracker
 
         stabilizationSettings = StabilizationSettings(self._settings.get(["stabilizationSettings"]))
         self.STABILIZATION_HELPER = StabilizationHelper(settings, stabilizationSettings)
@@ -51,9 +51,6 @@ class PrintJob:
         self.PREVIEW_IMAGE = None
 
         self.createFolder(dataFolder)
-
-    def processGcode(self, gcode, command):
-        self.POSITION_TRACKER.consumeGcode(gcode, command)
 
     def isCapturing(self):
         return self.RUNNING and not self.PAUSED and not self.HALTED
