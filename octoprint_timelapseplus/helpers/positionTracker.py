@@ -1,5 +1,7 @@
 import re
 
+from ..constants import Constants
+
 
 class PositionTracker:
 
@@ -63,7 +65,10 @@ class PositionTracker:
             else:
                 self.POS_E = e
 
-    def consumeGcode(self, gcode, command):
+    def consumeGcode(self, gcode, command, tags):
+        if Constants.GCODE_TAG_STABILIZATION in tags:
+            return
+
         propX = self.getMatchForProp(gcode, command, 'X')
         propY = self.getMatchForProp(gcode, command, 'Y')
         propZ = self.getMatchForProp(gcode, command, 'Z')
