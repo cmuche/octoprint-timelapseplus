@@ -15,6 +15,12 @@ class StabilizationSettings:
         if d is not None:
             self.setJSON(d)
 
+    def getFeedrateMove(self):
+        return self.MOVE_SPEED * 60
+
+    def getFeedrateRetraction(self):
+        return self.RETRACT_SPEED * 60
+
     def setJSON(self, d):
         if 'retractSpeed' in d: self.RETRACT_SPEED = float(d['retractSpeed'])
         if 'retractAmount' in d: self.RETRACT_AMOUNT = float(d['retractAmount'])
