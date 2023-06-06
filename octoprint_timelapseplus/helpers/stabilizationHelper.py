@@ -34,13 +34,13 @@ class StabilizationHelper:
     def getMoveCommands(self, positionTracker, x, y, z, f):
         cmd = []
 
-        if not positionTracker.RELATIVE_MODE:
-            cmd.append('G91')
-
-        if not positionTracker.RELATIVE_MODE:
+        if positionTracker.RELATIVE_MODE:
             cmd.append('G90')
 
         cmd.append('G0 X' + str(x) + ' Y' + str(y) + ' Z' + str(z) + ' F' + str(f))
+
+        if positionTracker.RELATIVE_MODE:
+            cmd.append('G91')
 
         return cmd
 
