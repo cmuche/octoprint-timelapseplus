@@ -14,6 +14,7 @@ from .cleanupController import CleanupController
 from .constants import Constants
 from .helpers.formatHelper import FormatHelper
 from .clientController import ClientController
+from .helpers.positionTracker import PositionTracker
 from .model.captureMode import CaptureMode
 from .model.enhancementPreset import EnhancementPreset
 from .model.frameZip import FrameZip
@@ -43,6 +44,7 @@ class TimelapsePlusPlugin(
         self.PRINTJOB = None
         self.RENDERJOBS = []
         self.ERROR = None
+        self.POSITION_TRACKER = None
 
     @octoprint.plugin.BlueprintPlugin.route("/webcamCapturePreview", methods=["POST"])
     def apiWebcamCapturePreview(self):
@@ -403,7 +405,8 @@ class TimelapsePlusPlugin(
             self.printHaltedTo(False)
 
     def processGcodeSent(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
-        self.POSITION_TRACKER.consumeGcode(gcode, cmd)
+        if self.POSITION_TRACKER is not None:
+            self.POSITION_TRACKER.consumeGcode(gcode, cmd)
 
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
