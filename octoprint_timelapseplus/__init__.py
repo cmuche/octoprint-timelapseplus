@@ -406,7 +406,7 @@ class TimelapsePlusPlugin(
 
     def processGcodeSent(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
         if self.POSITION_TRACKER is not None:
-            self.POSITION_TRACKER.consumeGcode(gcode, cmd)
+            self.POSITION_TRACKER.consumeGcode(gcode, cmd, tags)
 
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
