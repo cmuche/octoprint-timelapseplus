@@ -7,6 +7,9 @@ class PositionTracker:
         self.POS_X = 0
         self.POS_Y = 0
         self.POS_Z = 0
+        self.POS_E = 0
+        self.RELATIVE_MODE = False
+        self.RELATIVE_MODE_EXTRUDER = False
 
     def getMatchForProp(self, gcode, command, prop):
         regex = '^' + gcode + ' .*' + prop + '([0-9\\.-]+).*'
@@ -16,21 +19,73 @@ class PositionTracker:
         val = match.group(1)
 
         try:
-            return float(val)
+            val = val.strip()
+            return self.parseFloat(val)
         except:
             return None
 
-    def consumeGcode(self, gcode, command):
-        if gcode != 'G0' and gcode != 'G1':
-            return
+    def parseFloat(self, val):
+        if val.startswith('-'):
+            sign = -1
+            val = val[1:]
+        else:
+            sign = 1
 
+        if val.startswith('.'):
+            val = '0' + val
+
+        try:
+            value = float(val)
+            return sign * value
+        except ValueError:
+            return None
+
+    def setPosition(self, x, y, z, e, override=False):
+        if x is not None:
+            if self.RELATIVE_MODE and not override:
+                self.POS_X += x
+            else:
+                self.POS_X = x
+        if y is not None:
+            if self.RELATIVE_MODE and not override:
+                self.POS_Y += y
+            else:
+                self.POS_Y = y
+        if z is not None:
+            if self.RELATIVE_MODE and not override:
+                self.POS_Z += z
+            else:
+                self.POS_Z = z
+
+        if e is not None:
+            if self.RELATIVE_MODE_EXTRUDER and not override:
+                self.POS_E += e
+            else:
+                self.POS_E = e
+
+    def consumeGcode(self, gcode, command):
         propX = self.getMatchForProp(gcode, command, 'X')
         propY = self.getMatchForProp(gcode, command, 'Y')
         propZ = self.getMatchForProp(gcode, command, 'Z')
+        propE = self.getMatchForProp(gcode, command, 'E')
 
-        if propX is not None:
-            self.POS_X = propX
-        if propY is not None:
-            self.POS_Y = propY
-        if propZ is not None:
-            self.POS_Z = propZ
+        if command == 'G0' or command == 'G1':
+            # Linear Move https://marlinfw.org/docs/gcode/G000-G001.html
+            self.setPosition(propX, propY, propZ, propE)
+        elif command == 'M82':
+            # E Absolute https://marlinfw.org/docs/gcode/M083.html
+            self.RELATIVE_MODE_EXTRUDER = False
+        elif command == 'M83':
+            # E Relative https://marlinfw.org/docs/gcode/M083.html
+            self.RELATIVE_MODE_EXTRUDER = True
+        elif command == 'G90':
+            # Absolute Positioning https://marlinfw.org/docs/gcode/G090.html
+            self.RELATIVE_MODE = False
+        elif command == 'G91':
+            # Relative Positioning https://marlinfw.org/docs/gcode/G091.html
+            self.RELATIVE_MODE = True
+        elif command == 'G92':
+            # Set Position https://marlinfw.org/docs/gcode/G092.html
+            self.setPosition(propX, propY, propZ, propE, True)
+        else:
+            return
