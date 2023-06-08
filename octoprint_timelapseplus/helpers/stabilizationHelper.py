@@ -77,6 +77,14 @@ class StabilizationHelper:
     def stabilizeAndQueueSnapshotRaw(self, printer, positionTracker):
         if printer.set_job_on_hold(True):
 
+            newXPos = self.STAB.PARK_X
+            if self.STAB.PARK_X_RELATIVE:
+                newXPos = positionTracker.POS_X + self.STAB.PARK_X
+
+            newYPos = self.STAB.PARK_Y
+            if self.STAB.PARK_Y_RELATIVE:
+                newYPos = positionTracker.POS_Y + self.STAB.PARK_Y
+
             newZPos = self.STAB.PARK_Z
             if self.STAB.PARK_Z_RELATIVE:
                 newZPos = positionTracker.POS_Z + self.STAB.PARK_Z

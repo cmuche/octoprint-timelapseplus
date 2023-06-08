@@ -4,10 +4,16 @@ class StabilizationSettings:
         self.RETRACT_AMOUNT = 1.2
         self.RETRACT_Z_HOP = 0.2
         self.MOVE_SPEED = 150
+
         self.PARK_X = 30
+        self.PARK_X_RELATIVE = False
+
         self.PARK_Y = 125
-        self.PARK_Z = 10
+        self.PARK_Y_RELATIVE = False
+
+        self.PARK_Z = 0
         self.PARK_Z_RELATIVE = True
+
         self.WAIT_FOR_MOVEMENT = True
         self.WAIT_BEFORE = 200
         self.WAIT_AFTER = 100
@@ -32,6 +38,8 @@ class StabilizationSettings:
         if 'parkX' in d: self.PARK_X = float(d['parkX'])
         if 'parkY' in d: self.PARK_Y = float(d['parkY'])
         if 'parkZ' in d: self.PARK_Z = float(d['parkZ'])
+        if 'parkXRelative' in d: self.PARK_X_RELATIVE = d['parkXRelative']
+        if 'parkYRelative' in d: self.PARK_Y_RELATIVE = d['parkYRelative']
         if 'parkZRelative' in d: self.PARK_Z_RELATIVE = d['parkZRelative']
         if 'waitForMovement' in d: self.WAIT_FOR_MOVEMENT = d['waitForMovement']
         if 'waitBefore' in d: self.WAIT_BEFORE = int(d['waitBefore'])
@@ -48,6 +56,8 @@ class StabilizationSettings:
             parkX=self.PARK_X,
             parkY=self.PARK_Y,
             parkZ=self.PARK_Z,
+            parkXRelative=self.PARK_X_RELATIVE,
+            parkYRelative=self.PARK_Y_RELATIVE,
             parkZRelative=self.PARK_Z_RELATIVE,
             waitForMovement=self.WAIT_FOR_MOVEMENT,
             waitBefore=self.WAIT_BEFORE,
