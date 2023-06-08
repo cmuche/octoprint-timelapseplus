@@ -91,6 +91,9 @@ class StabilizationHelper:
         if self.STAB.PARK_Z_RELATIVE:
             newZPos = positionTracker.POS_Z + self.STAB.PARK_Z
 
+            if self.shouldDoRetract():
+                newZPos += self.STAB.RETRACT_Z_HOP
+
         oozeOffset = 0
         if self.STAB.OOZING_COMPENSATION:
             oozeOffset = self.calculateOozingCompensationAmount(positionTracker, newXPos, newYPos, newZPos)
