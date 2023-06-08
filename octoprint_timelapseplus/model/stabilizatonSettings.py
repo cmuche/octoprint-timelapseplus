@@ -19,7 +19,7 @@ class StabilizationSettings:
         self.WAIT_AFTER = 100
 
         self.OOZING_COMPENSATION = False
-        self.OOZING_COMPENSATION_VALUE = 0.2
+        self.OOZING_COMPENSATION_VALUE = 0.1
 
         self.INFILL_LOOKAHEAD = False
 
