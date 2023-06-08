@@ -119,7 +119,7 @@ class StabilizationHelper:
         cmd += self.getMoveCommands(positionTracker, positionTracker.POS_X, positionTracker.POS_Y, returnZPos, self.STAB.getFeedrateMove())
         cmd += self.getRetractionCommands(positionTracker, True)
 
-        cmd.append('G0 F' + float(positionTracker.FEEDRATE))
+        cmd.append('G0 F' + str(positionTracker.FEEDRATE))
 
         return cmd
 
