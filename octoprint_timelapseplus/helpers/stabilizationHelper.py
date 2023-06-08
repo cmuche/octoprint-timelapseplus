@@ -23,9 +23,11 @@ class StabilizationHelper:
         amount = seconds * self.STAB.OOZING_COMPENSATION_VALUE
         return amount
 
+    def shouldDoRetract(self):
+        return self.STAB.RETRACT_AMOUNT > 0 or self.STAB.RETRACT_Z_HOP > 0
+
     def getRetractionCommands(self, positionTracker, inverse, oozeOffset=0):
-        shouldDoRetract = self.STAB.RETRACT_AMOUNT > 0 or self.STAB.RETRACT_Z_HOP > 0
-        if not shouldDoRetract:
+        if not self.shouldDoRetract():
             return []
 
         cmd = []
@@ -36,8 +38,8 @@ class StabilizationHelper:
             cmd.append('G1 Z-' + str(self.STAB.RETRACT_Z_HOP) + ' F' + str(self.STAB.getFeedrateMove()))
         else:
             amount = self.STAB.RETRACT_AMOUNT + oozeOffset
-            cmd.append('G1 E-' + str(round(amount, 3)) + ' F' + str(self.STAB.getFeedrateRetraction()))
             cmd.append('G1 Z' + str(self.STAB.RETRACT_Z_HOP) + ' F' + str(self.STAB.getFeedrateMove()))
+            cmd.append('G1 E-' + str(round(amount, 3)) + ' F' + str(self.STAB.getFeedrateRetraction()))
 
         cmd += self.getCommandsPositionRelative(True, True, positionTracker.RELATIVE_MODE, positionTracker.RELATIVE_MODE_EXTRUDER)
 
@@ -107,7 +109,11 @@ class StabilizationHelper:
         if self.STAB.WAIT_AFTER > 0:
             cmd.append('G4 P' + str(self.STAB.WAIT_AFTER))
 
-        cmd += self.getMoveCommands(positionTracker, positionTracker.POS_X, positionTracker.POS_Y, positionTracker.POS_Z, self.STAB.getFeedrateMove())
+        returnZPos = positionTracker.POS_Z
+        if self.shouldDoRetract():
+            returnZPos += self.STAB.RETRACT_Z_HOP
+
+        cmd += self.getMoveCommands(positionTracker, positionTracker.POS_X, positionTracker.POS_Y, returnZPos, self.STAB.getFeedrateMove())
         cmd += self.getRetractionCommands(positionTracker, True)
 
         return cmd
