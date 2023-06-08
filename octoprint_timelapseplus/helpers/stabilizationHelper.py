@@ -74,46 +74,49 @@ class StabilizationHelper:
 
         return cmd
 
+    def stabilizeAndQueueSnapshotRawCommands(self, positionTracker):
+        cmd = []
+
+        newXPos = self.STAB.PARK_X
+        if self.STAB.PARK_X_RELATIVE:
+            newXPos = positionTracker.POS_X + self.STAB.PARK_X
+
+        newYPos = self.STAB.PARK_Y
+        if self.STAB.PARK_Y_RELATIVE:
+            newYPos = positionTracker.POS_Y + self.STAB.PARK_Y
+
+        newZPos = self.STAB.PARK_Z
+        if self.STAB.PARK_Z_RELATIVE:
+            newZPos = positionTracker.POS_Z + self.STAB.PARK_Z
+
+        oozeOffset = 0
+        if self.STAB.OOZING_COMPENSATION:
+            oozeOffset = self.calculateOozingCompensationAmount(positionTracker, newXPos, newYPos, newZPos)
+
+        cmd += self.getRetractionCommands(positionTracker, False, oozeOffset)
+        cmd += self.getMoveCommands(positionTracker, newXPos, newYPos, newZPos, self.STAB.getFeedrateMove())
+
+        if self.STAB.WAIT_FOR_MOVEMENT:
+            cmd.append('M400')
+
+        if self.STAB.WAIT_BEFORE > 0:
+            cmd.append('G4 P' + str(self.STAB.WAIT_BEFORE))
+
+        cmd.append('@' + self.SNAPSHOT_COMMAND + '-' + Constants.SUFFIX_PRINT_UNSTABLE)
+
+        if self.STAB.WAIT_AFTER > 0:
+            cmd.append('G4 P' + str(self.STAB.WAIT_AFTER))
+
+        cmd += self.getMoveCommands(positionTracker, positionTracker.POS_X, positionTracker.POS_Y, positionTracker.POS_Z, self.STAB.getFeedrateMove())
+        cmd += self.getRetractionCommands(positionTracker, True)
+
+        return cmd
+
     def stabilizeAndQueueSnapshotRaw(self, printer, positionTracker):
         if printer.set_job_on_hold(True):
-
-            newXPos = self.STAB.PARK_X
-            if self.STAB.PARK_X_RELATIVE:
-                newXPos = positionTracker.POS_X + self.STAB.PARK_X
-
-            newYPos = self.STAB.PARK_Y
-            if self.STAB.PARK_Y_RELATIVE:
-                newYPos = positionTracker.POS_Y + self.STAB.PARK_Y
-
-            newZPos = self.STAB.PARK_Z
-            if self.STAB.PARK_Z_RELATIVE:
-                newZPos = positionTracker.POS_Z + self.STAB.PARK_Z
-
-            cmd = []
             try:
-                oozeOffset = 0
-                if self.STAB.OOZING_COMPENSATION:
-                    oozeOffset = self.calculateOozingCompensationAmount(positionTracker, newXPos, newYPos, newZPos)
-
-                cmd += self.getRetractionCommands(positionTracker, False, oozeOffset)
-                cmd += self.getMoveCommands(positionTracker, newXPos, newYPos, newZPos, self.STAB.getFeedrateMove())
-
-                if self.STAB.WAIT_FOR_MOVEMENT:
-                    cmd.append('M400')
-
-                if self.STAB.WAIT_BEFORE > 0:
-                    cmd.append('G4 P' + str(self.STAB.WAIT_BEFORE))
-
-                cmd.append('@' + self.SNAPSHOT_COMMAND + '-' + Constants.SUFFIX_PRINT_UNSTABLE)
-
-                if self.STAB.WAIT_AFTER > 0:
-                    cmd.append('G4 P' + str(self.STAB.WAIT_AFTER))
-
-                cmd += self.getMoveCommands(positionTracker, positionTracker.POS_X, positionTracker.POS_Y, positionTracker.POS_Z, self.STAB.getFeedrateMove())
-                cmd += self.getRetractionCommands(positionTracker, True)
-
+                cmd = self.stabilizeAndQueueSnapshotRawCommands(positionTracker)
                 printer.commands(cmd, force=True, tags={Constants.GCODE_TAG_STABILIZATION})
-
                 # TODO Update PositionTracker with the created Commands
             finally:
                 printer.set_job_on_hold(False)
