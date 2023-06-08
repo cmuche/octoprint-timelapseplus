@@ -44,8 +44,8 @@ class InfillFinder:
         position = 0
         with open(self.FILE, 'r') as file:
             for line in file:
-                line = line.strip()
                 position = position + len(line)
+                line = line.strip()
 
                 if self.isLineSnapshot(line):
                     self.SNAPSHOTS.append(position)
