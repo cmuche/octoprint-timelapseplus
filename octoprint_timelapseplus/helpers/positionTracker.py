@@ -88,10 +88,18 @@ class PositionTracker:
             self.RELATIVE_MODE_EXTRUDER = True
         elif gcode == 'G90':
             # Absolute Positioning https://marlinfw.org/docs/gcode/G090.html
+            # OVERWRITES EXTRUDER ON MARLIN
             self.RELATIVE_MODE = False
+
+            if Constants.GCODE_G90_G91_EXTRUDER_OVERWRITE:
+                self.RELATIVE_MODE_EXTRUDER = False
         elif gcode == 'G91':
             # Relative Positioning https://marlinfw.org/docs/gcode/G091.html
+            # OVERWRITES EXTRUDER ON MARLIN
             self.RELATIVE_MODE = True
+
+            if Constants.GCODE_G90_G91_EXTRUDER_OVERWRITE:
+                self.RELATIVE_MODE_EXTRUDER = True
         elif gcode == 'G92':
             # Set Position https://marlinfw.org/docs/gcode/G092.html
             self.setPosition(propX, propY, propZ, propE, True)

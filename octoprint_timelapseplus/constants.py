@@ -3,3 +3,4 @@ class Constants:
     SUFFIX_PRINT_RESUME = 'RESUME'
     SUFFIX_PRINT_UNSTABLE = 'UNSTABLE'
     GCODE_TAG_STABILIZATION = 'timelapseplus-stabilization'
+    GCODE_G90_G91_EXTRUDER_OVERWRITE = True
