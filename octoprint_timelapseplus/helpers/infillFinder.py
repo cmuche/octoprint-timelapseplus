@@ -70,7 +70,7 @@ class InfillFinder:
         return parts[0].strip().upper() == '@' + self.SNAPSHOT_COMMAND.strip().upper()
 
     def isLineStartInfill(self, line):
-        return line == ';TYPE:Solid infill' or line == ';TYPE:Internal infill'
+        return line == ';TYPE:Internal infill'
 
     def isLineEndInfill(self, line):
         return line.startswith(';TYPE:') and not self.isLineStartInfill(line)
