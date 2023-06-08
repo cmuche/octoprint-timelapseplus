@@ -10,6 +10,7 @@ class PositionTracker:
         self.POS_Y = 0
         self.POS_Z = 0
         self.POS_E = 0
+        self.FEEDRATE = 0
         self.RELATIVE_MODE = False
         self.RELATIVE_MODE_EXTRUDER = False
 
@@ -45,7 +46,7 @@ class PositionTracker:
         except ValueError:
             return None
 
-    def setPosition(self, x, y, z, e, override=False):
+    def setPosition(self, x, y, z, e, f, override=False):
         if x is not None:
             if self.RELATIVE_MODE and not override:
                 self.POS_X += x
@@ -68,6 +69,10 @@ class PositionTracker:
             else:
                 self.POS_E = e
 
+        if f is not None:
+            self.FEEDRATE = f
+
+
     def consumeGcode(self, gcode, command, tags):
         if Constants.GCODE_TAG_STABILIZATION in tags:
             return
@@ -76,10 +81,11 @@ class PositionTracker:
         propY = self.getMatchForProp(gcode, command, 'Y')
         propZ = self.getMatchForProp(gcode, command, 'Z')
         propE = self.getMatchForProp(gcode, command, 'E')
+        propF = self.getMatchForProp(gcode, command, 'F')
 
         if gcode == 'G0' or gcode == 'G1':
             # Linear Move https://marlinfw.org/docs/gcode/G000-G001.html
-            self.setPosition(propX, propY, propZ, propE)
+            self.setPosition(propX, propY, propZ, propE, propF)
         elif gcode == 'M82':
             # E Absolute https://marlinfw.org/docs/gcode/M083.html
             self.RELATIVE_MODE_EXTRUDER = False
@@ -102,6 +108,6 @@ class PositionTracker:
                 self.RELATIVE_MODE_EXTRUDER = True
         elif gcode == 'G92':
             # Set Position https://marlinfw.org/docs/gcode/G092.html
-            self.setPosition(propX, propY, propZ, propE, True)
+            self.setPosition(propX, propY, propZ, propE, propF, True)
         else:
             return
