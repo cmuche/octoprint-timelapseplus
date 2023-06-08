@@ -29,7 +29,6 @@ class StabilizationHelper:
             return []
 
         cmd = []
-
         cmd += self.getCommandsPositionRelative(positionTracker.RELATIVE_MODE, positionTracker.RELATIVE_MODE_EXTRUDER, True, True)
 
         if inverse:
@@ -70,9 +69,7 @@ class StabilizationHelper:
         cmd = []
 
         cmd += self.getCommandsPositionRelative(positionTracker.RELATIVE_MODE, positionTracker.RELATIVE_MODE_EXTRUDER, False, positionTracker.RELATIVE_MODE_EXTRUDER)
-
         cmd.append('G0 X' + str(x) + ' Y' + str(y) + ' Z' + str(z) + ' F' + str(f))
-
         self.getCommandsPositionRelative(False, positionTracker.RELATIVE_MODE_EXTRUDER, positionTracker.RELATIVE_MODE, positionTracker.RELATIVE_MODE_EXTRUDER)
 
         return cmd
