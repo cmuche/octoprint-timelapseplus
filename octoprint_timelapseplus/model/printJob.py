@@ -12,14 +12,16 @@ from PIL import Image
 from octoprint.util import ResettableTimer
 from .captureMode import CaptureMode
 from .stabilizatonSettings import StabilizationSettings
-from ..helpers.positionTracker import PositionTracker
+from ..constants import Constants
 from ..helpers.fileHelper import FileHelper
+from ..helpers.infillFinder import InfillFinder
+from ..helpers.listHelper import ListHelper
 from ..helpers.stabilizationHelper import StabilizationHelper
 from ..helpers.timeHelper import TimeHelper
 
 
 class PrintJob:
-    def __init__(self, id, baseName, parent, logger, settings, dataFolder, webcamController, printer, positionTracker):
+    def __init__(self, id, baseName, parent, logger, settings, dataFolder, webcamController, printer, positionTracker, gcodeFile):
         self.PARENT = parent
         self.ID = id
         self.WEBCAM_CONTROLLER = webcamController
@@ -51,6 +53,29 @@ class PrintJob:
         self.PREVIEW_IMAGE = None
 
         self.createFolder(dataFolder)
+
+        self.GCODE_FILE = gcodeFile
+        self.INFILL_FINDER = InfillFinder(gcodeFile, settings)
+        self.INFILL_FINDER.startScanFile()
+        self.SNAPSHOT_QUEUED_POSITION = None
+        self.LAST_QUEUED_POSITION = 0
+
+    def gcodeQueuing(self, gcode, command, tags, snapshotCommand):
+        if self.SNAPSHOT_QUEUED_POSITION is None:
+            return None
+
+        filepos = ListHelper.extractFileposFromGcodeTag(tags)
+        if filepos is None:
+            return None
+
+        self.LAST_QUEUED_POSITION = filepos
+
+        if filepos < self.SNAPSHOT_QUEUED_POSITION:
+            return None
+
+        self.SNAPSHOT_QUEUED_POSITION = None
+        cmd = ['@' + snapshotCommand + '-' + Constants.SUFFIX_PRINT_QUEUED, command]
+        return cmd
 
     def isCapturing(self):
         return self.RUNNING and not self.PAUSED and not self.HALTED
@@ -145,12 +170,19 @@ class PrintJob:
             mdFile.write(json_object)
         return mdPath
 
-    def doSnapshot(self):
+    def doSnapshot(self, filepos=None, isQueued=False):
         if not self.isCapturing():
             return
 
         if self.STABILIZE:
-            self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER)
+            # todo only if set in settings
+            fileposAlreadyQueuedToPrinter = filepos is not None and filepos <= self.LAST_QUEUED_POSITION
+            canQueue = (not fileposAlreadyQueuedToPrinter) and (not isQueued) and self.INFILL_FINDER.canQueueSnapshotAt(filepos)
+
+            if canQueue:
+                self.SNAPSHOT_QUEUED_POSITION = self.INFILL_FINDER.getNextInfillPosition(filepos)
+            else:
+                self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER)
         else:
             self.doSnapshotUnstable()
 

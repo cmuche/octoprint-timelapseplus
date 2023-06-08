@@ -14,6 +14,7 @@ from .cleanupController import CleanupController
 from .constants import Constants
 from .helpers.formatHelper import FormatHelper
 from .clientController import ClientController
+from .helpers.listHelper import ListHelper
 from .helpers.positionTracker import PositionTracker
 from .model.captureMode import CaptureMode
 from .model.enhancementPreset import EnhancementPreset
@@ -386,19 +387,25 @@ class TimelapsePlusPlugin(
         return c1 == c2
 
     def atCommand(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
-        self.processCommand(command)
+        self.processCommand(command, tags)
 
     def atAction(self, comm, line, action, *args, **kwargs):
         self.processCommand(action)
 
-    def processCommand(self, cmd):
+    def processCommand(self, cmd, tags=None):
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
 
+        filepos = None
+        if tags is not None:
+            filepos = ListHelper.extractFileposFromGcodeTag(tags)
+
         if self.isSnapshotCommand(cmd, Constants.SUFFIX_PRINT_UNSTABLE):
             self.PRINTJOB.doSnapshotUnstable()
+        elif self.isSnapshotCommand(cmd, Constants.SUFFIX_PRINT_QUEUED) and self.PRINTJOB.CAPTURE_MODE == CaptureMode.COMMAND:
+            self.PRINTJOB.doSnapshot(filepos, True)
         elif self.isSnapshotCommand(cmd) and self.PRINTJOB.CAPTURE_MODE == CaptureMode.COMMAND:
-            self.PRINTJOB.doSnapshot()
+            self.PRINTJOB.doSnapshot(filepos)
         elif self.isSnapshotCommand(cmd, Constants.SUFFIX_PRINT_PAUSE):
             self.printHaltedTo(True)
         elif self.isSnapshotCommand(cmd, Constants.SUFFIX_PRINT_RESUME):
@@ -411,8 +418,12 @@ class TimelapsePlusPlugin(
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
 
-    def processGcodeQueued(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
-        return
+    def processGcodeQueuing(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
+        if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
+            return
+
+        snapshotCommand = self._settings.get(["snapshotCommand"])
+        return self.PRINTJOB.gcodeQueuing(gcode, cmd, tags, snapshotCommand)
 
     def render(self, frameZip, enhancementPreset=None, renderPreset=None, videoFormat=None):
         job = RenderJob(self._basefolder, frameZip, self, self._logger, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset, videoFormat)
@@ -432,9 +443,16 @@ class TimelapsePlusPlugin(
 
         printerFile = self._printer.get_current_job()['file']['path']
         baseName = os.path.splitext(os.path.basename(printerFile))[0]
+
+        gcodeFile = None
+        if self._printer.get_current_job()['file']['origin'] == 'local':
+            gcodeFile = self._settings.getBaseFolder('uploads') + '/' + printerFile
+            if not os.path.isfile(gcodeFile):
+                gcodeFile = None
+
         id = self.getRandomString(32)
 
-        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self.get_plugin_data_folder(), self.WEBCAM_CONTROLLER, self._printer, self.POSITION_TRACKER)
+        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self.get_plugin_data_folder(), self.WEBCAM_CONTROLLER, self._printer, self.POSITION_TRACKER, gcodeFile)
         self.PRINTJOB.start()
         self.sendClientData()
 
@@ -537,5 +555,5 @@ def __plugin_load__():
         "octoprint.comm.protocol.action": __plugin_implementation__.atAction,
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.getUpdateInformation,
         "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.processGcodeSending,
-        "octoprint.comm.protocol.gcode.queued": __plugin_implementation__.processGcodeQueued
+        "octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.processGcodeQueuing
     }
