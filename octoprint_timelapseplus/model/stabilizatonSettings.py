@@ -12,6 +12,9 @@ class StabilizationSettings:
         self.WAIT_BEFORE = 200
         self.WAIT_AFTER = 100
 
+        self.OOZING_COMPENSATION = False
+        self.OOZING_COMPENSATION_VALUE = 1
+
         if d is not None:
             self.setJSON(d)
 
@@ -33,6 +36,8 @@ class StabilizationSettings:
         if 'waitForMovement' in d: self.WAIT_FOR_MOVEMENT = d['waitForMovement']
         if 'waitBefore' in d: self.WAIT_BEFORE = int(d['waitBefore'])
         if 'waitAfter' in d: self.WAIT_AFTER = int(d['waitAfter'])
+        if 'oozingCompensation' in d: self.OOZING_COMPENSATION = d['oozingCompensation']
+        if 'oozingCompensationValue' in d: self.OOZING_COMPENSATION_VALUE = float(d['oozingCompensationValue'])
 
     def getJSON(self):
         return dict(
@@ -47,4 +52,6 @@ class StabilizationSettings:
             waitForMovement=self.WAIT_FOR_MOVEMENT,
             waitBefore=self.WAIT_BEFORE,
             waitAfter=self.WAIT_AFTER,
+            oozingCompensation=self.OOZING_COMPENSATION,
+            oozingCompensationValue=self.OOZING_COMPENSATION_VALUE
         )

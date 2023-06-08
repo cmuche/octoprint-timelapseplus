@@ -1,3 +1,5 @@
+import math
+
 from ..constants import Constants
 
 
@@ -7,7 +9,21 @@ class StabilizationHelper:
         self.SNAPSHOT_COMMAND = settings.get(["snapshotCommand"])
         self.STAB = stabilizationSettings
 
-    def getRetractionCommands(self, positionTracker, inverse):
+    def calculateDistance(self, x1, y1, z1, x2, y2, z2):
+        distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2 + (z2 - z1) ** 2)
+        return distance
+
+    def calculateOozingCompensationAmount(self, positionTracker, x, y, z):
+        distance = self.calculateDistance(positionTracker.POS_X, positionTracker.POS_Y, positionTracker.POS_Z, x, y, z)
+        seconds = distance / self.STAB.MOVE_SPEED
+        seconds *= 2
+        seconds += self.STAB.WAIT_BEFORE / 1000
+        seconds += self.STAB.WAIT_AFTER / 1000
+
+        amount = seconds * self.STAB.OOZING_COMPENSATION_VALUE
+        return amount
+
+    def getRetractionCommands(self, positionTracker, inverse, oozeOffset=0):
         shouldDoRetract = self.STAB.RETRACT_AMOUNT > 0 or self.STAB.RETRACT_Z_HOP > 0
         if not shouldDoRetract:
             return []
@@ -20,7 +36,8 @@ class StabilizationHelper:
             cmd.append('G1 E' + str(self.STAB.RETRACT_AMOUNT) + ' F' + str(self.STAB.getFeedrateRetraction()))
             cmd.append('G1 Z-' + str(self.STAB.RETRACT_Z_HOP) + ' F' + str(self.STAB.getFeedrateMove()))
         else:
-            cmd.append('G1 E-' + str(self.STAB.RETRACT_AMOUNT) + ' F' + str(self.STAB.getFeedrateRetraction()))
+            amount = self.STAB.RETRACT_AMOUNT + oozeOffset
+            cmd.append('G1 E-' + str(round(amount, 3)) + ' F' + str(self.STAB.getFeedrateRetraction()))
             cmd.append('G1 Z' + str(self.STAB.RETRACT_Z_HOP) + ' F' + str(self.STAB.getFeedrateMove()))
 
         cmd += self.getCommandsPositionRelative(True, True, positionTracker.RELATIVE_MODE, positionTracker.RELATIVE_MODE_EXTRUDER)
@@ -69,8 +86,12 @@ class StabilizationHelper:
 
             cmd = []
             try:
-                cmd += self.getRetractionCommands(positionTracker, False)
-                cmd += self.getMoveCommands(positionTracker, self.STAB.PARK_X, self.STAB.PARK_Y, newZPos, self.STAB.getFeedrateMove())
+                oozeOffset = 0
+                if self.STAB.OOZING_COMPENSATION:
+                    oozeOffset = self.calculateOozingCompensationAmount(positionTracker, newXPos, newYPos, newZPos)
+
+                cmd += self.getRetractionCommands(positionTracker, False, oozeOffset)
+                cmd += self.getMoveCommands(positionTracker, newXPos, newYPos, newZPos, self.STAB.getFeedrateMove())
 
                 if self.STAB.WAIT_FOR_MOVEMENT:
                     cmd.append('M400')
