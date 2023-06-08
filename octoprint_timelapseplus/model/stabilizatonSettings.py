@@ -19,7 +19,9 @@ class StabilizationSettings:
         self.WAIT_AFTER = 100
 
         self.OOZING_COMPENSATION = False
-        self.OOZING_COMPENSATION_VALUE = 1
+        self.OOZING_COMPENSATION_VALUE = 0.2
+
+        self.INFILL_LOOKAHEAD = False
 
         if d is not None:
             self.setJSON(d)
@@ -46,6 +48,7 @@ class StabilizationSettings:
         if 'waitAfter' in d: self.WAIT_AFTER = int(d['waitAfter'])
         if 'oozingCompensation' in d: self.OOZING_COMPENSATION = d['oozingCompensation']
         if 'oozingCompensationValue' in d: self.OOZING_COMPENSATION_VALUE = float(d['oozingCompensationValue'])
+        if 'infillLookahead' in d: self.INFILL_LOOKAHEAD = d['infillLookahead']
 
     def getJSON(self):
         return dict(
@@ -63,5 +66,6 @@ class StabilizationSettings:
             waitBefore=self.WAIT_BEFORE,
             waitAfter=self.WAIT_AFTER,
             oozingCompensation=self.OOZING_COMPENSATION,
-            oozingCompensationValue=self.OOZING_COMPENSATION_VALUE
+            oozingCompensationValue=self.OOZING_COMPENSATION_VALUE,
+            infillLookahead=self.INFILL_LOOKAHEAD
         )

@@ -175,9 +175,11 @@ class PrintJob:
             return
 
         if self.STABILIZE:
-            # todo only if set in settings
             fileposAlreadyQueuedToPrinter = filepos is not None and filepos <= self.LAST_QUEUED_POSITION
-            canQueue = (not fileposAlreadyQueuedToPrinter) and (not isQueued) and self.INFILL_FINDER.canQueueSnapshotAt(filepos)
+            canQueue = self.STABILIZATION_HELPER.STAB.INFILL_LOOKAHEAD and \
+                       (not fileposAlreadyQueuedToPrinter) and \
+                       (not isQueued) and \
+                       self.INFILL_FINDER.canQueueSnapshotAt(filepos)
 
             if canQueue:
                 self.SNAPSHOT_QUEUED_POSITION = self.INFILL_FINDER.getNextInfillPosition(filepos)
