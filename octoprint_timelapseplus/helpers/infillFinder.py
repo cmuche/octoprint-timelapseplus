@@ -13,8 +13,14 @@ class InfillFinder:
         allInfillBlocksAfter = [x for x in self.INFILL_BLOCKS if x[0] > position]
         nextInfillBlock = min(allInfillBlocksAfter, key=lambda x: x[0])
 
-        # todo get pos in the middle of block
-        return nextInfillBlock[0]
+        allSnapshotPositionsAfter = [x for x in self.SNAPSHOTS if x > position]
+        nextSnapshotPos = min(allSnapshotPositionsAfter)
+
+        # Position is in the 'middle' of the infill
+        blockFrom = nextInfillBlock[0]
+        blockTo = min(nextInfillBlock[1], nextSnapshotPos)
+        blockRange = blockTo - blockFrom
+        return blockFrom + int(blockRange / 2)
 
     def canQueueSnapshotAt(self, position):
         if position is None:
