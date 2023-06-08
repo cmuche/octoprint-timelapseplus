@@ -92,7 +92,7 @@ class PrintJob:
             self.CAPTURE_TIMER.cancel()
             return
 
-        self.doSnapshot()
+        self.doSnapshotUnstable()
 
         self.CAPTURE_TIMER.cancel()
         self.CAPTURE_TIMER = ResettableTimer(self.CAPTURE_TIMER_INTERVAL, self.captureTimerTriggered)
