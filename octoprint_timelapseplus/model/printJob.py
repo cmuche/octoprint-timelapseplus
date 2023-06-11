@@ -184,7 +184,11 @@ class PrintJob:
             if canQueue:
                 self.SNAPSHOT_QUEUED_POSITION = self.INFILL_FINDER.getNextInfillPosition(filepos)
             else:
-                self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER)
+                currentSnapshotProgress = 0
+                if len(self.INFILL_FINDER.SNAPSHOTS) > 0:
+                    currentSnapshotProgress = len(self.FRAMES)/len(self.INFILL_FINDER.SNAPSHOTS)
+
+                self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER, currentSnapshotProgress)
         else:
             self.doSnapshotUnstable()
 

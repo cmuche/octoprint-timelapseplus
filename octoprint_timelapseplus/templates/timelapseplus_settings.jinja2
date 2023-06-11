@@ -249,8 +249,19 @@
             </div>
             <div data-bind="visible: settings.plugins.timelapseplus.stabilization">
                 <h4>Park Position</h4>
+                <h5>X-Value</h5>
                 <div class="control-group">
-                    <label class="control-label">Park X</label>
+                    <label class="control-label">Type</label>
+                    <div class="controls">
+                        <select data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXType">
+                            <option value="FIXED">Fixed</option>
+                            <option value="RELATIVE">Relative</option>
+                            <option value="SWEEP">Sweep</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkXType() == 'FIXED'">
+                    <label class="control-label">Value</label>
                     <div class="controls">
                         <span class="input-append">
                             <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkX">
@@ -258,14 +269,49 @@
                         </span>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label">Park X Relative</label>
+
+                <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkXType() == 'RELATIVE'">
+                    <label class="control-label">Offset</label>
                     <div class="controls">
-                        <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilizationSettings.parkXRelative">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkX">
+                        <span class="add-on">mm</span>
+                        </span>
                     </div>
                 </div>
+
+                <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkXType() == 'SWEEP'">
+                    <label class="control-label">From</label>
+                    <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepFrom">
+                        <span class="add-on">mm</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkXType() == 'SWEEP'">
+                    <label class="control-label">To</label>
+                    <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepTo">
+                        <span class="add-on">mm</span>
+                        </span>
+                    </div>
+                </div>
+
+                <h5>Y-Value</h5>
                 <div class="control-group">
-                    <label class="control-label">Park Y</label>
+                    <label class="control-label">Type</label>
+                    <div class="controls">
+                        <select data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYType">
+                            <option value="FIXED">Fixed</option>
+                            <option value="RELATIVE">Relative</option>
+                            <option value="SWEEP">Sweep</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkYType() == 'FIXED'">
+                    <label class="control-label">Value</label>
                     <div class="controls">
                         <span class="input-append">
                             <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkY">
@@ -273,14 +319,45 @@
                         </span>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label">Park Y Relative</label>
+
+                <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkYType() == 'RELATIVE'">
+                    <label class="control-label">Offset</label>
                     <div class="controls">
-                        <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilizationSettings.parkYRelative">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkY">
+                        <span class="add-on">mm</span>
+                        </span>
                     </div>
                 </div>
+
+                <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkYType() == 'SWEEP'">
+                    <label class="control-label">From</label>
+                    <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepFrom">
+                        <span class="add-on">mm</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkYType() == 'SWEEP'">
+                    <label class="control-label">To</label>
+                    <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepTo">
+                        <span class="add-on">mm</span>
+                        </span>
+                    </div>
+                </div>
+
+                <h5>Z-Value</h5>
                 <div class="control-group">
-                    <label class="control-label">Park Z</label>
+                    <label class="control-label">Relative</label>
+                    <div class="controls">
+                        <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilizationSettings.parkZRelative">
+                    </div>
+                </div>
+                <div class="control-group" data-bind="visible: !settings.plugins.timelapseplus.stabilizationSettings.parkZRelative()">
+                    <label class="control-label">Value</label>
                     <div class="controls">
                         <span class="input-append">
                             <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkZ">
@@ -288,10 +365,13 @@
                         </span>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label">Park Z Relative</label>
+                <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkZRelative()">
+                    <label class="control-label">Offset</label>
                     <div class="controls">
-                        <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilizationSettings.parkZRelative">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkZ">
+                        <span class="add-on">mm</span>
+                        </span>
                     </div>
                 </div>
                 <h4>Movement</h4>

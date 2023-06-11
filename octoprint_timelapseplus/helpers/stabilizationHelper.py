@@ -1,6 +1,7 @@
 import math
 
 from ..constants import Constants
+from ..model.stabilizationParkType import StabilizationParkType
 
 
 class StabilizationHelper:
@@ -76,16 +77,32 @@ class StabilizationHelper:
 
         return cmd
 
-    def stabilizeAndQueueSnapshotRawCommands(self, positionTracker):
+    def getXYParkPos(self, positionTracker, currentSnapshotProgress):
+        posX = 0
+        posY = 0
+
+        if self.STAB.PARK_X_TYPE == StabilizationParkType.FIXED:
+            posX = self.STAB.PARK_X
+        elif self.STAB.PARK_X_TYPE == StabilizationParkType.RELATIVE:
+            posX = positionTracker.POS_X + self.STAB.PARK_X
+        elif self.STAB.PARK_X_TYPE == StabilizationParkType.SWEEP:
+            sweepXDelta = self.STAB.PARK_X_SWEEP_TO - self.STAB.PARK_X_SWEEP_FROM
+            posX = self.STAB.PARK_X_SWEEP_FROM + currentSnapshotProgress * sweepXDelta
+
+        if self.STAB.PARK_Y_TYPE == StabilizationParkType.FIXED:
+            posY = self.STAB.PARK_Y
+        elif self.STAB.PARK_Y_TYPE == StabilizationParkType.RELATIVE:
+            posY = positionTracker.POS_Y + self.STAB.PARK_Y
+        elif self.STAB.PARK_Y_TYPE == StabilizationParkType.SWEEP:
+            sweepYDelta = self.STAB.PARK_Y_SWEEP_TO - self.STAB.PARK_Y_SWEEP_FROM
+            posY = self.STAB.PARK_Y_SWEEP_FROM + currentSnapshotProgress * sweepYDelta
+
+        return posX, posY
+
+    def stabilizeAndQueueSnapshotRawCommands(self, positionTracker, currentSnapshotProgress):
         cmd = []
 
-        newXPos = self.STAB.PARK_X
-        if self.STAB.PARK_X_RELATIVE:
-            newXPos = positionTracker.POS_X + self.STAB.PARK_X
-
-        newYPos = self.STAB.PARK_Y
-        if self.STAB.PARK_Y_RELATIVE:
-            newYPos = positionTracker.POS_Y + self.STAB.PARK_Y
+        newXPos, newYPos = self.getXYParkPos(positionTracker, currentSnapshotProgress)
 
         newZPos = self.STAB.PARK_Z
         if self.STAB.PARK_Z_RELATIVE:
@@ -123,10 +140,10 @@ class StabilizationHelper:
 
         return cmd
 
-    def stabilizeAndQueueSnapshotRaw(self, printer, positionTracker):
+    def stabilizeAndQueueSnapshotRaw(self, printer, positionTracker, currentSnapshotProgress):
         if printer.set_job_on_hold(True):
             try:
-                cmd = self.stabilizeAndQueueSnapshotRawCommands(positionTracker)
+                cmd = self.stabilizeAndQueueSnapshotRawCommands(positionTracker, currentSnapshotProgress)
                 printer.commands(cmd, force=True, tags={Constants.GCODE_TAG_STABILIZATION})
                 # TODO Update PositionTracker with the created Commands
             finally:
