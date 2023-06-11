@@ -1,4 +1,5 @@
 import os.path
+from math import floor
 from threading import Thread
 
 
@@ -6,6 +7,8 @@ class InfillFinder:
     def __init__(self, gcodeFile, settings):
         self.FILE = gcodeFile
         self.INFILL_BLOCKS = []
+        self.POSITION_LINE_DICT = dict()
+        self.LINE_POSITION_DICT = dict()
         self.SNAPSHOTS = []
         self.SNAPSHOT_COMMAND = settings.get(["snapshotCommand"])
 
@@ -17,10 +20,11 @@ class InfillFinder:
         nextSnapshotPos = min(allSnapshotPositionsAfter)
 
         # Position is in the 'middle' of the infill
-        blockFrom = nextInfillBlock[0]
-        blockTo = min(nextInfillBlock[1], nextSnapshotPos)
+        blockFrom = self.POSITION_LINE_DICT[nextInfillBlock[0]]
+        blockTo = self.POSITION_LINE_DICT[min(nextInfillBlock[1], nextSnapshotPos)]
         blockRange = blockTo - blockFrom
-        return blockFrom + int(blockRange / 2)
+        blockMiddle = blockFrom + floor(blockRange / 2)
+        return self.LINE_POSITION_DICT[blockMiddle]
 
     def canQueueSnapshotAt(self, position):
         if position is None:
@@ -48,9 +52,14 @@ class InfillFinder:
         lastInfillStart = None
 
         position = 0
+        lineNumber = 0
         with open(self.FILE, 'r') as file:
             for line in file:
+                lineNumber += 1
                 position = position + len(line)
+                self.POSITION_LINE_DICT[position] = lineNumber
+                self.LINE_POSITION_DICT[lineNumber] = position
+
                 line = line.strip()
 
                 if self.isLineSnapshot(line):
