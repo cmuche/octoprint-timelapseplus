@@ -40,7 +40,7 @@ class StabilizationHelper:
             t -= (2.625 / 2.75)
             return 7.5625 * t * t + 0.984375
 
-    def easeFnInOut(t):
+    def easeFnInOut(self, t):
         return -(math.cos(math.pi * t) - 1) / 2
 
     def floatVal(self, val):
