@@ -10,6 +10,13 @@ class StabilizationHelper:
         self.SNAPSHOT_COMMAND = settings.get(["snapshotCommand"])
         self.STAB = stabilizationSettings
 
+    def floatVal(self, val):
+        roundedNumber = round(float(val), 3)
+        numberString = format(roundedNumber, ".3f")
+        decimalSeparator = '.' if '.' in numberString else ','
+        numberString = numberString.replace(f"0{decimalSeparator}", '').replace(f"-0{decimalSeparator}", '-')
+        return numberString
+
     def calculateDistance(self, x1, y1, z1, x2, y2, z2):
         distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2 + (z2 - z1) ** 2)
         return distance
@@ -35,12 +42,12 @@ class StabilizationHelper:
         cmd += self.getCommandsPositionRelative(positionTracker.RELATIVE_MODE, positionTracker.RELATIVE_MODE_EXTRUDER, True, True)
 
         if inverse:
-            cmd.append('G1 E' + str(self.STAB.RETRACT_AMOUNT) + ' F' + str(self.STAB.getFeedrateRetraction()))
-            cmd.append('G1 Z-' + str(self.STAB.RETRACT_Z_HOP) + ' F' + str(self.STAB.getFeedrateMove()))
+            cmd.append('G1 E' + self.floatVal(self.STAB.RETRACT_AMOUNT) + ' F' + self.floatVal(self.STAB.getFeedrateRetraction()))
+            cmd.append('G1 Z-' + self.floatVal(self.STAB.RETRACT_Z_HOP) + ' F' + self.floatVal(self.STAB.getFeedrateMove()))
         else:
             amount = self.STAB.RETRACT_AMOUNT + oozeOffset
-            cmd.append('G1 Z' + str(self.STAB.RETRACT_Z_HOP) + ' F' + str(self.STAB.getFeedrateMove()))
-            cmd.append('G1 E-' + str(round(amount, 3)) + ' F' + str(self.STAB.getFeedrateRetraction()))
+            cmd.append('G1 Z' + self.floatVal(self.STAB.RETRACT_Z_HOP) + ' F' + self.floatVal(self.STAB.getFeedrateMove()))
+            cmd.append('G1 E-' + self.floatVal(round(amount, 3)) + ' F' + self.floatVal(self.STAB.getFeedrateRetraction()))
 
         cmd += self.getCommandsPositionRelative(True, True, positionTracker.RELATIVE_MODE, positionTracker.RELATIVE_MODE_EXTRUDER)
 
@@ -72,7 +79,7 @@ class StabilizationHelper:
         cmd = []
 
         cmd += self.getCommandsPositionRelative(positionTracker.RELATIVE_MODE, positionTracker.RELATIVE_MODE_EXTRUDER, False, positionTracker.RELATIVE_MODE_EXTRUDER)
-        cmd.append('G0 X' + str(x) + ' Y' + str(y) + ' Z' + str(z) + ' F' + str(f))
+        cmd.append('G0 X' + self.floatVal(x) + ' Y' + self.floatVal(y) + ' Z' + self.floatVal(z) + ' F' + self.floatVal(f))
         self.getCommandsPositionRelative(False, positionTracker.RELATIVE_MODE_EXTRUDER, positionTracker.RELATIVE_MODE, positionTracker.RELATIVE_MODE_EXTRUDER)
 
         return cmd
@@ -136,7 +143,7 @@ class StabilizationHelper:
         cmd += self.getMoveCommands(positionTracker, positionTracker.POS_X, positionTracker.POS_Y, returnZPos, self.STAB.getFeedrateMove())
         cmd += self.getRetractionCommands(positionTracker, True)
 
-        cmd.append('G0 F' + str(positionTracker.FEEDRATE))
+        cmd.append('G0 F' + self.floatVal(positionTracker.FEEDRATE))
 
         return cmd
 
