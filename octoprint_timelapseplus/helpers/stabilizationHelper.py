@@ -16,7 +16,7 @@ class StabilizationHelper:
         if fn == StabilizationEaseFn.LINEAR:
             val = t
         if fn == StabilizationEaseFn.INOUT:
-            val = self.easeFnBounce(t)
+            val = self.easeFnInOut(t)
         if fn == StabilizationEaseFn.BOUNCE:
             val = self.easeFnBounce(t)
 
