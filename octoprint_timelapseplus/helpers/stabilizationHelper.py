@@ -13,8 +13,15 @@ class StabilizationHelper:
     def floatVal(self, val):
         roundedNumber = round(float(val), 3)
         numberString = format(roundedNumber, ".3f")
-        decimalSeparator = '.' if '.' in numberString else ','
-        numberString = numberString.replace(f"0{decimalSeparator}", '').replace(f"-0{decimalSeparator}", '-')
+        numberString = numberString.replace(',', '.')
+
+        valInt, valDec = numberString.split('.')
+
+        valDec = valDec.rstrip('0')
+        if valDec == '':
+            numberString = valInt
+        else:
+            numberString = valInt + '.' + valDec
         return numberString
 
     def calculateDistance(self, x1, y1, z1, x2, y2, z2):
