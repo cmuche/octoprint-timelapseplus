@@ -1,4 +1,5 @@
 import math
+import random
 
 from ..constants import Constants
 from ..model.stabilizationEaseFn import StabilizationEaseFn
@@ -15,6 +16,8 @@ class StabilizationHelper:
         val = 0
         if fn == StabilizationEaseFn.LINEAR:
             val = t
+        if fn == StabilizationEaseFn.RANDOM:
+            val = random.random()
         if fn == StabilizationEaseFn.INOUT:
             val = self.easeFnInOut(t)
         if fn == StabilizationEaseFn.BOUNCE:

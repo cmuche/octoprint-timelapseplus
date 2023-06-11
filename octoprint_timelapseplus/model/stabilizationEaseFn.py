@@ -5,3 +5,4 @@ class StabilizationEaseFn(Enum):
     LINEAR = 1
     INOUT = 2
     BOUNCE = 3
+    RANDOM = 4
