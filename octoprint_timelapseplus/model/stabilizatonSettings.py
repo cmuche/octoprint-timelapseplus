@@ -1,3 +1,4 @@
+from .stabilizationEaseFn import StabilizationEaseFn
 from .stabilizationParkType import StabilizationParkType
 
 
@@ -10,11 +11,13 @@ class StabilizationSettings:
 
         self.PARK_X_TYPE = StabilizationParkType.FIXED
         self.PARK_X = 0
+        self.PARK_X_SWEEP_FN = StabilizationEaseFn.BOUNCE
         self.PARK_X_SWEEP_FROM = 0
         self.PARK_X_SWEEP_TO = 200
 
         self.PARK_Y_TYPE = StabilizationParkType.FIXED
         self.PARK_Y = 0
+        self.PARK_Y_SWEEP_FN = StabilizationEaseFn.BOUNCE
         self.PARK_Y_SWEEP_FROM = 0
         self.PARK_Y_SWEEP_TO = 200
 
