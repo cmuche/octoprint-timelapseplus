@@ -238,11 +238,11 @@
 
             <ul class="nav nav-pills">
                 <li class="active"><a data-toggle="tab" href="#timelapseplus-settings-stab-info">General</a></li>
-                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-parkposition">Park Position</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-parkposition">Parking Position</a></li>
                 <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-movement">Movement</a></li>
                 <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-retraction">Retraction</a></li>
                 <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-infilllookahead">Infill Look-Ahead</a></li>
-                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-oozingcompensation">Oozing Compensation</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-oozingcompensation">Oozing</a></li>
             </ul>
 
             <div class="tab-content">
@@ -254,14 +254,20 @@
                         That would help a lot to improve and push this feature forward. Thank you!
                     </div>
                     <div class="control-group">
-                        <label class="control-label">Stabilize Print Head</label>
+                        <span class="help-block">
+                            The stabilization feature will park your print head in at certain position before taking a screenshot.
+                            As a result you will get a much smoother timelapse since the print head and heat bed will be in a controlled position and won't jump around on your captured snapshots.
+                            <strong>Keep in mind that this will affect your print and printer movements and can therefore influence your print quality.</strong>
+                            Be careful about the changes you make here since it could lead to unwanted behavior and could possibly damage your print or printer.
+                        </span>
+                        <label class="control-label">Enable Stabilization</label>
                         <div class="controls">
                             <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilization">
                         </div>
                     </div>
                 </div>
                 <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-parkposition">
-                    <h4>Park Position</h4>
+                    <h4>Parking Position</h4>
                     <h5>X-Value</h5>
                     <div class="control-group">
                         <label class="control-label">Type</label>
