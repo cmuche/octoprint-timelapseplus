@@ -72,8 +72,6 @@ class InfillFinder:
                     self.INFILL_BLOCKS.append((lastInfillStart, position))
                     lastInfillStart = None
 
-        print('INFILL SCAN DONE')
-
     def isLineSnapshot(self, line):
         parts = line.split(';', 1)
         return parts[0].strip().upper() == '@' + self.SNAPSHOT_COMMAND.strip().upper()
