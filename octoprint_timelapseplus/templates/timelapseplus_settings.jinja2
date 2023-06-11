@@ -238,11 +238,11 @@
 
             <ul class="nav nav-pills">
                 <li class="active"><a data-toggle="tab" href="#timelapseplus-settings-stab-info">General</a></li>
-                <li><a data-toggle="tab" href="#timelapseplus-settings-stab-parkposition">Park Position</a></li>
-                <li><a data-toggle="tab" href="#timelapseplus-settings-stab-movement">Movement</a></li>
-                <li><a data-toggle="tab" href="#timelapseplus-settings-stab-retraction">Retraction</a></li>
-                <li><a data-toggle="tab" href="#timelapseplus-settings-stab-infilllookahead">Infill Look-Ahead</a></li>
-                <li><a data-toggle="tab" href="#timelapseplus-settings-stab-oozingcompensation">Oozing Compensation</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-parkposition">Park Position</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-movement">Movement</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-retraction">Retraction</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-infilllookahead">Infill Look-Ahead</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-oozingcompensation">Oozing Compensation</a></li>
             </ul>
 
             <div class="tab-content">
@@ -260,7 +260,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane" id="timelapseplus-settings-stab-parkposition">
+                <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-parkposition">
                     <h4>Park Position</h4>
                     <h5>X-Value</h5>
                     <div class="control-group">
@@ -415,7 +415,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane" id="timelapseplus-settings-stab-movement">
+                <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-movement">
                     <h4>Movement</h4>
                     <div class="control-group">
                         <label class="control-label">Move Speed</label>
@@ -451,7 +451,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane" id="timelapseplus-settings-stab-retraction">
+                <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-retraction">
                     <h4>Retraction</h4>
                     <div class="control-group">
                         <label class="control-label">Retraction Speed</label>
@@ -481,7 +481,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane" id="timelapseplus-settings-stab-infilllookahead">
+                <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-infilllookahead">
                     <h4>Infill Look-Ahead</h4>
                     <div class="control-group">
                         <label class="control-label">Enable Infill Look-Ahead</label>
@@ -490,7 +490,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane" id="timelapseplus-settings-stab-oozingcompensation">
+                <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-oozingcompensation">
                     <h4>Oozing Compensation</h4>
                     <div class="control-group">
                         <label class="control-label">Enable Oozing Compensation</label>
