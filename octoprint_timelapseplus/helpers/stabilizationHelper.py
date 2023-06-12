@@ -1,8 +1,7 @@
 import math
-import random
 
+from .stabilizationEaseCalculator import StabilizationEaseCalculator
 from ..constants import Constants
-from ..model.stabilizationEaseFn import StabilizationEaseFn
 from ..model.stabilizationParkType import StabilizationParkType
 
 
@@ -11,45 +10,6 @@ class StabilizationHelper:
     def __init__(self, settings, stabilizationSettings):
         self.SNAPSHOT_COMMAND = settings.get(["snapshotCommand"])
         self.STAB = stabilizationSettings
-
-    def applyEaseFn(self, t, fn, cycles):
-        val = 0
-        if fn == StabilizationEaseFn.LINEAR:
-            val = t
-        if fn == StabilizationEaseFn.RANDOM:
-            val = random.random()
-        if fn == StabilizationEaseFn.INOUT:
-            val = self.easeFnInOut(t)
-        if fn == StabilizationEaseFn.BOUNCE:
-            val = self.easeFnBounce(t)
-        if fn == StabilizationEaseFn.CYCLIC_SINE:
-            val = self.easeFnCyclicSine(t, cycles)
-
-        if val < 0:
-            return 0
-        if val > 1:
-            return 1
-
-        return val
-
-    def easeFnBounce(self, t):
-        if t < (1 / 2.75):
-            return 7.5625 * t * t
-        elif t < (2 / 2.75):
-            t -= (1.5 / 2.75)
-            return 7.5625 * t * t + 0.75
-        elif t < (2.5 / 2.75):
-            t -= (2.25 / 2.75)
-            return 7.5625 * t * t + 0.9375
-        else:
-            t -= (2.625 / 2.75)
-            return 7.5625 * t * t + 0.984375
-
-    def easeFnInOut(self, t):
-        return -(math.cos(math.pi * t) - 1) / 2
-
-    def easeFnCyclicSine(self, t, cycles):
-        return (math.cos(t * 2 * math.pi * cycles) + 1) / 2
 
     def floatVal(self, val):
         roundedNumber = round(float(val), 3)
@@ -141,7 +101,7 @@ class StabilizationHelper:
         elif self.STAB.PARK_X_TYPE == StabilizationParkType.RELATIVE:
             posX = positionTracker.POS_X + self.STAB.PARK_X
         elif self.STAB.PARK_X_TYPE == StabilizationParkType.SWEEP:
-            rX = self.applyEaseFn(currentSnapshotProgress, self.STAB.PARK_X_SWEEP_FN, self.STAB.PARK_X_SWEEP_CYCLES)
+            rX = StabilizationEaseCalculator.applyEaseFn(currentSnapshotProgress, self.STAB.PARK_X_SWEEP_FN, self.STAB.PARK_X_SWEEP_CYCLES)
             sweepXDelta = self.STAB.PARK_X_SWEEP_TO - self.STAB.PARK_X_SWEEP_FROM
             posX = self.STAB.PARK_X_SWEEP_FROM + rX * sweepXDelta
 
@@ -150,7 +110,7 @@ class StabilizationHelper:
         elif self.STAB.PARK_Y_TYPE == StabilizationParkType.RELATIVE:
             posY = positionTracker.POS_Y + self.STAB.PARK_Y
         elif self.STAB.PARK_Y_TYPE == StabilizationParkType.SWEEP:
-            rY = self.applyEaseFn(currentSnapshotProgress, self.STAB.PARK_Y_SWEEP_FN, self.STAB.PARK_Y_SWEEP_CYCLES)
+            rY = StabilizationEaseCalculator.applyEaseFn(currentSnapshotProgress, self.STAB.PARK_Y_SWEEP_FN, self.STAB.PARK_Y_SWEEP_CYCLES)
             sweepYDelta = self.STAB.PARK_Y_SWEEP_TO - self.STAB.PARK_Y_SWEEP_FROM
             posY = self.STAB.PARK_Y_SWEEP_FROM + rY * sweepYDelta
 
