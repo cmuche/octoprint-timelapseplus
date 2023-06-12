@@ -46,4 +46,4 @@ class StabilizationEaseCalculator:
 
     @staticmethod
     def easeFnCyclicSine(t, cycles):
-        return (math.cos(t * 2 * math.pi * cycles) + 1) / 2
+        return 1 - (math.cos(t * 2 * math.pi * cycles) + 1) / 2
