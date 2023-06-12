@@ -18,6 +18,16 @@ class StabilizationEaseCalculator:
             val = StabilizationEaseCalculator.easeFnBounce(t)
         if fn == StabilizationEaseFn.CYCLIC_SINE:
             val = StabilizationEaseCalculator.easeFnCyclicSine(t, cycles)
+        if fn == StabilizationEaseFn.CYCLIC_SINE_REDUCING:
+            val = StabilizationEaseCalculator.easeFnCyclicSine(t, cycles)
+            val = StabilizationEaseCalculator.reduceCyclicFn(t, val)
+        if fn == StabilizationEaseFn.CYCLIC_LINEAR:
+            val = StabilizationEaseCalculator.easeFnCyclicLinear(t, cycles)
+        if fn == StabilizationEaseFn.CYCLIC_LINEAR_REDUCING:
+            val = StabilizationEaseCalculator.easeFnCyclicLinear(t, cycles)
+            val = StabilizationEaseCalculator.reduceCyclicFn(t, val)
+        if fn == StabilizationEaseFn.CYCLIC_SAWTOOTH:
+            val = StabilizationEaseCalculator.easeFnCyclicSawtooth(t, cycles)
 
         if val < 0:
             return 0
@@ -45,5 +55,26 @@ class StabilizationEaseCalculator:
         return -(math.cos(math.pi * t) - 1) / 2
 
     @staticmethod
+    def reduceCyclicFn(t, val):
+        val -= 0.5
+        val *= (1 - t)
+        val += 0.5
+        return val
+
+    @staticmethod
     def easeFnCyclicSine(t, cycles):
         return 1 - (math.cos(t * 2 * math.pi * cycles) + 1) / 2
+
+    @staticmethod
+    def easeFnCyclicLinear(t, cycles):
+        period = 1.0 / cycles
+        normT = t % period
+        tVal = 1 - 4 * abs(normT - 0.5 * period) / period
+        return tVal / 2 + 0.5
+
+    @staticmethod
+    def easeFnCyclicSawtooth(t, cycles):
+        periodLength = 1 / cycles
+        period = math.floor(t / periodLength)
+        tN = t - period * periodLength
+        return tN * cycles

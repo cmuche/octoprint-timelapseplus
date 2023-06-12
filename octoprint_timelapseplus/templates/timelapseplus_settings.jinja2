@@ -309,6 +309,10 @@
                                     <option value="BOUNCE">Bounce</option>
                                     <option value="RANDOM">Randomized</option>
                                     <option value="CYCLIC_SINE">Sine Cyclic</option>
+                                    <option value="CYCLIC_SINE_REDUCING">Sine Cyclic Reducing</option>
+                                    <option value="CYCLIC_LINEAR">Linear Cyclic</option>
+                                    <option value="CYCLIC_LINEAR_REDUCING">Linear Cyclic Reducing</option>
+                                    <option value="CYCLIC_SAWTOOTH">Sawtooth</option>
                                 </select>
                             </div>
                         </div>
@@ -331,7 +335,7 @@
                         </span>
                             </div>
                         </div>
-                        <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepFn() == 'CYCLIC_SINE'">
+                        <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepFn().startsWith('CYCLIC_')">
                             <label class="control-label">Cycles</label>
                             <div class="controls">
                                 <input type="number" step='1' min="1" max="50" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepCycles">
@@ -386,6 +390,10 @@
                                     <option value="BOUNCE">Bounce</option>
                                     <option value="RANDOM">Randomized</option>
                                     <option value="CYCLIC_SINE">Sine Cyclic</option>
+                                    <option value="CYCLIC_SINE_REDUCING">Sine Cyclic Reducing</option>
+                                    <option value="CYCLIC_LINEAR">Linear Cyclic</option>
+                                    <option value="CYCLIC_LINEAR_REDUCING">Linear Cyclic Reducing</option>
+                                    <option value="CYCLIC_SAWTOOTH">Sawtooth</option>
                                 </select>
                             </div>
                         </div>
@@ -407,7 +415,7 @@
                         </span>
                             </div>
                         </div>
-                        <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepFn() == 'CYCLIC_SINE'">
+                        <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepFn().startsWith('CYCLIC_')">
                             <label class="control-label">Cycles</label>
                             <div class="controls">
                                 <input type="number" step='1' min="1" max="50" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepCycles">
