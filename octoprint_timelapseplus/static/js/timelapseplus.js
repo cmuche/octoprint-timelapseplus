@@ -52,6 +52,7 @@ $(function() {
         self.captureTimerInterval = ko.observable();
         self.isRunning = ko.observable(false);
         self.isCapturing = ko.observable(false);
+        self.isStabilized = ko.observable(false);
         self.currentFileSize = ko.observable(0);
         self.snapshotCount = ko.observable(0);
         self.previewImage = ko.observable(null);
@@ -502,6 +503,13 @@ $(function() {
             });
         };
 
+        self.editQuickSettingsStabilization = function() {
+            let newVal = !self.config().stabilization;
+            self.editQuickSettings({stabilization: newVal}, function(cfg) {
+                cfg.stabilization = newVal;
+            });
+        };
+
         self.editQuickSettingsCaptureMode = function() {
             let newVal = self.config().captureMode == "COMMAND" ? "TIMED" : "COMMAND";
             self.editQuickSettings({captureMode: newVal}, function(cfg) {
@@ -565,6 +573,9 @@ $(function() {
 
             if ("isCapturing" in data)
                 self.isCapturing(data.isCapturing);
+
+            if ("isStabilized" in data)
+                self.isStabilized(data.isStabilized);
 
             if ("currentFileSize" in data)
                 self.currentFileSize(data.currentFileSize);

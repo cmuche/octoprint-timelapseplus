@@ -11,8 +11,11 @@ from octoprint.events import Events
 from .apiController import ApiController
 from .cacheController import CacheController
 from .cleanupController import CleanupController
+from .constants import Constants
 from .helpers.formatHelper import FormatHelper
 from .clientController import ClientController
+from .helpers.listHelper import ListHelper
+from .helpers.positionTracker import PositionTracker
 from .model.captureMode import CaptureMode
 from .model.enhancementPreset import EnhancementPreset
 from .model.frameZip import FrameZip
@@ -21,6 +24,7 @@ from .model.printJob import PrintJob
 from .model.renderJob import RenderJob
 from .model.renderJobState import RenderJobState
 from .model.renderPreset import RenderPreset
+from .model.stabilizatonSettings import StabilizationSettings
 from .model.video import Video
 from .model.webcamType import WebcamType
 from .prerequisitesController import PrerequisitesController
@@ -41,9 +45,7 @@ class TimelapsePlusPlugin(
         self.PRINTJOB = None
         self.RENDERJOBS = []
         self.ERROR = None
-
-        self.SUFFIX_PRINT_PAUSE = 'PAUSE'
-        self.SUFFIX_PRINT_RESUME = 'RESUME'
+        self.POSITION_TRACKER = None
 
     @octoprint.plugin.BlueprintPlugin.route("/webcamCapturePreview", methods=["POST"])
     def apiWebcamCapturePreview(self):
@@ -123,6 +125,10 @@ class TimelapsePlusPlugin(
         self.API_CONTROLLER.editQuickSettings()
         return self.API_CONTROLLER.emptyResponse()
 
+    @octoprint.plugin.BlueprintPlugin.route("/stabilizationEaseFnPreview", methods=["GET"])
+    def apiStabilizationEaseFnPreview(self):
+        return self.API_CONTROLLER.stabilizationEaseFnPreview()
+
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
         buf = io.BytesIO()
@@ -173,7 +179,9 @@ class TimelapsePlusPlugin(
             purgeFrameCollections=False,
             purgeFrameCollectionsDays=90,
             purgeVideos=False,
-            purgeVideosDays=90
+            purgeVideosDays=90,
+            stabilization=False,
+            stabilizationSettings=StabilizationSettings().getJSON()
         )
 
     def get_template_vars(self):
@@ -184,6 +192,8 @@ class TimelapsePlusPlugin(
         rpRaw = self._settings.get(["renderPresets"])
         rpList = list(map(lambda x: RenderPreset(x), rpRaw))
         rpNew = list(map(lambda x: x.getJSON(), rpList))
+
+        stabilizationSettings = StabilizationSettings(self._settings.get(["stabilizationSettings"])).getJSON()
 
         return dict(
             enabled=self._settings.get(["enabled"]),
@@ -204,7 +214,9 @@ class TimelapsePlusPlugin(
             purgeFrameCollections=self._settings.get(["purgeFrameCollections"]),
             purgeFrameCollectionsDays=self._settings.get(["purgeFrameCollectionsDays"]),
             purgeVideos=self._settings.get(["purgeVideos"]),
-            purgeVideosDays=self._settings.get(["purgeVideosDays"])
+            purgeVideosDays=self._settings.get(["purgeVideosDays"]),
+            stabilization=self._settings.get(["stabilization"]),
+            stabilizationSettings=stabilizationSettings
         )
 
     def listFrameZips(self):
@@ -248,6 +260,7 @@ class TimelapsePlusPlugin(
             captureMode=CaptureMode[self._settings.get(["captureMode"])].name,
             captureTimerInterval=int(self._settings.get(["captureTimerInterval"])),
             snapshotCommand=self._settings.get(["snapshotCommand"]),
+            stabilization=self._settings.get(["stabilization"])
         )
         data = dict(
             config=configData,
@@ -255,6 +268,7 @@ class TimelapsePlusPlugin(
             error=self.ERROR,
             isRunning=False,
             isCapturing=False,
+            isStabilized=False,
             currentFileSize=0,
             captureMode=None,
             captureTimerInterval=0,
@@ -276,6 +290,7 @@ class TimelapsePlusPlugin(
             data['isRunning'] = self.PRINTJOB.RUNNING
             data['isCapturing'] = self.PRINTJOB.isCapturing()
             data['snapshotCount'] = len(self.PRINTJOB.FRAMES)
+            data['isStabilized'] = self.PRINTJOB.STABILIZE
 
         self.CLIENT_CONTROLLER.enqueueData(data, force)
 
@@ -315,7 +330,11 @@ class TimelapsePlusPlugin(
         if self.WEBCAM_CONTROLLER.getWebcamByPluginId(webcamPluginId) is None:
             self._settings.set(["webcamPluginId"], None)
 
+        self.resetPositionTracker()
         self.checkPrerequisites()
+
+    def resetPositionTracker(self):
+        self.POSITION_TRACKER = PositionTracker()
 
     def on_settings_save(self, data):
         ret = super().on_settings_save(data)
@@ -373,21 +392,43 @@ class TimelapsePlusPlugin(
         return c1 == c2
 
     def atCommand(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
-        self.processCommand(command)
+        self.processCommand(command, tags)
 
     def atAction(self, comm, line, action, *args, **kwargs):
         self.processCommand(action)
 
-    def processCommand(self, cmd):
+    def processCommand(self, cmd, tags=None):
         if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
             return
 
-        if self.isSnapshotCommand(cmd) and self.PRINTJOB.CAPTURE_MODE == CaptureMode.COMMAND:
-            self.PRINTJOB.doSnapshot()
-        elif self.isSnapshotCommand(cmd, self.SUFFIX_PRINT_PAUSE):
+        filepos = None
+        if tags is not None:
+            filepos = ListHelper.extractFileposFromGcodeTag(tags)
+
+        if self.isSnapshotCommand(cmd, Constants.SUFFIX_PRINT_UNSTABLE):
+            self.PRINTJOB.doSnapshotUnstable()
+        elif self.isSnapshotCommand(cmd, Constants.SUFFIX_PRINT_QUEUED) and self.PRINTJOB.CAPTURE_MODE == CaptureMode.COMMAND:
+            self.PRINTJOB.doSnapshot(filepos, True)
+        elif self.isSnapshotCommand(cmd) and self.PRINTJOB.CAPTURE_MODE == CaptureMode.COMMAND:
+            self.PRINTJOB.doSnapshot(filepos)
+        elif self.isSnapshotCommand(cmd, Constants.SUFFIX_PRINT_PAUSE):
             self.printHaltedTo(True)
-        elif self.isSnapshotCommand(cmd, self.SUFFIX_PRINT_RESUME):
+        elif self.isSnapshotCommand(cmd, Constants.SUFFIX_PRINT_RESUME):
             self.printHaltedTo(False)
+
+    def processGcodeSending(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
+        if self.POSITION_TRACKER is not None:
+            self.POSITION_TRACKER.consumeGcode(gcode, cmd, tags)
+
+        if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
+            return
+
+    def processGcodeQueuing(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
+        if self.PRINTJOB is None or not self.PRINTJOB.RUNNING:
+            return
+
+        snapshotCommand = self._settings.get(["snapshotCommand"])
+        return self.PRINTJOB.gcodeQueuing(gcode, cmd, tags, snapshotCommand)
 
     def render(self, frameZip, enhancementPreset=None, renderPreset=None, videoFormat=None):
         job = RenderJob(self._basefolder, frameZip, self, self._logger, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset, videoFormat)
@@ -407,9 +448,16 @@ class TimelapsePlusPlugin(
 
         printerFile = self._printer.get_current_job()['file']['path']
         baseName = os.path.splitext(os.path.basename(printerFile))[0]
+
+        gcodeFile = None
+        if self._printer.get_current_job()['file']['origin'] == 'local':
+            gcodeFile = self._settings.getBaseFolder('uploads') + '/' + printerFile
+            if not os.path.isfile(gcodeFile):
+                gcodeFile = None
+
         id = self.getRandomString(32)
 
-        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self.get_plugin_data_folder(), self.WEBCAM_CONTROLLER)
+        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self.get_plugin_data_folder(), self.WEBCAM_CONTROLLER, self._printer, self.POSITION_TRACKER, gcodeFile)
         self.PRINTJOB.start()
         self.sendClientData()
 
@@ -418,6 +466,7 @@ class TimelapsePlusPlugin(
             return
 
         zipFileName = self.PRINTJOB.finish(success)
+        self.resetPositionTracker()
         self.sendClientData()
 
         if self._settings.get(["renderAfterPrint"]):
@@ -509,5 +558,7 @@ def __plugin_load__():
         "octoprint.server.http.bodysize": __plugin_implementation__.increaseBodyUploadSize,
         "octoprint.comm.protocol.atcommand.sending": __plugin_implementation__.atCommand,
         "octoprint.comm.protocol.action": __plugin_implementation__.atAction,
-        "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.getUpdateInformation
+        "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.getUpdateInformation,
+        "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.processGcodeSending,
+        "octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.processGcodeQueuing
     }

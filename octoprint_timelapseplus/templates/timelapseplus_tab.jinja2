@@ -33,6 +33,18 @@
             </div>
         </div>
 
+        <div class="action clickable" data-bind="click: editQuickSettingsStabilization">
+            <div class="icon">
+                <i class="fa fa-crosshairs positive" data-bind="visible: config().stabilization"></i>
+                <i class="fa fa-crosshairs negative" data-bind="visible: !config().stabilization"></i>
+            </div>
+            <div class="description">
+                <div class="name">Stabilize</div>
+                <div class="value positive" data-bind="visible: config().stabilization">Yes</div>
+                <div class="value negative" data-bind="visible: !config().stabilization">No</div>
+            </div>
+        </div>
+
         <div class="action clickable" data-bind="click: editQuickSettingsCaptureMode">
             <div class="icon">
                 <i class="fa fa-camera"></i>
@@ -68,6 +80,11 @@
                         <span>Capturing:</span>
                         <i data-bind="visible: isCapturing()" class="fa fa-check" style="color: #42a500"></i>
                         <i data-bind="visible: !isCapturing()" class="fa fa-times" style="color: #a50d00"></i>
+                    </div>
+                    <div>
+                        <span>Stabilization:</span>
+                        <i data-bind="visible: isStabilized()" class="fa fa-check" style="color: #42a500"></i>
+                        <i data-bind="visible: !isStabilized()" class="fa fa-times" style="color: #a50d00"></i>
                     </div>
                     <div>
                         <span>Frames captured:</span>

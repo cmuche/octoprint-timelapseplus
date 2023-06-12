@@ -11,18 +11,30 @@ from PIL import Image
 
 from octoprint.util import ResettableTimer
 from .captureMode import CaptureMode
+from .stabilizatonSettings import StabilizationSettings
+from ..constants import Constants
 from ..helpers.fileHelper import FileHelper
+from ..helpers.infillFinder import InfillFinder
+from ..helpers.listHelper import ListHelper
+from ..helpers.stabilizationHelper import StabilizationHelper
 from ..helpers.timeHelper import TimeHelper
 
 
 class PrintJob:
-    def __init__(self, id, baseName, parent, logger, settings, dataFolder, webcamController):
+    def __init__(self, id, baseName, parent, logger, settings, dataFolder, webcamController, printer, positionTracker, gcodeFile):
         self.PARENT = parent
         self.ID = id
         self.WEBCAM_CONTROLLER = webcamController
 
         self._settings = settings
         self._logger = logger
+        self._printer = printer
+
+        self.STABILIZE = self._settings.get(["stabilization"])
+        self.POSITION_TRACKER = positionTracker
+
+        stabilizationSettings = StabilizationSettings(self._settings.get(["stabilizationSettings"]))
+        self.STABILIZATION_HELPER = StabilizationHelper(settings, stabilizationSettings)
 
         self.METADATA = {'timestamps': {}, 'started': None, 'ended': None, 'success': False, 'baseName': baseName, 'pluginVersion': parent.PLUGIN_VERSION}
         self.BASE_NAME = baseName
@@ -42,6 +54,29 @@ class PrintJob:
 
         self.createFolder(dataFolder)
 
+        self.GCODE_FILE = gcodeFile
+        self.INFILL_FINDER = InfillFinder(gcodeFile, settings)
+        self.INFILL_FINDER.startScanFile()
+        self.SNAPSHOT_QUEUED_POSITION = None
+        self.LAST_QUEUED_POSITION = 0
+
+    def gcodeQueuing(self, gcode, command, tags, snapshotCommand):
+        if self.SNAPSHOT_QUEUED_POSITION is None:
+            return None
+
+        filepos = ListHelper.extractFileposFromGcodeTag(tags)
+        if filepos is None:
+            return None
+
+        self.LAST_QUEUED_POSITION = filepos
+
+        if filepos < self.SNAPSHOT_QUEUED_POSITION:
+            return None
+
+        self.SNAPSHOT_QUEUED_POSITION = None
+        cmd = ['@' + snapshotCommand + '-' + Constants.SUFFIX_PRINT_QUEUED, command]
+        return cmd
+
     def isCapturing(self):
         return self.RUNNING and not self.PAUSED and not self.HALTED
 
@@ -57,7 +92,7 @@ class PrintJob:
             self.CAPTURE_TIMER.cancel()
             return
 
-        self.doSnapshot()
+        self.doSnapshotUnstable()
 
         self.CAPTURE_TIMER.cancel()
         self.CAPTURE_TIMER = ResettableTimer(self.CAPTURE_TIMER_INTERVAL, self.captureTimerTriggered)
@@ -135,8 +170,30 @@ class PrintJob:
             mdFile.write(json_object)
         return mdPath
 
-    def doSnapshot(self):
-        if self.PAUSED or self.HALTED:
+    def doSnapshot(self, filepos=None, isQueued=False):
+        if not self.isCapturing():
+            return
+
+        if self.STABILIZE:
+            fileposAlreadyQueuedToPrinter = filepos is not None and filepos <= self.LAST_QUEUED_POSITION
+            canQueue = self.STABILIZATION_HELPER.STAB.INFILL_LOOKAHEAD and \
+                       (not fileposAlreadyQueuedToPrinter) and \
+                       (not isQueued) and \
+                       self.INFILL_FINDER.canQueueSnapshotAt(filepos)
+
+            if canQueue:
+                self.SNAPSHOT_QUEUED_POSITION = self.INFILL_FINDER.getNextInfillPosition(filepos)
+            else:
+                currentSnapshotProgress = 0
+                if len(self.INFILL_FINDER.SNAPSHOTS) > 0:
+                    currentSnapshotProgress = len(self.FRAMES)/len(self.INFILL_FINDER.SNAPSHOTS)
+
+                self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER, currentSnapshotProgress)
+        else:
+            self.doSnapshotUnstable()
+
+    def doSnapshotUnstable(self):
+        if not self.isCapturing():
             return
 
         thread = Thread(target=self.doSnapshotInner, daemon=True)
