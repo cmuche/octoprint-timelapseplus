@@ -337,6 +337,12 @@
                                 <input type="number" step='1' min="1" max="50" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepCycles">
                             </div>
                         </div>
+                        <div class="control-group">
+                            <label class="control-label">Preview</label>
+                            <div class="controls">
+                                <img style="width:15em" data-bind="attr: {src: '/plugin/timelapseplus/stabilizationEaseFnPreview?fn=' + settings.plugins.timelapseplus.stabilizationSettings.parkXSweepFn() + '&cycles=' + settings.plugins.timelapseplus.stabilizationSettings.parkXSweepCycles()}">
+                            </div>
+                        </div>
                     </div>
 
                     <h5>Y-Value</h5>
@@ -405,6 +411,12 @@
                             <label class="control-label">Cycles</label>
                             <div class="controls">
                                 <input type="number" step='1' min="1" max="50" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepCycles">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Preview</label>
+                            <div class="controls">
+                                <img style="width:15em" data-bind="attr: {src: '/plugin/timelapseplus/stabilizationEaseFnPreview?fn=' + settings.plugins.timelapseplus.stabilizationSettings.parkYSweepFn() + '&cycles=' + settings.plugins.timelapseplus.stabilizationSettings.parkYSweepCycles()}">
                             </div>
                         </div>
                     </div>

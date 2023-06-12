@@ -125,6 +125,10 @@ class TimelapsePlusPlugin(
         self.API_CONTROLLER.editQuickSettings()
         return self.API_CONTROLLER.emptyResponse()
 
+    @octoprint.plugin.BlueprintPlugin.route("/stabilizationEaseFnPreview", methods=["GET"])
+    def apiStabilizationEaseFnPreview(self):
+        return self.API_CONTROLLER.stabilizationEaseFnPreview()
+
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
         buf = io.BytesIO()
