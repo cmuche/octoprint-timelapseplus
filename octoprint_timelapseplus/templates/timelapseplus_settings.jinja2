@@ -308,6 +308,7 @@
                                     <option value="INOUT">Sine Sweep</option>
                                     <option value="BOUNCE">Bounce</option>
                                     <option value="RANDOM">Randomized</option>
+                                    <option value="CYCLIC_SINE">Sine Cyclic</option>
                                 </select>
                             </div>
                         </div>
@@ -328,6 +329,12 @@
                             <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepTo">
                         <span class="add-on">mm</span>
                         </span>
+                            </div>
+                        </div>
+                        <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepFn() == 'CYCLIC_SINE'">
+                            <label class="control-label">Cycles</label>
+                            <div class="controls">
+                                <input type="number" step='1' min="1" max="50" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepCycles">
                             </div>
                         </div>
                     </div>
@@ -372,6 +379,7 @@
                                     <option value="INOUT">Sine Sweep</option>
                                     <option value="BOUNCE">Bounce</option>
                                     <option value="RANDOM">Randomized</option>
+                                    <option value="CYCLIC_SINE">Sine Cyclic</option>
                                 </select>
                             </div>
                         </div>
@@ -391,6 +399,12 @@
                             <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepTo">
                         <span class="add-on">mm</span>
                         </span>
+                            </div>
+                        </div>
+                        <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepFn() == 'CYCLIC_SINE'">
+                            <label class="control-label">Cycles</label>
+                            <div class="controls">
+                                <input type="number" step='1' min="1" max="50" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepCycles">
                             </div>
                         </div>
                     </div>

@@ -12,7 +12,7 @@ class StabilizationHelper:
         self.SNAPSHOT_COMMAND = settings.get(["snapshotCommand"])
         self.STAB = stabilizationSettings
 
-    def applyEaseFn(self, t, fn):
+    def applyEaseFn(self, t, fn, cycles):
         val = 0
         if fn == StabilizationEaseFn.LINEAR:
             val = t
@@ -22,6 +22,8 @@ class StabilizationHelper:
             val = self.easeFnInOut(t)
         if fn == StabilizationEaseFn.BOUNCE:
             val = self.easeFnBounce(t)
+        if fn == StabilizationEaseFn.CYCLIC_SINE:
+            val = self.easeFnCyclicSine(t, cycles)
 
         if val < 0:
             return 0
@@ -45,6 +47,9 @@ class StabilizationHelper:
 
     def easeFnInOut(self, t):
         return -(math.cos(math.pi * t) - 1) / 2
+
+    def easeFnCyclicSine(self, t, cycles):
+        return (math.cos(t * 2 * math.pi * cycles) + 1) / 2
 
     def floatVal(self, val):
         roundedNumber = round(float(val), 3)
@@ -136,7 +141,7 @@ class StabilizationHelper:
         elif self.STAB.PARK_X_TYPE == StabilizationParkType.RELATIVE:
             posX = positionTracker.POS_X + self.STAB.PARK_X
         elif self.STAB.PARK_X_TYPE == StabilizationParkType.SWEEP:
-            rX = self.applyEaseFn(currentSnapshotProgress, self.STAB.PARK_X_SWEEP_FN)
+            rX = self.applyEaseFn(currentSnapshotProgress, self.STAB.PARK_X_SWEEP_FN, self.STAB.PARK_X_SWEEP_CYCLES)
             sweepXDelta = self.STAB.PARK_X_SWEEP_TO - self.STAB.PARK_X_SWEEP_FROM
             posX = self.STAB.PARK_X_SWEEP_FROM + rX * sweepXDelta
 
@@ -145,7 +150,7 @@ class StabilizationHelper:
         elif self.STAB.PARK_Y_TYPE == StabilizationParkType.RELATIVE:
             posY = positionTracker.POS_Y + self.STAB.PARK_Y
         elif self.STAB.PARK_Y_TYPE == StabilizationParkType.SWEEP:
-            rY = self.applyEaseFn(currentSnapshotProgress, self.STAB.PARK_Y_SWEEP_FN)
+            rY = self.applyEaseFn(currentSnapshotProgress, self.STAB.PARK_Y_SWEEP_FN, self.STAB.PARK_Y_SWEEP_CYCLES)
             sweepYDelta = self.STAB.PARK_Y_SWEEP_TO - self.STAB.PARK_Y_SWEEP_FROM
             posY = self.STAB.PARK_Y_SWEEP_FROM + rY * sweepYDelta
 

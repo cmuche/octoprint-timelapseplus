@@ -12,12 +12,14 @@ class StabilizationSettings:
         self.PARK_X_TYPE = StabilizationParkType.FIXED
         self.PARK_X = 0
         self.PARK_X_SWEEP_FN = StabilizationEaseFn.LINEAR
+        self.PARK_X_SWEEP_CYCLES = 5
         self.PARK_X_SWEEP_FROM = 0
         self.PARK_X_SWEEP_TO = 200
 
         self.PARK_Y_TYPE = StabilizationParkType.FIXED
         self.PARK_Y = 0
         self.PARK_Y_SWEEP_FN = StabilizationEaseFn.LINEAR
+        self.PARK_Y_SWEEP_CYCLES = 5
         self.PARK_Y_SWEEP_FROM = 0
         self.PARK_Y_SWEEP_TO = 200
 
@@ -51,12 +53,14 @@ class StabilizationSettings:
         if 'parkXType' in d: self.PARK_X_TYPE = StabilizationParkType[d['parkXType']]
         if 'parkX' in d: self.PARK_X = float(d['parkX'])
         if 'parkXSweepFn' in d: self.PARK_X_SWEEP_FN = StabilizationEaseFn[d['parkXSweepFn']]
+        if 'parkXSweepCycles' in d: self.PARK_X_SWEEP_CYCLES = int(d['parkXSweepCycles'])
         if 'parkXSweepFrom' in d: self.PARK_X_SWEEP_FROM = float(d['parkXSweepFrom'])
         if 'parkXSweepTo' in d: self.PARK_X_SWEEP_TO = float(d['parkXSweepTo'])
 
         if 'parkYType' in d: self.PARK_Y_TYPE = StabilizationParkType[d['parkYType']]
         if 'parkY' in d: self.PARK_Y = float(d['parkY'])
         if 'parkYSweepFn' in d: self.PARK_Y_SWEEP_FN = StabilizationEaseFn[d['parkYSweepFn']]
+        if 'parkYSweepCycles' in d: self.PARK_Y_SWEEP_CYCLES = int(d['parkYSweepCycles'])
         if 'parkYSweepFrom' in d: self.PARK_Y_SWEEP_FROM = float(d['parkYSweepFrom'])
         if 'parkYSweepTo' in d: self.PARK_Y_SWEEP_TO = float(d['parkYSweepTo'])
 
@@ -79,11 +83,13 @@ class StabilizationSettings:
             parkXType=self.PARK_X_TYPE.name,
             parkX=self.PARK_X,
             parkXSweepFn=self.PARK_X_SWEEP_FN.name,
+            parkXSweepCycles=self.PARK_X_SWEEP_CYCLES,
             parkXSweepFrom=self.PARK_X_SWEEP_FROM,
             parkXSweepTo=self.PARK_X_SWEEP_TO,
             parkYType=self.PARK_Y_TYPE.name,
             parkY=self.PARK_Y,
             parkYSweepFn=self.PARK_Y_SWEEP_FN.name,
+            parkYSweepCycles=self.PARK_Y_SWEEP_CYCLES,
             parkYSweepFrom=self.PARK_Y_SWEEP_FROM,
             parkYSweepTo=self.PARK_Y_SWEEP_TO,
             parkZ=self.PARK_Z,
