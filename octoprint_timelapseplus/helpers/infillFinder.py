@@ -43,7 +43,7 @@ class InfillFinder:
         return nextInfillBlock[0] < nextSnapshotPos
 
     def startScanFile(self):
-        if not os.path.isfile(self.FILE):
+        if self.FILE is None or not os.path.isfile(self.FILE):
             return
 
         Thread(target=self.scanFile, daemon=True).start()
