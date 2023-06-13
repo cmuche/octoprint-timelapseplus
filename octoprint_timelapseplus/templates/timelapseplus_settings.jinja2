@@ -470,6 +470,11 @@
                         </span>
                         </div>
                     </div>
+                    <div class="alert alert-block" style="margin-top: 1em" data-bind="visible: !settings.plugins.timelapseplus.stabilizationSettings.parkZRelative()">
+                        <strong>Warning: </strong>
+                        If you use an absolute Z-Value you <strong>must</strong> ensure that this value is larger than the height of your printed object!
+                        Otherwise, your print head may collide with your print.
+                    </div>
                 </div>
                 <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-movement">
                     <h4>Movement</h4>
