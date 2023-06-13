@@ -255,12 +255,13 @@
                         That would help a lot to improve and push this feature forward. Thank you!
                     </div>
                     <div class="control-group">
-                        <span class="help-block">
+                        <span class="help-block" style="margin-bottom: 2em">
                             The stabilization feature will park your print head in at certain position before taking a screenshot.
                             As a result you will get a much smoother timelapse since the print head and heat bed will be in a controlled position and won't jump around on your captured snapshots.
+                            Stabilization only works with the <i>Command Capture Mode</i>.
                             <strong>Keep in mind that this will affect your print and printer movements and can therefore influence your print quality.</strong>
                             <br><br>
-                            Discalimer: Be careful about the changes you make here since it could lead to unwanted behavior and could possibly damage your print or printer.
+                            Disclaimer: Be careful about the changes you make here since it could lead to unwanted behavior and could possibly damage your print or printer.
                         </span>
                         <label class="control-label">Enable Stabilization</label>
                         <div class="controls">
@@ -284,6 +285,10 @@
                 </div>
                 <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-parkposition">
                     <h4>Parking Position</h4>
+                    <span class="help-block">
+                        Relative values refer to the current print head position at the time when the snapshot stabilization process is initiated.
+                        Movement Types span over all capture commands found in the GCODE file.
+                    </span>
                     <h5>X-Value</h5>
                     <div class="control-group">
                         <label class="control-label">Type</label>
@@ -334,7 +339,7 @@
                         </div>
 
                         <div class="control-group">
-                            <label class="control-label">From</label>
+                            <label class="control-label">Start Value</label>
                             <div class="controls">
                         <span class="input-append">
                             <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepFrom">
@@ -343,7 +348,7 @@
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label">To</label>
+                            <label class="control-label">End Value</label>
                             <div class="controls">
                         <span class="input-append">
                             <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepTo">
@@ -414,7 +419,7 @@
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label">From</label>
+                            <label class="control-label">Start Value</label>
                             <div class="controls">
                         <span class="input-append">
                             <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepFrom">
@@ -423,7 +428,7 @@
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label">To</label>
+                            <label class="control-label">End Value</label>
                             <div class="controls">
                         <span class="input-append">
                             <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepTo">
@@ -485,12 +490,18 @@
                             <input type="number" step='1' min="1" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.moveSpeed">
                             <span class="add-on">mm/s</span>
                         </span>
+                        <span class="help-block">
+                            The print head will be moved to its parking position with this speed.
+                        </span>
                         </div>
                     </div>
                     <div class="control-group">
                         <label class="control-label">Wait for Movement (M400)</label>
                         <div class="controls">
                             <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilizationSettings.waitForMovement">
+                            <span class="help-block">
+                                Add a <code>M400</code> command before taking a snapshot which prevents the printer from executing commands before the parking movement has finished.
+                            </span>
                         </div>
                     </div>
                     <div class="control-group">
@@ -499,6 +510,10 @@
                         <span class="input-append">
                             <input type="number" step='1' min="0" max="5000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.waitBefore">
                             <span class="add-on">ms</span>
+                        </span>
+                        <span class="help-block">
+                            Wait this long when the print head is parked and before taking a snapshot.
+                            Increase this value if your snapshot is taken too early.
                         </span>
                         </div>
                     </div>
@@ -509,11 +524,19 @@
                             <input type="number" step='1' min="0" max="5000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.waitAfter">
                             <span class="add-on">ms</span>
                         </span>
+                        <span class="help-block">
+                            Wait this long when the snapshot is taken and before returning to the print.
+                            Increase this value if your camera needs more time to take a snapshot.
+                        </span>
                         </div>
                     </div>
                 </div>
                 <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-retraction">
                     <h4>Retraction</h4>
+                    <span class="help-block" style="margin-bottom: 2em">
+                        When moving to the parking position, a retraction will be performed and before the print is resumed, a re-retraction will be performed.
+                        Configure these values for your printer.
+                    </span>
                     <div class="control-group">
                         <label class="control-label">Retraction Speed</label>
                         <div class="controls">
@@ -544,6 +567,13 @@
                 </div>
                 <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-infilllookahead">
                     <h4>Infill Look-Ahead</h4>
+                    <span class="help-block" style="margin-bottom: 2em">
+                        To minimize the impact of the stabilization process on the print quality, Timelapse+ can try to perform stabilized snapshot capturing when printing the infill
+                        rather than the perimeters. Therefore, it will scan your GCODE file when a print is started and tries to detect where infill blocks are.
+                        Your slicer needs to write the infill block information into the produced GCODE file. If a snapshot is triggered which should be stabilized, Timelapse+ then
+                        tries to delay the capturing process until the next time your printer prints an infill. If there won't be any infill before the snapshot after that, Timelapse+
+                        will perform the snapshot capturing immediately.
+                    </span>
                     <div class="control-group">
                         <label class="control-label">Enable Infill Look-Ahead</label>
                         <div class="controls">
@@ -553,6 +583,13 @@
                 </div>
                 <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-oozingcompensation">
                     <h4>Oozing Compensation</h4>
+                    <span class="help-block" style="margin-bottom: 2em">
+                        While the print head is parked, it is mostly unavoidable that your nozzle oozes some filament during the movement process.
+                        To countersteer against that, Timelapse+ can calculate how long the parking and capturing process will last and how much filament will
+                        ooze out of the nozzle in that time. When retracting before parking, this additional amount will be retracted.
+                        Be careful with this feature: A value too high can lead to under-extrusion when resuming after a snapshot.
+                        You will need to play around with this value a bit until it fits your printer.
+                    </span>
                     <div class="control-group">
                         <label class="control-label">Enable Oozing Compensation</label>
                         <div class="controls">
