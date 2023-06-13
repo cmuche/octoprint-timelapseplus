@@ -330,14 +330,19 @@ class TimelapsePlusPlugin(
         if self.WEBCAM_CONTROLLER.getWebcamByPluginId(webcamPluginId) is None:
             self._settings.set(["webcamPluginId"], None)
 
+        self.updateConstants()
         self.resetPositionTracker()
         self.checkPrerequisites()
+
+    def updateConstants(self):
+        Constants.GCODE_G90_G91_EXTRUDER_OVERWRITE = StabilizationSettings(self._settings.get(["stabilizationSettings"])).GCODE_G90_G91_EXTRUDER_OVERWRITE
 
     def resetPositionTracker(self):
         self.POSITION_TRACKER = PositionTracker()
 
     def on_settings_save(self, data):
         ret = super().on_settings_save(data)
+        self.updateConstants()
         self.checkPrerequisites()
         return ret
 

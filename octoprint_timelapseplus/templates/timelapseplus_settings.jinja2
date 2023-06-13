@@ -135,7 +135,7 @@
                 <div class="controls">
                     <input type="text" data-bind="value: settings.plugins.timelapseplus.snapshotCommand">
                     <span class="help-block">Action Command or @-Command that will trigger a snapshot capture. You'll have to include it in your GCODE where you want a snapshot to be triggered.</span>
-                    <code>; Example GCODE
+                    <code class="block">; Example GCODE
 
                         ; @-Command like this:
                         @<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>
@@ -238,6 +238,7 @@
 
             <ul class="nav nav-pills">
                 <li class="active"><a data-toggle="tab" href="#timelapseplus-settings-stab-info">General</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-printer">Printer</a></li>
                 <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-parkposition">Parking Position</a></li>
                 <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-movement">Movement</a></li>
                 <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-retraction">Retraction</a></li>
@@ -258,11 +259,26 @@
                             The stabilization feature will park your print head in at certain position before taking a screenshot.
                             As a result you will get a much smoother timelapse since the print head and heat bed will be in a controlled position and won't jump around on your captured snapshots.
                             <strong>Keep in mind that this will affect your print and printer movements and can therefore influence your print quality.</strong>
-                            Be careful about the changes you make here since it could lead to unwanted behavior and could possibly damage your print or printer.
+                            <br><br>
+                            Discalimer: Be careful about the changes you make here since it could lead to unwanted behavior and could possibly damage your print or printer.
                         </span>
                         <label class="control-label">Enable Stabilization</label>
                         <div class="controls">
                             <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilization">
+                        </div>
+                    </div>
+                </div>
+                <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-printer">
+                    <h4>Printer</h4>
+                    <div class="control-group">
+                        <label class="control-label">G90/G91 Extruder Overwrite</label>
+                        <div class="controls">
+                            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilizationSettings.gcodeG90G91ExtruderOverwrite">
+                            <span class="help-block">
+                                Activate this if the extruder mode is also set by <code>G90</code>/<code>G91</code> commands.
+                                The GCODE Commands <code>G90</code> and <code>G91</code> define if movement commands should be interpreted as relative or absolute values.
+                                In some firmwares (e.g. Marlin-based firmwares) this also sets this behavior for the extruder (which can exclusively be set via <code>M82</code>/<code>M83</code> commands).
+                            </span>
                         </div>
                     </div>
                 </div>

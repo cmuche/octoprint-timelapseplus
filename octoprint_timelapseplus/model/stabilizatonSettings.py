@@ -35,6 +35,8 @@ class StabilizationSettings:
 
         self.INFILL_LOOKAHEAD = False
 
+        self.GCODE_G90_G91_EXTRUDER_OVERWRITE = True
+
         if d is not None:
             self.setJSON(d)
 
@@ -74,6 +76,8 @@ class StabilizationSettings:
         if 'oozingCompensationValue' in d: self.OOZING_COMPENSATION_VALUE = float(d['oozingCompensationValue'])
         if 'infillLookahead' in d: self.INFILL_LOOKAHEAD = d['infillLookahead']
 
+        if 'gcodeG90G91ExtruderOverwrite' in d: self.GCODE_G90_G91_EXTRUDER_OVERWRITE = d['gcodeG90G91ExtruderOverwrite']
+
     def getJSON(self):
         return dict(
             retractSpeed=self.RETRACT_SPEED,
@@ -99,5 +103,6 @@ class StabilizationSettings:
             waitAfter=self.WAIT_AFTER,
             oozingCompensation=self.OOZING_COMPENSATION,
             oozingCompensationValue=self.OOZING_COMPENSATION_VALUE,
-            infillLookahead=self.INFILL_LOOKAHEAD
+            infillLookahead=self.INFILL_LOOKAHEAD,
+            gcodeG90G91ExtruderOverwrite=self.GCODE_G90_G91_EXTRUDER_OVERWRITE
         )
