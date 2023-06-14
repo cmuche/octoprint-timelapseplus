@@ -79,7 +79,6 @@ Check out the [_Examples Page_](https://github.com/cmuche/octoprint-timelapseplu
   - __HLS__ Streams
   - Custom __Scripts__
 - __Purge__ Videos and Frame Collections after `n` days
-- Timelapse+ __doesn't modify your GCODE__ and __doesn't affect your printer's movements__!
 
 # 📚 Wiki
 You can find the Documentation and Help on the [Timelapse+ Wiki Pages](https://github.com/cmuche/octoprint-timelapseplus/wiki).
