@@ -3,12 +3,12 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/cmuche/octoprint-timelapseplus?label=Latest%20Version)
 ![GitHub Release Date](https://img.shields.io/github/release-date/cmuche/octoprint-timelapseplus?label=Release%20Date)
 
-Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render your print timelapses.
+__Timelapse+__ is a powerful yet lightweight plugin to __stabilize__, __capture__, __enhance__ and __render__ your print timelapses.
 
 
 https://github.com/cmuche/octoprint-timelapseplus/assets/14235338/4e62dcdd-8be8-49c9-ad2a-834db2e8b3a1
 
-ℹ️ _Timelapse+ supports the new __Webcam Plugins__ in OctoPrint 1.9.0_
+▶️ [See the full video on YouTube](https://www.youtube.com/watch?v=S7q_VtEwRbI)
 
 # 👾 Why Timelapse+?
 
