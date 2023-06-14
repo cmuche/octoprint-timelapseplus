@@ -252,18 +252,19 @@
                 <div class="tab-pane active" id="timelapseplus-settings-stab-info">
                     <div class="alert alert-block">
                         <strong>Note:</strong>
-                        This feature is currently under development. Please keep in mind that problems can occur or some things may not work properly.
-                        If you have feedback, encounter problems or have suggestions for improvement, please share them in a GitHub Issue.
-                        That would help a lot to improve and push this feature forward. Thank you!
+                        This feature is currently under development. Please keep in mind that problems may occur or certain
+                        functionalities may not work properly. If you encounter any issues, have feedback
+                        or suggestions for improvement, please share them in a GitHub Issue.
+                        Your input would greatly help in advancing and refining this feature. Thank you!
                     </div>
                     <div class="control-group">
                         <span class="help-block" style="margin-bottom: 2em">
-                            The stabilization feature will park your print head in at certain position before taking a screenshot.
-                            As a result you will get a much smoother timelapse since the print head and heat bed will be in a controlled position and won't jump around on your captured snapshots.
-                            Stabilization only works with the <i>Command Capture Mode</i>.
-                            <strong>Keep in mind that this will affect your print and printer movements and can therefore influence your print quality.</strong>
+                            The stabilization feature will park your print head in a certain position before taking a screenshot.
+                            As a result, you will get a much smoother timelapse since the print head and heat bed will be in a controlled
+                            position and won't jump around in your captured snapshots. Stabilization only works with the <i>Command Capture Mode</i>.
+                            <strong>eep in mind that this will affect your print and printer movements, potentially influencing your print quality.</strong>
                             <br><br>
-                            Disclaimer: Be careful about the changes you make here since it could lead to unwanted behavior and could possibly damage your print or printer.
+                            Disclaimer: Be cautious when making changes here, as they could lead to unwanted behavior and potentially damage your print or printer.
                         </span>
                         <label class="control-label">Enable Stabilization</label>
                         <div class="controls">
@@ -570,11 +571,12 @@
                 <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-infilllookahead">
                     <h4>Infill Look-Ahead</h4>
                     <span class="help-block" style="margin-bottom: 2em">
-                        To minimize the impact of the stabilization process on the print quality, Timelapse+ can try to perform stabilized snapshot capturing when printing the infill
-                        rather than the perimeters. Therefore, it will scan your GCODE file when a print is started and tries to detect where infill blocks are.
-                        Your slicer needs to write the infill block information into the produced GCODE file. If a snapshot is triggered which should be stabilized, Timelapse+ then
-                        tries to delay the capturing process until the next time your printer prints an infill. If there won't be any infill before the snapshot after that, Timelapse+
-                        will perform the snapshot capturing immediately.
+                        To minimize the impact of the stabilization process on print quality, Timelapse+ attempts to perform stabilized snapshot capturing
+                        during the printing of infill rather than perimeters. Your GCODE file will be scanned when a print is started and Timelapse+
+                        tries to identify the locations of infill blocks. Your slicer must include the infill block information in the generated GCODE file.
+                        If a snapshot is triggered and requires stabilization, Timelapse+ then attempts to delay the capturing process until your
+                        printer reaches the next infill printing stage. If there are no further infill sections before the subsequent snapshot,
+                        Timelapse+ will proceed with immediate snapshot capturing.
                     </span>
                     <div class="control-group">
                         <label class="control-label">Enable Infill Look-Ahead</label>
@@ -586,11 +588,11 @@
                 <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-oozingcompensation">
                     <h4>Oozing Compensation</h4>
                     <span class="help-block" style="margin-bottom: 2em">
-                        While the print head is parked, it is mostly unavoidable that your nozzle oozes some filament during the movement process.
-                        To countersteer against that, Timelapse+ can calculate how long the parking and capturing process will last and how much filament will
-                        ooze out of the nozzle in that time. When retracting before parking, this additional amount will be retracted.
-                        Be careful with this feature: A value too high can lead to under-extrusion when resuming after a snapshot.
-                        You will need to play around with this value a bit until it fits your printer.
+                        While the print head is parked, it is almost inevitable for your nozzle to experience some filament oozing during the movement process.
+                        To mitigate this, Timelapse+ has the ability to calculate the expected duration of the parking and capturing process, as well
+                        as the amount of filament likely to ooze out during that time. When retracting before parking, this extra filament will be
+                        retracted as well. However, exercise caution with this feature: setting the value too high can result in under-extrusion upon
+                        resuming after a snapshot. It may require some experimentation to find the optimal value for your printer.
                     </span>
                     <div class="control-group">
                         <label class="control-label">Enable Oozing Compensation</label>
