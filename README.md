@@ -6,13 +6,22 @@
 Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render your print timelapses.
 
 
-
-
 https://github.com/cmuche/octoprint-timelapseplus/assets/14235338/4e62dcdd-8be8-49c9-ad2a-834db2e8b3a1
 
-
-
 ℹ️ _Timelapse+ supports the new __Webcam Plugins__ in OctoPrint 1.9.0_
+
+# 👾 Why Timelapse+?
+
+- __EASY TO USE__\
+_A clean, organized, and accessible interface, prioritizing user convenience. It enables storing print snapshots in Frame Collections for easy re-rendering with different settings._
+- __EASY TO SET UP__\
+_Setting up is simple, with options to trigger snapshots based on layer changes or time intervals. It comes with comprehensive documentation and offers intuitive settings without unnecessary complexity._
+- __BEAUTIFUL ENHANCEMENTS__\
+_Elevate your timelapses with stunning enhancements. Timelapse+ provides simple image enhancements, area blurring for selective sharing, and the ability to add beautiful pre and post-roll effects and timecode overlays for artistic flair._
+- __POWERFUL__\
+_Timelapse+ comes with features like frame interpolation for even smoother videos, support for various webcam types and streams, compatibility with OctoPrint's webcam plugins support and multiple output formats (including MP4 and GIF)._
+- __STABLE TIMELAPSES__\
+_Achieve stabilized and smooth timelapses with the print head stabilization feature. It ensures optimal print quality while enabling print head animations for added visual appeal._
 
 # 👀 Examples 
 Check out the [_Examples Page_](https://github.com/cmuche/octoprint-timelapseplus/wiki/Examples)
