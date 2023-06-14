@@ -26,6 +26,10 @@ Check out the [_Examples Page_](https://github.com/cmuche/octoprint-timelapseplu
 - User-friendly and tidy user interface
   - __View, watch and download__ your rendered videos
   - __Preview__ your __render settings__ and check the estimated video length before starting a render job
+- __Stabilized Timelapses__
+  - Park your print head before taking a snapshot
+  - Optimized for print quality
+  - Animated movements
 - Customizable __image enhancements for post-processing__
   - __Brightness__ and __contrast__
   - __Auto-Optimization__ by histogram equalization
