@@ -15,9 +15,9 @@ https://github.com/cmuche/octoprint-timelapseplus/assets/14235338/4e62dcdd-8be8-
 - __EASY TO USE__\
 _A clean, organized, and accessible interface, prioritizing user convenience. It enables storing print snapshots in Frame Collections for easy re-rendering with different settings._
 - __EASY TO SET UP__\
-_Setting up is simple, with options to trigger snapshots based on layer changes or time intervals. It comes with comprehensive documentation and offers intuitive settings without unnecessary complexity._
+_Setting up is simple, with options to trigger snapshots based on layer changes or time intervals. It's well documented and offers intuitive settings without unnecessary complexity._
 - __BEAUTIFUL ENHANCEMENTS__\
-_Elevate your timelapses with stunning enhancements. Timelapse+ provides simple image enhancements, area blurring for selective sharing, and the ability to add beautiful pre and post-roll effects and timecode overlays for artistic flair._
+_Elevate your timelapses with stunning enhancements. Timelapse+ provides simple image enhancements, area blurring for sharing your timelapses and the ability to add beautiful pre and post-roll effects and timecode overlays for artistic flair._
 - __POWERFUL__\
 _Timelapse+ comes with features like frame interpolation for even smoother videos, support for various webcam types and streams, compatibility with OctoPrint's webcam plugins support and multiple output formats (including MP4 and GIF)._
 - __STABLE TIMELAPSES__\
