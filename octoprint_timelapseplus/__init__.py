@@ -10,7 +10,7 @@ from time import sleep
 import logging
 import octoprint.plugin
 from octoprint.events import Events
-from .Log import Log
+from .log import Log
 from .apiController import ApiController
 from .cacheController import CacheController
 from .cleanupController import CleanupController
