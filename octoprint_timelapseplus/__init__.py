@@ -303,16 +303,21 @@ class TimelapsePlusPlugin(
     def initLogger(self):
         logger = logging.getLogger(__name__)
 
-        handlerFile = logging.handlers.RotatingFileHandler(self._settings.get_plugin_logfile_path(), maxBytes=16 * 1024 * 1024)
-        handlerFile.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s: %(message)s"))
-        handlerFile.setLevel(logging.DEBUG)
+        try:
+            handlerFile = logging.handlers.RotatingFileHandler(self._settings.get_plugin_logfile_path(), maxBytes=16 * 1024 * 1024)
+            handlerFile.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s: %(message)s"))
+            handlerFile.setLevel(logging.DEBUG)
+            logger.addHandler(handlerFile)
+        except:
+            pass
 
-        handlerConsole = logging.StreamHandler(sys.stdout)
-        handlerConsole.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s: %(message)s"))
-        handlerConsole.setLevel(logging.DEBUG)
-
-        logger.addHandler(handlerFile)
-        logger.addHandler(handlerConsole)
+        try:
+            handlerConsole = logging.StreamHandler(sys.stdout)
+            handlerConsole.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s: %(message)s"))
+            handlerConsole.setLevel(logging.DEBUG)
+            logger.addHandler(handlerConsole)
+        except:
+            pass
 
         logger.setLevel(logging.DEBUG)
         logger.propagate = False
