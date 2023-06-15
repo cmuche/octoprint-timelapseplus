@@ -3,11 +3,14 @@ import io
 import os
 import random
 import string
+import sys
 from threading import Thread
 from time import sleep
 
+import logging
 import octoprint.plugin
 from octoprint.events import Events
+from .Log import Log
 from .apiController import ApiController
 from .cacheController import CacheController
 from .cleanupController import CleanupController
@@ -297,7 +300,28 @@ class TimelapsePlusPlugin(
     def getRandomString(self, length):
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
 
+    def initLogger(self):
+        logger = logging.getLogger(__name__)
+
+        handlerFile = logging.handlers.RotatingFileHandler(self._settings.get_plugin_logfile_path(), maxBytes=16 * 1024 * 1024)
+        handlerFile.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s: %(message)s"))
+        handlerFile.setLevel(logging.DEBUG)
+
+        handlerConsole = logging.StreamHandler(sys.stdout)
+        handlerConsole.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s: %(message)s"))
+        handlerConsole.setLevel(logging.DEBUG)
+
+        logger.addHandler(handlerFile)
+        logger.addHandler(handlerConsole)
+
+        logger.setLevel(logging.DEBUG)
+        logger.propagate = False
+
+        Log.LOGGER = logger
+
     def on_after_startup(self):
+        self.initLogger()
+
         allWebcams = []
         if hasattr(octoprint, 'webcams'):
             # Webcam support from 1.9.0
