@@ -2,7 +2,7 @@
 
     <ul class="nav nav-pills">
         <li class="active"><a data-toggle="tab" href="#timelapseplus-settings-tab-info">Info</a></li>
-        <li><a data-toggle="tab" href="#timelapseplus-settings-tab-pathsandwebcam">Paths and Webcam</a></li>
+        <li><a data-toggle="tab" href="#timelapseplus-settings-tab-pathsandwebcam">Paths/Webcam</a></li>
         <li><a data-toggle="tab" href="#timelapseplus-settings-tab-general">General</a></li>
         <li><a data-toggle="tab" href="#timelapseplus-settings-tab-purging">Purging</a></li>
         <li><a data-toggle="tab" href="#timelapseplus-settings-tab-stabilization">Stabilization</a></li>
@@ -274,6 +274,7 @@
                 </div>
                 <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-printer">
                     <h4>Printer</h4>
+                    <h5>Firmware</h5>
                     <div class="control-group">
                         <label class="control-label">G90/G91 Extruder Overwrite</label>
                         <div class="controls">
@@ -283,6 +284,52 @@
                                 The GCODE Commands <code>G90</code> and <code>G91</code> define if movement commands should be interpreted as relative or absolute values.
                                 In some firmwares (e.g. Marlin-based firmwares) this also sets this behavior for the extruder (which can exclusively be set via <code>M82</code>/<code>M83</code> commands).
                             </span>
+                        </div>
+                    </div>
+                    <h5>Limits</h5>
+                    <div class="control-group">
+                        <label class="control-label">Min X</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerXMin">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Max X</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerXMax">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Min Y</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerYMin">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Max Y</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerYMax">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Max Z</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerZMax">
+                        <span class="add-on">mm</span>
+                        </span>
                         </div>
                     </div>
                 </div>

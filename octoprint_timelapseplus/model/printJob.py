@@ -186,9 +186,13 @@ class PrintJob:
             else:
                 currentSnapshotProgress = 0
                 if len(self.INFILL_FINDER.SNAPSHOTS) > 0:
-                    currentSnapshotProgress = len(self.FRAMES)/len(self.INFILL_FINDER.SNAPSHOTS)
+                    currentSnapshotProgress = len(self.FRAMES) / len(self.INFILL_FINDER.SNAPSHOTS)
 
-                self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER, currentSnapshotProgress)
+                try:
+                    self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER, currentSnapshotProgress)
+                except Exception as ex:
+                    self.PARENT.sendClientPopup('error', 'Stabilization failed', str(ex) + '\n\nAn unstable Snapshot will be taken instead.')
+                    self.doSnapshotUnstable()
         else:
             self.doSnapshotUnstable()
 

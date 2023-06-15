@@ -9,6 +9,12 @@ class StabilizationSettings:
         self.RETRACT_Z_HOP = 0.2
         self.MOVE_SPEED = 150
 
+        self.PRINTER_X_MIN = 0
+        self.PRINTER_X_MAX = 220
+        self.PRINTER_Y_MIN = 0
+        self.PRINTER_Y_MAX = 220
+        self.PRINTER_Z_MAX = 250
+
         self.PARK_X_TYPE = StabilizationParkType.FIXED
         self.PARK_X = 0
         self.PARK_X_SWEEP_FN = StabilizationEaseFn.LINEAR
@@ -76,6 +82,12 @@ class StabilizationSettings:
         if 'oozingCompensationValue' in d: self.OOZING_COMPENSATION_VALUE = float(d['oozingCompensationValue'])
         if 'infillLookahead' in d: self.INFILL_LOOKAHEAD = d['infillLookahead']
 
+        if 'printerXMin' in d: self.PRINTER_X_MIN = float(d['printerXMin'])
+        if 'printerXMax' in d: self.PRINTER_X_MAX = float(d['printerXMax'])
+        if 'printerYMin' in d: self.PRINTER_Y_MIN = float(d['printerYMin'])
+        if 'printerYMax' in d: self.PRINTER_Y_MAX = float(d['printerYMax'])
+        if 'printerZMax' in d: self.PRINTER_Z_MAX = float(d['printerZMax'])
+
         if 'gcodeG90G91ExtruderOverwrite' in d: self.GCODE_G90_G91_EXTRUDER_OVERWRITE = d['gcodeG90G91ExtruderOverwrite']
 
     def getJSON(self):
@@ -104,5 +116,10 @@ class StabilizationSettings:
             oozingCompensation=self.OOZING_COMPENSATION,
             oozingCompensationValue=self.OOZING_COMPENSATION_VALUE,
             infillLookahead=self.INFILL_LOOKAHEAD,
-            gcodeG90G91ExtruderOverwrite=self.GCODE_G90_G91_EXTRUDER_OVERWRITE
+            gcodeG90G91ExtruderOverwrite=self.GCODE_G90_G91_EXTRUDER_OVERWRITE,
+            printerXMin=self.PRINTER_X_MIN,
+            printerXMax=self.PRINTER_X_MAX,
+            printerYMin=self.PRINTER_Y_MIN,
+            printerYMax=self.PRINTER_Y_MAX,
+            printerZMax=self.PRINTER_Z_MAX
         )

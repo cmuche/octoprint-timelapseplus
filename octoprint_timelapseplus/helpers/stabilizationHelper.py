@@ -116,6 +116,12 @@ class StabilizationHelper:
 
         return posX, posY
 
+    def validateParkingPosition(self, x, y, z):
+        if x < self.STAB.PRINTER_X_MIN or x > self.STAB.PRINTER_X_MAX or \
+                y < self.STAB.PRINTER_Y_MIN or y > self.STAB.PRINTER_Y_MAX or \
+                z > self.STAB.PRINTER_Z_MAX:
+            raise Exception('The Parking Position ' + '({:.2f},{:.2f},{:.2f})'.format(x, y, z) + ' is out of Limits!')
+
     def stabilizeAndQueueSnapshotRawCommands(self, positionTracker, currentSnapshotProgress):
         cmd = []
 
@@ -127,6 +133,8 @@ class StabilizationHelper:
 
             if self.shouldDoRetract():
                 newZPos += self.STAB.RETRACT_Z_HOP
+
+        self.validateParkingPosition(newXPos, newYPos, newZPos)
 
         oozeOffset = 0
         if self.STAB.OOZING_COMPENSATION:
