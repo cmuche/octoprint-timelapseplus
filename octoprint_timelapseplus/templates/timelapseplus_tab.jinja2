@@ -97,17 +97,9 @@
                     <div>
                         <span>Capture Mode:</span>
                         <span data-bind="text: getCaptureModeName(captureMode())"></span>
-                    </div>
-                    <div data-bind="visible: captureMode() == 'TIMED'">
-                        <span>Timer Interval:</span>
-                        <span>
-                            <span data-bind="text: captureTimerInterval"></span>
-                            <span>seconds</span>
+                        <span data-bind="if: captureMode() == 'TIMED'">
+                            (<span data-bind="text: captureTimerInterval"></span>s)
                         </span>
-                    </div>
-                    <div data-bind="visible: captureMode() == 'COMMAND'">
-                        <span>Snapshot Command:</span>
-                        <span data-bind="text: snapshotCommand"></span>
                     </div>
                 </div>
             </div>
