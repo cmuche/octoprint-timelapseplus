@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <div class="quick-actions" data-bind="if: config() != null">
+    <div class="quick-actions" data-bind="if: config() != null && !isRunning()">
         <div class="action clickable" data-bind="click: editQuickSettingsEnabled">
             <div class="icon">
                 <i class="fa fa-power-off positive" data-bind="visible: config().enabled"></i>
