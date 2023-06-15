@@ -8,7 +8,7 @@ __Timelapse+__ is a powerful yet lightweight plugin to __stabilize__, __capture_
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/thumbnail-1.png)](https://www.youtube.com/watch?v=S7q_VtEwRbI)
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/thumbnail-1.png)](https://www.youtube.com/watch?v=S7q_VtEwRbI)
 
-▶️ _Click the Thumbnails to see the Videos on YouTube_
+▶️ _Click the thumbnails to see the videos on YouTube_
 
 # 👾 Why Timelapse+?
 
