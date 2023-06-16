@@ -12,6 +12,7 @@ from PIL import Image
 from octoprint.util import ResettableTimer
 from .captureMode import CaptureMode
 from .stabilizatonSettings import StabilizationSettings
+from ..log import Log
 from ..constants import Constants
 from ..helpers.fileHelper import FileHelper
 from ..helpers.infillFinder import InfillFinder
@@ -21,13 +22,12 @@ from ..helpers.timeHelper import TimeHelper
 
 
 class PrintJob:
-    def __init__(self, id, baseName, parent, logger, settings, dataFolder, webcamController, printer, positionTracker, gcodeFile):
+    def __init__(self, id, baseName, parent, settings, dataFolder, webcamController, printer, positionTracker, gcodeFile):
         self.PARENT = parent
         self.ID = id
         self.WEBCAM_CONTROLLER = webcamController
 
         self._settings = settings
-        self._logger = logger
         self._printer = printer
 
         self.STABILIZE = self._settings.get(["stabilization"])
@@ -73,6 +73,8 @@ class PrintJob:
         if filepos < self.SNAPSHOT_QUEUED_POSITION:
             return None
 
+        Log.debug('Executing queued Snapshot')
+
         self.SNAPSHOT_QUEUED_POSITION = None
         cmd = ['@' + snapshotCommand + '-' + Constants.SUFFIX_PRINT_QUEUED, command]
         return cmd
@@ -86,7 +88,7 @@ class PrintJob:
         os.makedirs(self.FOLDER, exist_ok=True)
 
     def captureTimerTriggered(self):
-        self._logger.info('TIMER TRIGGERED')
+        Log.debug('Capture Timer triggered')
 
         if not self.RUNNING:
             self.CAPTURE_TIMER.cancel()
@@ -99,6 +101,9 @@ class PrintJob:
         self.CAPTURE_TIMER.start()
 
     def start(self):
+        Log.info('Starting Print Job', {'id': self.ID})
+        Log.debug('Stabilization Settings', self.STABILIZATION_HELPER.STAB.getJSON())
+
         self.CURRENT_INDEX = 1
         self.FRAMES = []
         self.CAPTURE_THREADS = []
@@ -115,7 +120,7 @@ class PrintJob:
         return t
 
     def finish(self, success):
-        self._logger.info('Finished Print!')
+        Log.info('Finishing Print Job')
 
         self.METADATA['success'] = success
 
@@ -126,7 +131,7 @@ class PrintJob:
         self.RUNNING = False
 
         # Wait for all Capture Threads to finish
-        self._logger.info('Waiting for Capture Threads...')
+        Log.debug('Waiting for Capture Threads')
         for x in self.CAPTURE_THREADS:
             x.join()
 
@@ -142,8 +147,7 @@ class PrintJob:
 
         metadataFile = self.createMetadata()
 
-        self._logger.info('Zipping Frames...')
-        self._logger.info(self.FRAMES)
+        Log.info('Zipping Frames...')
 
         timePart = datetime.now().strftime("%Y%m%d%H%M%S")
         zipFileName = self._settings.getBaseFolder('timelapse') + '/' + self.BASE_NAME + '_' + timePart + '.zip'
@@ -161,6 +165,9 @@ class PrintJob:
 
         shutil.move(tmpZipFile, zipFileName)
         shutil.rmtree(self.FOLDER)
+
+        Log.info('Created FrameZip', {'file', zipFileName})
+
         return zipFileName
 
     def createMetadata(self):
@@ -174,12 +181,16 @@ class PrintJob:
         if not self.isCapturing():
             return
 
+        Log.info('Triggering Snapshot', {'queued': isQueued, 'filePos': filepos})
+
         if self.STABILIZE:
             fileposAlreadyQueuedToPrinter = filepos is not None and filepos <= self.LAST_QUEUED_POSITION
             canQueue = self.STABILIZATION_HELPER.STAB.INFILL_LOOKAHEAD and \
                        (not fileposAlreadyQueuedToPrinter) and \
                        (not isQueued) and \
                        self.INFILL_FINDER.canQueueSnapshotAt(filepos)
+
+            Log.debug('Snapshot should be stabilized', {'canQueue': canQueue})
 
             if canQueue:
                 self.SNAPSHOT_QUEUED_POSITION = self.INFILL_FINDER.getNextInfillPosition(filepos)
@@ -190,8 +201,9 @@ class PrintJob:
 
                 try:
                     self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER, currentSnapshotProgress)
-                except Exception as ex:
-                    self.PARENT.sendClientPopup('error', 'Stabilization failed', str(ex) + '\n\nAn unstable Snapshot will be taken instead.')
+                except Exception as err:
+                    Log.warning('Stabilization failed', err)
+                    self.PARENT.sendClientPopup('error', 'Stabilization failed', str(err) + '\n\nAn unstable Snapshot will be taken instead.')
                     self.doSnapshotUnstable()
         else:
             self.doSnapshotUnstable()
@@ -199,6 +211,8 @@ class PrintJob:
     def doSnapshotUnstable(self):
         if not self.isCapturing():
             return
+
+        Log.info('Performing unstable Snapshot')
 
         thread = Thread(target=self.doSnapshotInner, daemon=True)
         self.CAPTURE_THREADS.append(thread)

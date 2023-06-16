@@ -8,10 +8,9 @@ from ..helpers.fileHelper import FileHelper
 
 
 class FrameZip:
-    def __init__(self, path, parent, logger):
+    def __init__(self, path, parent):
         self.PARENT = parent
         self.CACHE_CONTROLLER = parent.CACHE_CONTROLLER
-        self._logger = logger
 
         self.FILE = os.path.splitext(os.path.basename(path))[0]
         self.PATH = path
