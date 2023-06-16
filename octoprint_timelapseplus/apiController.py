@@ -328,3 +328,7 @@ class ApiController:
         response = make_response(byteArr)
         response.mimetype = 'image/png'
         return response
+
+    def downloadLog(self):
+        logFile = self._settings.get_plugin_logfile_path()
+        return send_file(logFile, as_attachment=False, mimetype='text/plain')

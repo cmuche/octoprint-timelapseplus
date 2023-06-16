@@ -140,6 +140,10 @@ class TimelapsePlusPlugin(
     def apiStabilizationEaseFnPreview(self):
         return self.doApiRequest(self.API_CONTROLLER.stabilizationEaseFnPreview)
 
+    @octoprint.plugin.BlueprintPlugin.route("/downloadLog", methods=["GET"])
+    def apiDownloadLog(self):
+        return self.doApiRequest(self.API_CONTROLLER.downloadLog)
+
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
         buf = io.BytesIO()
@@ -172,6 +176,7 @@ class TimelapsePlusPlugin(
 
     def get_settings_defaults(self):
         return dict(
+            pluginVersion=self.getPluginVersion(),
             enabled=True,
             ffmpegPath='',
             ffprobePath='',
@@ -369,8 +374,14 @@ class TimelapsePlusPlugin(
         self.resetPositionTracker()
         self.checkPrerequisites()
 
+    def getPluginVersion(self):
+        v = self._plugin_version
+        if v is None:
+            return 'Unknown'
+        return v
+
     def on_after_startup(self):
-        self.PLUGIN_VERSION = self._plugin_version
+        self.PLUGIN_VERSION = self.getPluginVersion()
         self.initLogger()
 
         Log.info('Timelapse+ is starting...')

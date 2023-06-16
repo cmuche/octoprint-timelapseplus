@@ -13,7 +13,9 @@
 
     <div class="tab-content">
         <div class="tab-pane active" id="timelapseplus-settings-tab-info">
-            <div class="alert alert-block">
+            <h3>Timelapse+</h3>
+            <h4>Version <span data-bind="text: settings.plugins.timelapseplus.pluginVersion"></span></h4>
+            <div class="alert alert-block" style="margin-top: 2em;margin-bottom: 2em">
                 <strong>Need Help?</strong>
                 If you are unsure which options to choose or how to start, you can visit the Wiki which also includes a 'Getting Started Guide'.
                 You are always welcome to open an issue on GitHub when you might find a bug, want a feature to be added to Timelapse+, need help or just have a question about this plugin.
@@ -23,10 +25,22 @@
                     Read the Wiki
                 </a>
                 <a href="https://github.com/cmuche/octoprint-timelapseplus/issues/new" target="_blank" class="btn btn-mini">
-                    <i class="fa fa-exclamation-triangle"></i>
+                    <i class="fa fa-plus"></i>
                     Open an Issue
                 </a>
             </div>
+            <a class="btn btn-mini" href="/plugin/timelapseplus/downloadLog" target="_blank">
+                <i class="fa fa-scroll"></i>
+                View Log File
+            </a>
+            <a class="btn btn-mini" href="https://plugins.octoprint.org/plugins/timelapseplus" target="_blank">
+                <i class="fa fa-globe"></i>
+                Plugin Homepage
+            </a>
+            <a class="btn btn-mini" href="https://github.com/cmuche/octoprint-timelapseplus" target="_blank">
+                <i class="fa fa-github"></i>
+                GitHub Page
+            </a>
         </div>
         <div class="tab-pane" id="timelapseplus-settings-tab-pathsandwebcam">
             <h3>Paths and Webcam</h3>
