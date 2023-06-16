@@ -13,7 +13,7 @@ __Timelapse+__ is a powerful yet lightweight plugin to __stabilize__, __capture_
 # 👾 Why Timelapse+?
 
 - __EASY TO USE__\
-_A clean, organized, and accessible interface, prioritizing user convenience. It enables storing print snapshots in Frame Collections for easy re-rendering with different settings._
+_Timelapse+ comes with a clean, organized, and accessible interface, prioritizing user convenience. It enables storing print snapshots in Frame Collections for easy re-rendering with different settings._
 - __EASY TO SET UP__\
 _Setting up is simple, with options to trigger snapshots based on layer changes or time intervals. It's well documented and offers intuitive settings without unnecessary complexity._
 - __BEAUTIFUL ENHANCEMENTS__\
