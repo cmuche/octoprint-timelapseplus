@@ -140,6 +140,7 @@ class PrintJob:
         self.FRAMES = []
         self.CAPTURE_THREADS = []
 
+        self.INFILL_FINDER.destroy()
         self.METADATA['ended'] = TimeHelper.getUnixTimestamp()
 
         if len(finishedFiles) < 1:

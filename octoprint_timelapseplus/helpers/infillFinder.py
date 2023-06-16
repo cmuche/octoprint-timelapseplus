@@ -16,6 +16,12 @@ class InfillFinder:
         self.SNAPSHOTS = []
         self.SNAPSHOT_COMMAND = settings.get(["snapshotCommand"])
 
+    def destroy(self):
+        self.INFILL_BLOCKS = []
+        self.POSITION_LINE_DICT = []
+        self.LINE_POSITION_DICT = []
+        self.SNAPSHOTS = []
+
     def getNextInfillPosition(self, position):
         allInfillBlocksAfter = [x for x in self.INFILL_BLOCKS if x[0] > position]
         nextInfillBlock = min(allInfillBlocksAfter, key=lambda x: x[0])
