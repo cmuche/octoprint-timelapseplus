@@ -52,7 +52,7 @@ class TimelapsePlusPlugin(
 
     def doApiRequest(self, fn):
         try:
-            Log.debug('API Request', {'name': fn.__name__})
+            #Log.debug('API Request', {'name': fn.__name__})
             return fn()
         except Exception as err:
             Log.critical('API Request failed', err)
