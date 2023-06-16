@@ -126,7 +126,7 @@ class PrintJob:
 
         if self.CAPTURE_MODE == CaptureMode.TIMED:
             self.CAPTURE_TIMER.cancel()
-            self.doSnapshot()
+            self.doSnapshotUnstable()
 
         self.RUNNING = False
 
