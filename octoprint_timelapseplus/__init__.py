@@ -378,14 +378,14 @@ class TimelapsePlusPlugin(
         v = self._plugin_version
         if v is None:
             return 'Unknown'
-        return v
+        return str(v)
 
     def on_after_startup(self):
         self.PLUGIN_VERSION = self.getPluginVersion()
         self.initLogger()
 
         Log.info('Timelapse+ is starting...')
-        Log.info('Plugin Version: ' + str(self._plugin_version))
+        Log.info('Plugin Version: ' + self.PLUGIN_VERSION)
 
         try:
             self.startupInner()
