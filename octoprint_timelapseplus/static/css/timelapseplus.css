@@ -302,7 +302,7 @@
     box-shadow: 0.2em 0.2em 0.35em rgba(0, 0, 0, 0.5);
 }
 
-#timelapseplus-settings code, .tlp-preset-modal code {
+#timelapseplus-settings code.block, .tlp-preset-modal code.block {
     display: block;
     white-space: pre-line;
     margin-top: 1em;

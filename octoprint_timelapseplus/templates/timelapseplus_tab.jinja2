@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <div class="quick-actions" data-bind="if: config() != null">
+    <div class="quick-actions" data-bind="if: config() != null && !isRunning()">
         <div class="action clickable" data-bind="click: editQuickSettingsEnabled">
             <div class="icon">
                 <i class="fa fa-power-off positive" data-bind="visible: config().enabled"></i>
@@ -30,6 +30,18 @@
                 <div class="name">Enabled</div>
                 <div class="value positive" data-bind="visible: config().enabled">Yes</div>
                 <div class="value negative" data-bind="visible: !config().enabled">No</div>
+            </div>
+        </div>
+
+        <div class="action clickable" data-bind="click: editQuickSettingsStabilization">
+            <div class="icon">
+                <i class="fa fa-crosshairs positive" data-bind="visible: config().stabilization"></i>
+                <i class="fa fa-crosshairs negative" data-bind="visible: !config().stabilization"></i>
+            </div>
+            <div class="description">
+                <div class="name">Stabilize</div>
+                <div class="value positive" data-bind="visible: config().stabilization">Yes</div>
+                <div class="value negative" data-bind="visible: !config().stabilization">No</div>
             </div>
         </div>
 
@@ -70,6 +82,11 @@
                         <i data-bind="visible: !isCapturing()" class="fa fa-times" style="color: #a50d00"></i>
                     </div>
                     <div>
+                        <span>Stabilization:</span>
+                        <i data-bind="visible: isStabilized()" class="fa fa-check" style="color: #42a500"></i>
+                        <i data-bind="visible: !isStabilized()" class="fa fa-times" style="color: #a50d00"></i>
+                    </div>
+                    <div>
                         <span>Frames captured:</span>
                         <span data-bind="text: snapshotCount"></span>
                     </div>
@@ -80,17 +97,9 @@
                     <div>
                         <span>Capture Mode:</span>
                         <span data-bind="text: getCaptureModeName(captureMode())"></span>
-                    </div>
-                    <div data-bind="visible: captureMode() == 'TIMED'">
-                        <span>Timer Interval:</span>
-                        <span>
-                            <span data-bind="text: captureTimerInterval"></span>
-                            <span>seconds</span>
+                        <span data-bind="if: captureMode() == 'TIMED'">
+                            (<span data-bind="text: captureTimerInterval"></span>s)
                         </span>
-                    </div>
-                    <div data-bind="visible: captureMode() == 'COMMAND'">
-                        <span>Snapshot Command:</span>
-                        <span data-bind="text: snapshotCommand"></span>
                     </div>
                 </div>
             </div>
@@ -183,9 +192,9 @@
             </div>
             <div class="buttons">
                 <div class="btn-group action-buttons">
-                    <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.openVideo($data) }"><i class="fas fa-play"></i></div>
-                    <a class="btn btn-mini" data-bind="attr: {href: $data.url}"><i class="fas fa-download"></i></a>
-                    <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('video', $data.id) }"><i class="fas fa-trash"></i></div>
+                    <div title="Play" href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.openVideo($data) }"><i class="fas fa-play"></i></div>
+                    <a title="Download" class="btn btn-mini" data-bind="attr: {href: $data.url}"><i class="fas fa-download"></i></a>
+                    <div title="Delete" href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('video', $data.id) }"><i class="fas fa-trash"></i></div>
                 </div>
             </div>
         </div>
@@ -240,9 +249,9 @@
             </div>
             <div class="buttons">
                 <div class="btn-group action-buttons">
-                    <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: $parent.openRenderDialog"><i class="fas fa-file-video"></i></div>
-                    <a class="btn btn-mini" data-bind="attr: {href: $data.url}"><i class="fas fa-download"></i></a>
-                    <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('frameZip', $data.id) }"><i class="fas fa-trash"></i></div>
+                    <div title="Render" href="javascript:void(0)" class="btn btn-mini" data-bind="click: $parent.openRenderDialog"><i class="fas fa-file-video"></i></div>
+                    <a title="Download" class="btn btn-mini" data-bind="attr: {href: $data.url}"><i class="fas fa-download"></i></a>
+                    <div title="Delete" href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('frameZip', $data.id) }"><i class="fas fa-trash"></i></div>
                 </div>
             </div>
         </div>

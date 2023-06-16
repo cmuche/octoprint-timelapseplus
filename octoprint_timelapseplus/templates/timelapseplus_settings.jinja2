@@ -2,9 +2,10 @@
 
     <ul class="nav nav-pills">
         <li class="active"><a data-toggle="tab" href="#timelapseplus-settings-tab-info">Info</a></li>
-        <li><a data-toggle="tab" href="#timelapseplus-settings-tab-pathsandwebcam">Paths and Webcam</a></li>
+        <li><a data-toggle="tab" href="#timelapseplus-settings-tab-pathsandwebcam">Paths/Webcam</a></li>
         <li><a data-toggle="tab" href="#timelapseplus-settings-tab-general">General</a></li>
         <li><a data-toggle="tab" href="#timelapseplus-settings-tab-purging">Purging</a></li>
+        <li><a data-toggle="tab" href="#timelapseplus-settings-tab-stabilization">Stabilization</a></li>
         <li><a data-toggle="tab" href="#timelapseplus-settings-tab-enhancement">Enhancement</a></li>
         <li><a data-toggle="tab" href="#timelapseplus-settings-tab-rendering">Rendering</a></li>
     </ul>
@@ -12,7 +13,9 @@
 
     <div class="tab-content">
         <div class="tab-pane active" id="timelapseplus-settings-tab-info">
-            <div class="alert alert-block">
+            <h3>Timelapse+</h3>
+            <h4>Version <span data-bind="text: settings.plugins.timelapseplus.pluginVersion"></span></h4>
+            <div class="alert alert-block" style="margin-top: 2em;margin-bottom: 2em">
                 <strong>Need Help?</strong>
                 If you are unsure which options to choose or how to start, you can visit the Wiki which also includes a 'Getting Started Guide'.
                 You are always welcome to open an issue on GitHub when you might find a bug, want a feature to be added to Timelapse+, need help or just have a question about this plugin.
@@ -22,10 +25,22 @@
                     Read the Wiki
                 </a>
                 <a href="https://github.com/cmuche/octoprint-timelapseplus/issues/new" target="_blank" class="btn btn-mini">
-                    <i class="fa fa-exclamation-triangle"></i>
+                    <i class="fa fa-plus"></i>
                     Open an Issue
                 </a>
             </div>
+            <a class="btn btn-mini" href="/plugin/timelapseplus/downloadLog" target="_blank">
+                <i class="fa fa-scroll"></i>
+                View Log File
+            </a>
+            <a class="btn btn-mini" href="https://plugins.octoprint.org/plugins/timelapseplus" target="_blank">
+                <i class="fa fa-globe"></i>
+                Plugin Homepage
+            </a>
+            <a class="btn btn-mini" href="https://github.com/cmuche/octoprint-timelapseplus" target="_blank">
+                <i class="fa fa-github"></i>
+                GitHub Page
+            </a>
         </div>
         <div class="tab-pane" id="timelapseplus-settings-tab-pathsandwebcam">
             <h3>Paths and Webcam</h3>
@@ -134,7 +149,7 @@
                 <div class="controls">
                     <input type="text" data-bind="value: settings.plugins.timelapseplus.snapshotCommand">
                     <span class="help-block">Action Command or @-Command that will trigger a snapshot capture. You'll have to include it in your GCODE where you want a snapshot to be triggered.</span>
-                    <code>; Example GCODE
+                    <code class="block">; Example GCODE
 
                         ; @-Command like this:
                         @<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>
@@ -146,6 +161,8 @@
                         @<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>-PAUSE
                         ; Resume Snapshot Capturing:
                         @<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>-RESUME
+                        ; Explicitly non-stabilized Snapshot:
+                        @<span data-bind="text: settings.plugins.timelapseplus.snapshotCommand"></span>-UNSTABLE
                     </code>
                 </div>
             </div>
@@ -229,6 +246,426 @@
                 <strong data-bind="text: settings.plugins.timelapseplus.purgeFrameCollectionsDays"></strong>
                 <span>days will be automatically removed.</span>
             </span>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="timelapseplus-settings-tab-stabilization">
+            <h3>Stabilization (Beta)</h3>
+
+            <ul class="nav nav-pills">
+                <li class="active"><a data-toggle="tab" href="#timelapseplus-settings-stab-info">General</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-printer">Printer</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-parkposition">Parking Position</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-movement">Movement</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-retraction">Retraction</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-infilllookahead">Infill Look-Ahead</a></li>
+                <li data-bind="visible: settings.plugins.timelapseplus.stabilization"><a data-toggle="tab" href="#timelapseplus-settings-stab-oozingcompensation">Oozing</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="timelapseplus-settings-stab-info">
+                    <div class="alert alert-block">
+                        <strong>Note:</strong>
+                        This feature is currently under development. Please keep in mind that problems may occur or certain
+                        functionalities may not work properly. If you encounter any issues, have feedback
+                        or suggestions for improvement, please share them in a GitHub Issue.
+                        Your input would greatly help in advancing and refining this feature. Thank you!
+                    </div>
+                    <div class="control-group">
+                        <span class="help-block" style="margin-bottom: 2em">
+                            The stabilization feature will park your print head in a certain position before taking a screenshot.
+                            As a result, you will get a much smoother timelapse since the print head and heat bed will be in a controlled
+                            position and won't jump around in your captured snapshots. Stabilization only works with the <i>Command Capture Mode</i>.
+                            <strong>eep in mind that this will affect your print and printer movements, potentially influencing your print quality.</strong>
+                            <br><br>
+                            Disclaimer: Be cautious when making changes here, as they could lead to unwanted behavior and potentially damage your print or printer.
+                        </span>
+                        <label class="control-label">Enable Stabilization</label>
+                        <div class="controls">
+                            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilization">
+                        </div>
+                    </div>
+                </div>
+                <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-printer">
+                    <h4>Printer</h4>
+                    <h5>Firmware</h5>
+                    <div class="control-group">
+                        <label class="control-label">G90/G91 Extruder Overwrite</label>
+                        <div class="controls">
+                            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilizationSettings.gcodeG90G91ExtruderOverwrite">
+                            <span class="help-block">
+                                Activate this if the extruder mode is also set by <code>G90</code>/<code>G91</code> commands.
+                                The GCODE Commands <code>G90</code> and <code>G91</code> define if movement commands should be interpreted as relative or absolute values.
+                                In some firmwares (e.g. Marlin-based firmwares) this also sets this behavior for the extruder (which can exclusively be set via <code>M82</code>/<code>M83</code> commands).
+                            </span>
+                        </div>
+                    </div>
+                    <h5>Limits</h5>
+                    <div class="control-group">
+                        <label class="control-label">Min X</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerXMin">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Max X</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerXMax">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Min Y</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerYMin">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Max Y</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerYMax">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Max Z</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerZMax">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+                <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-parkposition">
+                    <h4>Parking Position</h4>
+                    <h5>X-Value</h5>
+                    <div class="control-group">
+                        <label class="control-label">Type</label>
+                        <div class="controls">
+                            <select data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXType">
+                                <option value="FIXED">Fixed</option>
+                                <option value="RELATIVE">Relative</option>
+                                <option value="SWEEP">Animation</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkXType() == 'FIXED'">
+                        <label class="control-label">Value</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkX">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+
+                    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkXType() == 'RELATIVE'">
+                        <label class="control-label">Offset</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkX">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+
+                    <div data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkXType() == 'SWEEP'">
+                        <div class="control-group">
+                            <label class="control-label">Effect</label>
+                            <div class="controls">
+                                <select data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepFn">
+                                    <option value="LINEAR">Linear Sweep</option>
+                                    <option value="INOUT">Sine Sweep</option>
+                                    <option value="BOUNCE">Bounce</option>
+                                    <option value="RANDOM">Randomized</option>
+                                    <option value="CYCLIC_SINE">Sine Cyclic</option>
+                                    <option value="CYCLIC_SINE_REDUCING">Sine Cyclic Reducing</option>
+                                    <option value="CYCLIC_LINEAR">Linear Cyclic</option>
+                                    <option value="CYCLIC_LINEAR_REDUCING">Linear Cyclic Reducing</option>
+                                    <option value="CYCLIC_SAWTOOTH">Sawtooth</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Start Value</label>
+                            <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepFrom">
+                        <span class="add-on">mm</span>
+                        </span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">End Value</label>
+                            <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepTo">
+                        <span class="add-on">mm</span>
+                        </span>
+                            </div>
+                        </div>
+                        <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepFn().startsWith('CYCLIC_')">
+                            <label class="control-label">Cycles</label>
+                            <div class="controls">
+                                <input type="number" step='1' min="1" max="50" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkXSweepCycles">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Preview</label>
+                            <div class="controls">
+                                <img style="width:15em" data-bind="attr: {src: '/plugin/timelapseplus/stabilizationEaseFnPreview?fn=' + settings.plugins.timelapseplus.stabilizationSettings.parkXSweepFn() + '&cycles=' + settings.plugins.timelapseplus.stabilizationSettings.parkXSweepCycles()}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5>Y-Value</h5>
+                    <div class="control-group">
+                        <label class="control-label">Type</label>
+                        <div class="controls">
+                            <select data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYType">
+                                <option value="FIXED">Fixed</option>
+                                <option value="RELATIVE">Relative</option>
+                                <option value="SWEEP">Animation</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkYType() == 'FIXED'">
+                        <label class="control-label">Value</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkY">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+
+                    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkYType() == 'RELATIVE'">
+                        <label class="control-label">Offset</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkY">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+
+                    <div data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkYType() == 'SWEEP'">
+                        <div class="control-group">
+                            <label class="control-label">Effect</label>
+                            <div class="controls">
+                                <select data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepFn">
+                                    <option value="LINEAR">Linear Sweep</option>
+                                    <option value="INOUT">Sine Sweep</option>
+                                    <option value="BOUNCE">Bounce</option>
+                                    <option value="RANDOM">Randomized</option>
+                                    <option value="CYCLIC_SINE">Sine Cyclic</option>
+                                    <option value="CYCLIC_SINE_REDUCING">Sine Cyclic Reducing</option>
+                                    <option value="CYCLIC_LINEAR">Linear Cyclic</option>
+                                    <option value="CYCLIC_LINEAR_REDUCING">Linear Cyclic Reducing</option>
+                                    <option value="CYCLIC_SAWTOOTH">Sawtooth</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Start Value</label>
+                            <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepFrom">
+                        <span class="add-on">mm</span>
+                        </span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">End Value</label>
+                            <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="-1000" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepTo">
+                        <span class="add-on">mm</span>
+                        </span>
+                            </div>
+                        </div>
+                        <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepFn().startsWith('CYCLIC_')">
+                            <label class="control-label">Cycles</label>
+                            <div class="controls">
+                                <input type="number" step='1' min="1" max="50" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkYSweepCycles">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Preview</label>
+                            <div class="controls">
+                                <img style="width:15em" data-bind="attr: {src: '/plugin/timelapseplus/stabilizationEaseFnPreview?fn=' + settings.plugins.timelapseplus.stabilizationSettings.parkYSweepFn() + '&cycles=' + settings.plugins.timelapseplus.stabilizationSettings.parkYSweepCycles()}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5>Z-Value</h5>
+                    <div class="control-group">
+                        <label class="control-label">Relative</label>
+                        <div class="controls">
+                            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilizationSettings.parkZRelative">
+                        </div>
+                    </div>
+                    <div class="control-group" data-bind="visible: !settings.plugins.timelapseplus.stabilizationSettings.parkZRelative()">
+                        <label class="control-label">Value</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkZ">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.parkZRelative()">
+                        <label class="control-label">Offset</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.parkZ">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="alert alert-block" style="margin-top: 1em" data-bind="visible: !settings.plugins.timelapseplus.stabilizationSettings.parkZRelative()">
+                        <strong>Warning: </strong>
+                        If you use an absolute Z-Value you <strong>must</strong> ensure that this value is larger than the height of your printed object!
+                        Otherwise, your print head may collide with your print.
+                    </div>
+                </div>
+                <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-movement">
+                    <h4>Movement</h4>
+                    <div class="control-group">
+                        <label class="control-label">Move Speed</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='1' min="1" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.moveSpeed">
+                            <span class="add-on">mm/s</span>
+                        </span>
+                        <span class="help-block">
+                            The print head will be moved to its parking position with this speed.
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Wait for Movement (M400)</label>
+                        <div class="controls">
+                            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilizationSettings.waitForMovement">
+                            <span class="help-block">
+                                Add a <code>M400</code> command before taking a snapshot which prevents the printer from executing commands before the parking movement has finished.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Wait before</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='1' min="0" max="5000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.waitBefore">
+                            <span class="add-on">ms</span>
+                        </span>
+                        <span class="help-block">
+                            Wait this long when the print head is parked and before taking a snapshot.
+                            Increase this value if your snapshot is taken too early.
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Wait after</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='1' min="0" max="5000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.waitAfter">
+                            <span class="add-on">ms</span>
+                        </span>
+                        <span class="help-block">
+                            Wait this long when the snapshot is taken and before returning to the print.
+                            Increase this value if your camera needs more time to take a snapshot.
+                        </span>
+                        </div>
+                    </div>
+                </div>
+                <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-retraction">
+                    <h4>Retraction</h4>
+                    <span class="help-block" style="margin-bottom: 2em">
+                        When moving to the parking position, a retraction will be performed and before the print is resumed, a re-retraction will be performed.
+                        Configure these values for your printer.
+                    </span>
+                    <div class="control-group">
+                        <label class="control-label">Retraction Speed</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='1' min="1" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.retractSpeed">
+                            <span class="add-on">mm/s</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Retraction Amount</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.01' min="0.12" max="10" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.retractAmount">
+                            <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Retraction Z-Hop</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.01' min="0.00" max="10" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.retractZHop">
+                            <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+                <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-infilllookahead">
+                    <h4>Infill Look-Ahead</h4>
+                    <span class="help-block" style="margin-bottom: 2em">
+                        To minimize the impact of the stabilization process on print quality, Timelapse+ attempts to perform stabilized snapshot capturing
+                        during the printing of infill rather than perimeters. Your GCODE file will be scanned when a print is started and Timelapse+
+                        tries to identify the locations of infill blocks. Your slicer must include the infill block information in the generated GCODE file.
+                        If a snapshot is triggered and requires stabilization, Timelapse+ then attempts to delay the capturing process until your
+                        printer reaches the next infill printing stage. If there are no further infill sections before the subsequent snapshot,
+                        Timelapse+ will proceed with immediate snapshot capturing.
+                    </span>
+                    <div class="control-group">
+                        <label class="control-label">Enable Infill Look-Ahead</label>
+                        <div class="controls">
+                            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilizationSettings.infillLookahead">
+                        </div>
+                    </div>
+                </div>
+                <div data-bind="visible: settings.plugins.timelapseplus.stabilization" class="tab-pane" id="timelapseplus-settings-stab-oozingcompensation">
+                    <h4>Oozing Compensation</h4>
+                    <span class="help-block" style="margin-bottom: 2em">
+                        While the print head is parked, it is almost inevitable for your nozzle to experience some filament oozing during the movement process.
+                        To mitigate this, Timelapse+ has the ability to calculate the expected duration of the parking and capturing process, as well
+                        as the amount of filament likely to ooze out during that time. When retracting before parking, this extra filament will be
+                        retracted as well. However, exercise caution with this feature: setting the value too high can result in under-extrusion upon
+                        resuming after a snapshot. It may require some experimentation to find the optimal value for your printer.
+                    </span>
+                    <div class="control-group">
+                        <label class="control-label">Enable Oozing Compensation</label>
+                        <div class="controls">
+                            <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.stabilizationSettings.oozingCompensation">
+                        </div>
+                    </div>
+                    <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.stabilizationSettings.oozingCompensation">
+                        <label class="control-label">Oozing Speed Value</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.01' min="0.01" max="10" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.oozingCompensationValue">
+                            <span class="add-on">mm/s</span>
+                        </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

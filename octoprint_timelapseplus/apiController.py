@@ -7,13 +7,16 @@ import time
 from contextlib import closing
 from zipfile import ZipFile
 
-from PIL import Image
+from PIL import Image, ImageDraw
 from flask import make_response, send_file
 
+from .helpers.listHelper import ListHelper
+from .helpers.stabilizationEaseCalculator import StabilizationEaseCalculator
 from .model.captureMode import CaptureMode
 from .helpers.fileHelper import FileHelper
 from .helpers.timecodeRenderer import TimecodeRenderer
 from .model.frameTimecodeInfo import FrameTimecodeInfo
+from .model.stabilizationEaseFn import StabilizationEaseFn
 from .prerequisitesController import PrerequisitesController
 from .model.webcamType import WebcamType
 from .helpers.formatHelper import FormatHelper
@@ -54,9 +57,7 @@ class ApiController:
         if data['type'] == 'video':
             cacheId = ['thumbnail', 'video', id]
 
-            if self.CACHE_CONTROLLER.isCached(cacheId):
-                thumb = self.CACHE_CONTROLLER.getBytes(cacheId)
-            else:
+            if not self.CACHE_CONTROLLER.isCached(cacheId):
                 allVideos = self.PARENT.listVideos()
                 video = next(x for x in allVideos if x.ID == id)
 
@@ -68,15 +69,16 @@ class ApiController:
                 thumb = self.PARENT.makeThumbnail(img)
                 self.CACHE_CONTROLLER.storeBytes(cacheId, thumb)
 
+                img.close()
+
+            thumb = self.CACHE_CONTROLLER.getBytes(cacheId)
             response = make_response(thumb)
             response.mimetype = 'image/jpeg'
             return response
         if data['type'] == 'frameZip':
             cacheId = ['thumbnail', 'framezip', id]
 
-            if self.CACHE_CONTROLLER.isCached(cacheId):
-                thumb = self.CACHE_CONTROLLER.getBytes(cacheId)
-            else:
+            if not self.CACHE_CONTROLLER.isCached(cacheId):
                 try:
                     allFrameZips = self.PARENT.listFrameZips()
                     frameZip = next(x for x in allFrameZips if x.ID == id)
@@ -88,17 +90,25 @@ class ApiController:
                 thumb = self.PARENT.makeThumbnail(img)
                 self.CACHE_CONTROLLER.storeBytes(cacheId, thumb)
 
+                img.close()
+
+            thumb = self.CACHE_CONTROLLER.getBytes(cacheId)
             response = make_response(thumb)
             response.mimetype = 'image/jpeg'
+
             return response
 
     def maskPreview(self):
         import flask
         data = flask.request.args
         mask = Mask(self.PARENT, self._data_folder, data['id'])
+
         img = Image.open(mask.PATH)
         thumb = self.PARENT.makeThumbnail(img)
         response = make_response(thumb)
+
+        img.close()
+
         response.mimetype = 'image/jpeg'
         return response
 
@@ -121,20 +131,20 @@ class ApiController:
         allFrameZips = self.PARENT.listFrameZips()
         frameZip = next(x for x in allFrameZips if x.ID == data['frameZipId'])
         frame = frameZip.getThumbnail()
-        img = Image.open(io.BytesIO(frame))
 
-        epRaw = self._settings.get(["enhancementPresets"])
-        epList = list(map(lambda x: EnhancementPreset(self.PARENT, x), epRaw))
-        preset = epList[int(data['presetIndex'])]
+        with Image.open(io.BytesIO(frame)) as img:
+            epRaw = self._settings.get(["enhancementPresets"])
+            epList = list(map(lambda x: EnhancementPreset(self.PARENT, x), epRaw))
+            preset = epList[int(data['presetIndex'])]
 
-        img = preset.applyEnhance(img)
-        img = preset.applyBlur(img)
+            img = preset.applyEnhance(img)
+            img = preset.applyBlur(img)
 
-        timecodeRenderer = TimecodeRenderer(self._basefolder)
-        img = timecodeRenderer.applyTimecode(img, preset, FrameTimecodeInfo.getDummy())
+            timecodeRenderer = TimecodeRenderer(self._basefolder)
+            with timecodeRenderer.applyTimecode(img, preset, FrameTimecodeInfo.getDummy()) as imgTimecode:
+                res = self.PARENT.makeThumbnail(imgTimecode, (500, 500))
+                response = make_response(res)
 
-        res = self.PARENT.makeThumbnail(img, (500, 500))
-        response = make_response(res)
         response.mimetype = 'image/jpeg'
         return response
 
@@ -150,11 +160,10 @@ class ApiController:
                 img = preset.applyBlur(img)
 
                 timecodeRederer = TimecodeRenderer(self._basefolder)
-                img = timecodeRederer.applyTimecode(img, preset, FrameTimecodeInfo.getDummy())
-
-                res = self.PARENT.makeThumbnail(img, (500, 500))
-                resBase64 = base64.b64encode(res)
-                return dict(result=resBase64)
+                with timecodeRederer.applyTimecode(img, preset, FrameTimecodeInfo.getDummy()) as imgTimecode:
+                    res = self.PARENT.makeThumbnail(imgTimecode, (500, 500))
+                    resBase64 = base64.b64encode(res)
+                    return dict(result=resBase64)
         finally:
             if snapshot is not None and os.path.isfile(snapshot):
                 os.remove(snapshot)
@@ -236,6 +245,7 @@ class ApiController:
 
             with Image.open(snapshot) as img:
                 width, height = img.size
+
                 res = self.PARENT.makeThumbnail(img, (500, 500))
                 resBase64 = base64.b64encode(res)
                 return dict(time=elapsedTime, size=size, width=width, height=height, result=resBase64)
@@ -274,8 +284,51 @@ class ApiController:
         if 'enabled' in data:
             self._settings.set(["enabled"], bool(data['enabled']))
 
+        if 'stabilization' in data:
+            self._settings.set(["stabilization"], bool(data['stabilization']))
+
         if 'captureMode' in data:
             self._settings.set(["captureMode"], CaptureMode[data['captureMode']].name)
 
         self._settings.save(trigger_event=True)
         self.PARENT.sendClientData()
+
+    def stabilizationEaseFnPreview(self):
+        import flask
+        data = flask.request.args
+
+        fn = StabilizationEaseFn[data['fn']]
+        cycles = int(data['cycles'])
+        imgSizeOut = (200, 50)
+        imgSize = (imgSizeOut[0] * 3, imgSizeOut[1] * 3)
+
+        img = Image.new('RGBA', imgSize, (127, 127, 127, 25))
+        draw = ImageDraw.Draw(img)
+
+        pX = 0
+        pY = StabilizationEaseCalculator.applyEaseFn(0, fn, cycles)
+        for x in ListHelper.rangeList(imgSize[0] - 1):
+            x += 1
+            t = x / imgSize[0]
+            y = StabilizationEaseCalculator.applyEaseFn(t, fn, cycles)
+            y1 = pY * imgSize[1]
+            y2 = y * imgSize[1]
+            draw.line((pX, imgSize[1] - int(y1), x, imgSize[1] - int(y2)), fill=(127, 127, 127, 255), width=5)
+            pX = x
+            pY = y
+
+        imgOut = img.resize(imgSizeOut)
+        buf = io.BytesIO()
+        imgOut.save(buf, format='PNG')
+
+        img.close()
+        imgOut.close()
+
+        byteArr = buf.getvalue()
+        response = make_response(byteArr)
+        response.mimetype = 'image/png'
+        return response
+
+    def downloadLog(self):
+        logFile = self._settings.get_plugin_logfile_path()
+        return send_file(logFile, as_attachment=False, mimetype='text/plain')

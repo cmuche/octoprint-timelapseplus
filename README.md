@@ -3,13 +3,25 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/cmuche/octoprint-timelapseplus?label=Latest%20Version)
 ![GitHub Release Date](https://img.shields.io/github/release-date/cmuche/octoprint-timelapseplus?label=Release%20Date)
 
-Timelapse+ is a powerful yet lightweight plugin to capture, enhance and render your print timelapses.
+__Timelapse+__ is a powerful yet lightweight plugin to __stabilize__, __capture__, __enhance__ and __render__ your print timelapses.
 
-| [![Video](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/timelapseplus.gif)](https://www.youtube.com/watch?v=zs9QcQsIEyM) |
-|------------------------------------------------------------------------------------------------------------------------------------------------|
-| Click the image to see the video                                                                                                               |                                                                                                               |
+[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/thumbnail-1.png)](https://www.youtube.com/watch?v=S7q_VtEwRbI)
+[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/thumbnail-2.png)](https://www.youtube.com/watch?v=-gPDsS9JMlw)
 
-ℹ️ _Timelapse+ supports the new __Webcam Plugins__ in OctoPrint 1.9.0_
+▶️ _Click the thumbnails to see the videos on YouTube_
+
+# 👾 Why Timelapse+?
+
+- __EASY TO USE__\
+_Timelapse+ comes with a clean, organized, and accessible interface, prioritizing user convenience. It enables storing print snapshots in Frame Collections for easy re-rendering with different settings._
+- __EASY TO SET UP__\
+_Setting up is simple, with options to trigger snapshots based on layer changes or time intervals. It's well documented and offers intuitive settings without unnecessary complexity._
+- __BEAUTIFUL ENHANCEMENTS__\
+_Elevate your timelapses with stunning enhancements. Timelapse+ provides simple image enhancements, area blurring for sharing your timelapses and the ability to add beautiful pre and post-roll effects and timecode overlays for artistic flair._
+- __POWERFUL__\
+_Timelapse+ comes with features like frame interpolation for even smoother videos, support for various webcam types and streams, compatibility with OctoPrint's webcam plugins support and multiple output formats (including MP4 and GIF)._
+- __STABLE TIMELAPSES__\
+_Achieve stabilized and smooth timelapses with the print head stabilization feature. It ensures optimal print quality while enabling print head animations for added visual appeal._
 
 # 👀 Examples 
 Check out the [_Examples Page_](https://github.com/cmuche/octoprint-timelapseplus/wiki/Examples)
@@ -23,6 +35,10 @@ Check out the [_Examples Page_](https://github.com/cmuche/octoprint-timelapseplu
 - User-friendly and tidy user interface
   - __View, watch and download__ your rendered videos
   - __Preview__ your __render settings__ and check the estimated video length before starting a render job
+- __Stabilized Timelapses__
+  - Park your print head before taking a snapshot
+  - Optimized for print quality
+  - Animated movements
 - Customizable __image enhancements for post-processing__
   - __Brightness__ and __contrast__
   - __Auto-Optimization__ by histogram equalization
@@ -63,7 +79,6 @@ Check out the [_Examples Page_](https://github.com/cmuche/octoprint-timelapseplu
   - __HLS__ Streams
   - Custom __Scripts__
 - __Purge__ Videos and Frame Collections after `n` days
-- Timelapse+ __doesn't modify your GCODE__ and __doesn't affect your printer's movements__!
 
 # 📚 Wiki
 You can find the Documentation and Help on the [Timelapse+ Wiki Pages](https://github.com/cmuche/octoprint-timelapseplus/wiki).
@@ -88,9 +103,12 @@ You can find the Documentation and Help on the [Timelapse+ Wiki Pages](https://g
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-enhancement.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-enhancement.png)
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-render-1.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-render-1.png)
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-render-2.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-render-2.png)
+[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-enhancement-2.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-enhancement-2.png)
+[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-stab-parking.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-stab-parking.png)
 
 ### More Features
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-test-capture.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-test-capture.png)
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-live-preview.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-live-preview.png)
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/prerequisites.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/prerequisites.png)
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/toast.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/toast.png)
+[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/quick-actions.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/quick-actions.png)

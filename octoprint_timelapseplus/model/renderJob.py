@@ -11,8 +11,8 @@ from threading import Thread
 
 from PIL import Image
 
-from .frameTimecodeInfo import FrameTimecodeInfo
 from .enhancementPreset import EnhancementPreset
+from .frameTimecodeInfo import FrameTimecodeInfo
 from .ppRollPhase import PPRollPhase
 from .renderJobState import RenderJobState
 from .renderPreset import RenderPreset
@@ -20,17 +20,18 @@ from ..helpers.colorHelper import ColorHelper
 from ..helpers.fileHelper import FileHelper
 from ..helpers.formatHelper import FormatHelper
 from ..helpers.imageCombineHelper import ImageCombineHelper
+from ..helpers.jobExecutor import JobExecutor
 from ..helpers.listHelper import ListHelper
 from ..helpers.ppRollRenderer import PPRollRenderer
 from ..helpers.timecodeRenderer import TimecodeRenderer
+from ..log import Log
 
 
 class RenderJob:
-    def __init__(self, baseFolder, frameZip, parent, logger, settings, dataFolder, enhancementPreset=None, renderPreset=None, videoFormat=None):
+    def __init__(self, baseFolder, frameZip, parent, settings, dataFolder, enhancementPreset=None, renderPreset=None, videoFormat=None):
         self.ID = parent.getRandomString(8)
         self.PARENT = parent
         self._settings = settings
-        self._logger = logger
         self._basefolder = baseFolder
 
         self.FRAMEZIP = frameZip
@@ -71,6 +72,7 @@ class RenderJob:
         self.setState(RenderJobState.WAITING)
 
     def setState(self, state):
+        Log.debug('Render Job State changed to ' + state.name, {'id', self.ID})
         self.STATE = state
         self.PROGRESS = 0
         self.ETA = 0
@@ -127,19 +129,23 @@ class RenderJob:
 
         frameFiles = sorted(glob.glob(self.FOLDER + '/[!PPROLL]*.jpg'))
         chunks = ListHelper.chunkList(frameFiles, preset.COMBINE_SIZE)
-        for i, chunk in enumerate(chunks):
-            img = ImageCombineHelper.createCombinedImage(chunk, preset.COMBINE_METHOD)
-            imgName = "C_{:05d}".format(i + 1) + ".jpg"
-            imgPath = self.FOLDER + '/' + imgName
-            img.save(imgPath, quality=100, subsampling=0)
 
-            for f in chunk:
-                os.remove(f)
+        jobs = [(chunk, preset, i) for i, chunk in enumerate(chunks)]
+        JobExecutor(jobs, self.combineImagesInner, self.setProgress).start()
 
-            if self.METADATA is not None:
-                self.METADATA['timestamps'][imgName] = self.METADATA['timestamps'][os.path.basename(chunk[-1])]
+    def combineImagesInner(self, j):
+        chunk, preset, i = j
+        img = ImageCombineHelper.createCombinedImage(chunk, preset.COMBINE_METHOD)
+        imgName = "C_{:05d}".format(i + 1) + ".jpg"
+        imgPath = self.FOLDER + '/' + imgName
+        img.save(imgPath, quality=100, subsampling=0)
+        img.close()
 
-            self.setProgress((i + 1) / len(chunks))
+        for f in chunk:
+            os.remove(f)
+
+        if self.METADATA is not None:
+            self.METADATA['timestamps'][imgName] = self.METADATA['timestamps'][os.path.basename(chunk[-1])]
 
     def blurImages(self, preset):
         if not preset.BLUR:
@@ -148,11 +154,16 @@ class RenderJob:
         self.setState(RenderJobState.BLURRING)
 
         frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
-        for i, frame in enumerate(frameFiles):
-            img = Image.open(frame)
-            imgRes = preset.applyBlur(img)
-            imgRes.save(frame, quality=100, subsampling=0)
-            self.setProgress((i + 1) / len(frameFiles))
+
+        jobs = [(frame, preset) for frame in frameFiles]
+        JobExecutor(jobs, self.blurImagesInner, self.setProgress).start()
+
+    def blurImagesInner(self, j):
+        frame, preset = j
+        img = Image.open(frame)
+        imgRes = preset.applyBlur(img)
+        imgRes.save(frame, quality=100, subsampling=0)
+        imgRes.close()
 
     def enhanceImages(self, preset):
         if not preset.ENHANCE:
@@ -160,11 +171,16 @@ class RenderJob:
 
         self.setState(RenderJobState.ENHANCING)
         frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
-        for i, frame in enumerate(frameFiles):
-            img = Image.open(frame)
-            imgRes = preset.applyEnhance(img)
-            imgRes.save(frame, quality=100, subsampling=0)
-            self.setProgress((i + 1) / len(frameFiles))
+
+        jobs = [(frame, preset) for frame in frameFiles]
+        JobExecutor(jobs, self.enhanceImagesInner, self.setProgress).start()
+
+    def enhanceImagesInner(self, j):
+        frame, preset = j
+        img = Image.open(frame)
+        imgRes = preset.applyEnhance(img)
+        imgRes.save(frame, quality=100, subsampling=0)
+        imgRes.close()
 
     def resizeImages(self, preset):
         if not preset.RESIZE:
@@ -172,11 +188,16 @@ class RenderJob:
 
         self.setState(RenderJobState.RESIZING)
         frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
-        for i, frame in enumerate(frameFiles):
-            img = Image.open(frame)
-            imgRes = preset.applyResize(img)
-            imgRes.save(frame, quality=100, subsampling=0)
-            self.setProgress((i + 1) / len(frameFiles))
+
+        jobs = [(frame, preset) for frame in frameFiles]
+        JobExecutor(jobs, self.resizeImagesInner, self.setProgress).start()
+
+    def resizeImagesInner(self, j):
+        frame, preset = j
+        img = Image.open(frame)
+        imgRes = preset.applyResize(img)
+        imgRes.save(frame, quality=100, subsampling=0)
+        imgRes.close()
 
     def addTimecodes(self, preset):
         if not preset.TIMECODE:
@@ -190,12 +211,19 @@ class RenderJob:
         timecodeRenderer = TimecodeRenderer(self._basefolder)
 
         frameFiles = sorted(glob.glob(self.FOLDER + '/[!PPROLL]*.jpg'))
-        for i, frame in enumerate(frameFiles):
-            frameInfo = FrameTimecodeInfo(self.METADATA['timestamps'][os.path.basename(frame)], self.METADATA['started'], self.METADATA['ended'])
-            img = Image.open(frame)
-            imgRes = timecodeRenderer.applyTimecode(img, preset, frameInfo)
-            imgRes.save(frame, quality=100, subsampling=0)
-            self.setProgress((i + 1) / len(frameFiles))
+
+        jobs = [(frame, timecodeRenderer, preset) for frame in frameFiles]
+        JobExecutor(jobs, self.addTimecodesInner, self.setProgress).start()
+
+    def addTimecodesInner(self, j):
+        frame, timecodeRenderer, preset = j
+        frameInfo = FrameTimecodeInfo(self.METADATA['timestamps'][os.path.basename(frame)], self.METADATA['started'], self.METADATA['ended'])
+        img = Image.open(frame)
+        imgRes = timecodeRenderer.applyTimecode(img, preset, frameInfo)
+        imgRes.save(frame, quality=100, subsampling=0)
+
+        img.close()
+        imgRes.close()
 
     def createPPRoll(self, preset):
         if not preset.PPROLL:
@@ -205,25 +233,25 @@ class RenderJob:
         frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
         numFramesPre = preset.getNumPPRollFramesPre()
         numFramesPost = preset.getNumPPRollFramesPost()
-        currentProgress = 0
 
+        jobs = []
         for i in ListHelper.rangeList(numFramesPre):
             thisRatio = i / numFramesPre
             thisOutFile = self.FOLDER + '/' + "PPROLL_PRE_{:05d}".format(i) + ".jpg"
-            img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset, PPRollPhase.PRE, self.METADATA, self._basefolder)
-            img.save(thisOutFile, quality=100, subsampling=0)
-
-            currentProgress += 1
-            self.setProgress(currentProgress / (numFramesPre + numFramesPost))
+            jobs.append((thisRatio, frameFiles, thisOutFile, preset, PPRollPhase.PRE))
 
         for i in ListHelper.rangeList(numFramesPost):
             thisRatio = i / numFramesPost
             thisOutFile = self.FOLDER + '/' + "PPROLL_POST_{:05d}".format(i) + ".jpg"
-            img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset, PPRollPhase.POST, self.METADATA, self._basefolder)
-            img.save(thisOutFile, quality=100, subsampling=0)
+            jobs.append((thisRatio, frameFiles, thisOutFile, preset, PPRollPhase.POST))
 
-            currentProgress += 1
-            self.setProgress(currentProgress / (numFramesPre + numFramesPost))
+        JobExecutor(jobs, self.createPPRollInner, self.setProgress).start()
+
+    def createPPRollInner(self, j):
+        thisRatio, frameFiles, thisOutFile, preset, phase = j
+        img = PPRollRenderer.renderFrame(thisRatio, frameFiles, preset, phase, self.METADATA, self._basefolder)
+        img.save(thisOutFile, quality=100, subsampling=0)
+        img.close()
 
     def generateFade(self, preset):
         if not preset.FADE:
@@ -240,22 +268,25 @@ class RenderJob:
             fadeInElements = frameFiles[0:fadeInFrameCount]
             for i, element in enumerate(fadeInElements):
                 r = 1 - i / len(fadeInElements)
-                fadeJobs.append((r, element))
+                fadeJobs.append((r, element, preset.FADE_COLOR))
 
         if fadeOutFrameCount > 0:
             fadeOutElements = frameFiles[-fadeOutFrameCount:]
             for i, element in enumerate(fadeOutElements):
                 r = (i + 1) / len(fadeOutElements)
-                fadeJobs.append((r, element))
+                fadeJobs.append((r, element, preset.FADE_COLOR))
 
-        for i, j in enumerate(fadeJobs):
-            col = ColorHelper.hexToRgba(preset.FADE_COLOR, j[0])
-            img = Image.open(j[1]).convert('RGBA')
-            overlay = Image.new("RGBA", img.size, col)
-            img = Image.alpha_composite(img, overlay).convert('RGB')
-            img.save(j[1], quality=100, subsampling=0)
-            overlay.close()
-            self.setProgress((i + 1) / len(fadeJobs))
+        JobExecutor(fadeJobs, self.generateFadeInner, self.setProgress).start()
+
+    def generateFadeInner(self, j):
+        r, imgFile, fadeColor = j
+        col = ColorHelper.hexToRgba(fadeColor, r)
+        img = Image.open(imgFile).convert('RGBA')
+        overlay = Image.new("RGBA", img.size, col)
+        img = Image.alpha_composite(img, overlay).convert('RGB')
+        img.save(imgFile, quality=100, subsampling=0)
+        overlay.close()
+        img.close()
 
     def createPalette(self, format):
         if not format.CREATE_PALETTE:
@@ -333,6 +364,8 @@ class RenderJob:
         thumbImg.save(videoFile + '.thumb.jpg', quality=75)
 
     def runFfmpegWithProgress(self, params, totalFrames=0):
+        Log.debug('Executing FFmpeg', params)
+
         cmd = [self._settings.get(["ffmpegPath"]), '-y']
         cmd += params
         cmd += ['-hide_banner', '-loglevel', 'info', '-progress', 'pipe:1', '-nostats']
@@ -355,11 +388,16 @@ class RenderJob:
 
         if process.returncode != 0:
             for ol in outLines:
-                self._logger.error(ol)
+                Log.error(ol)
 
             raise Exception("Failed to run FFmpeg (Return Code " + str(process.returncode) + ")")
 
     def startPipeline(self):
+        Log.info('Starting Rendering Pipeline', {'id': self.ID})
+        Log.debug('Enhancement Preset', self.ENHANCEMENT_PRESET.getJSON())
+        Log.debug('Render Preset', self.RENDER_PRESET.getJSON())
+        Log.debug('Video Format', self.VIDEO_FORMAT.getJSON())
+
         try:
             self.extractZip()
             self.enhanceImages(self.ENHANCEMENT_PRESET)
@@ -376,6 +414,7 @@ class RenderJob:
 
             self.setState(RenderJobState.FINISHED)
         except Exception as e:
+            Log.error('Render Job failed', e)
             self.ERROR = str(e)
             self.setState(RenderJobState.FAILED)
             raise e
