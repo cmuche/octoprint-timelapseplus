@@ -192,9 +192,9 @@
             </div>
             <div class="buttons">
                 <div class="btn-group action-buttons">
-                    <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.openVideo($data) }"><i class="fas fa-play"></i></div>
-                    <a class="btn btn-mini" data-bind="attr: {href: $data.url}"><i class="fas fa-download"></i></a>
-                    <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('video', $data.id) }"><i class="fas fa-trash"></i></div>
+                    <div title="Play" href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.openVideo($data) }"><i class="fas fa-play"></i></div>
+                    <a title="Download" class="btn btn-mini" data-bind="attr: {href: $data.url}"><i class="fas fa-download"></i></a>
+                    <div title="Delete" href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('video', $data.id) }"><i class="fas fa-trash"></i></div>
                 </div>
             </div>
         </div>
@@ -249,9 +249,9 @@
             </div>
             <div class="buttons">
                 <div class="btn-group action-buttons">
-                    <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: $parent.openRenderDialog"><i class="fas fa-file-video"></i></div>
-                    <a class="btn btn-mini" data-bind="attr: {href: $data.url}"><i class="fas fa-download"></i></a>
-                    <div href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('frameZip', $data.id) }"><i class="fas fa-trash"></i></div>
+                    <div title="Render" href="javascript:void(0)" class="btn btn-mini" data-bind="click: $parent.openRenderDialog"><i class="fas fa-file-video"></i></div>
+                    <a title="Download" class="btn btn-mini" data-bind="attr: {href: $data.url}"><i class="fas fa-download"></i></a>
+                    <div title="Delete" href="javascript:void(0)" class="btn btn-mini" data-bind="click: function(){ $parent.delete('frameZip', $data.id) }"><i class="fas fa-trash"></i></div>
                 </div>
             </div>
         </div>
