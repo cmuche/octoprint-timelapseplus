@@ -1,5 +1,6 @@
 import os.path
 import sys
+import time
 from math import floor
 from threading import Thread
 
@@ -54,9 +55,13 @@ class InfillFinder:
 
     def scanFile(self):
         try:
+            timeStart = time.time()
             self.scanFileInner()
+            timeEnd = time.time()
+
+            timeElapsed = int((timeEnd - timeStart) * 1000)
             dictSize = sys.getsizeof(self.POSITION_LINE_DICT) + sys.getsizeof(self.LINE_POSITION_DICT)
-            Log.info('Infill Scan done', {'numInfillBlocks': len(self.INFILL_BLOCKS), 'numSnapshots': len(self.SNAPSHOTS), 'dictSize': dictSize})
+            Log.info('Infill Scan done', {'elapsedTimeMs': timeElapsed, 'numInfillBlocks': len(self.INFILL_BLOCKS), 'numSnapshots': len(self.SNAPSHOTS), 'dictSize': dictSize})
         except Exception as err:
             # todo send popup to clients
             Log.error('Infill Scanning failed', err)
