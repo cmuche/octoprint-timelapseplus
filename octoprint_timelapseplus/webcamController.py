@@ -40,7 +40,7 @@ class WebcamController:
         return ret
 
     def getSnapshotStreamMp4OrHls(self, path, ffmpegPath, webcamUrl):
-        Log.debug('Getting Snapshot from MP4/HLS Stream', {'stream', webcamUrl})
+        Log.debug('Getting Snapshot from MP4/HLS Stream', {'stream': webcamUrl})
 
         cmd = [ffmpegPath, '-r', '1', '-i', webcamUrl, '-frames:v', '1', '-q:v', '1', '-f', 'image2', '-']
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
@@ -53,7 +53,7 @@ class WebcamController:
         image.save(path, format='JPEG', quality=100, subsampling=0)
 
     def getSnapshotStreamMjpeg(self, path, webcamUrl):
-        Log.debug('Getting Snapshot from MJPEG Stream', {'stream', webcamUrl})
+        Log.debug('Getting Snapshot from MJPEG Stream', {'stream': webcamUrl})
 
         response = requests.get(webcamUrl, stream=True, timeout=self.TIMEOUT)
         if response.status_code != 200:
@@ -88,7 +88,7 @@ class WebcamController:
         image.save(path, 'JPEG', quality=100, subsampling=0)
 
     def getSnapshotJpeg(self, path, webcamUrl):
-        Log.debug('Getting Snapshot from JPEG', {'endpoint', webcamUrl})
+        Log.debug('Getting Snapshot from JPEG', {'endpoint': webcamUrl})
 
         res = requests.get(webcamUrl, stream=True, timeout=self.TIMEOUT)
 
@@ -105,7 +105,7 @@ class WebcamController:
                 raise Exception('Webcam Snapshot Endpoint took too long sending Data')
 
     def getSnapshotFromScript(self, scriptPath, fileName):
-        Log.debug('Getting Snapshot from Script', {'script', scriptPath})
+        Log.debug('Getting Snapshot from Script', {'script': scriptPath})
 
         if not os.path.isfile(scriptPath):
             raise Exception('The Script File does not exist')
@@ -127,7 +127,7 @@ class WebcamController:
             raise Exception('Webcam Script did not create the requested Output File.\n\nReturn Code: ' + str(proc.returncode) + '\n\nOutput: ' + str(scriptOutput))
 
     def getSnapshotFromPlugin(self, pluginId, fileName):
-        Log.debug('Getting Snapshot from Plugin', {'plugin', pluginId})
+        Log.debug('Getting Snapshot from Plugin', {'plugin': pluginId})
 
         if pluginId is None:
             raise Exception('Webcam Plugin is not set')
