@@ -1,4 +1,3 @@
-import concurrent
 import glob
 import json
 import os
@@ -12,8 +11,8 @@ from threading import Thread
 
 from PIL import Image
 
-from .frameTimecodeInfo import FrameTimecodeInfo
 from .enhancementPreset import EnhancementPreset
+from .frameTimecodeInfo import FrameTimecodeInfo
 from .ppRollPhase import PPRollPhase
 from .renderJobState import RenderJobState
 from .renderPreset import RenderPreset
@@ -25,14 +24,14 @@ from ..helpers.jobExecutor import JobExecutor
 from ..helpers.listHelper import ListHelper
 from ..helpers.ppRollRenderer import PPRollRenderer
 from ..helpers.timecodeRenderer import TimecodeRenderer
+from ..log import Log
 
 
 class RenderJob:
-    def __init__(self, baseFolder, frameZip, parent, logger, settings, dataFolder, enhancementPreset=None, renderPreset=None, videoFormat=None):
+    def __init__(self, baseFolder, frameZip, parent, settings, dataFolder, enhancementPreset=None, renderPreset=None, videoFormat=None):
         self.ID = parent.getRandomString(8)
         self.PARENT = parent
         self._settings = settings
-        self._logger = logger
         self._basefolder = baseFolder
 
         self.FRAMEZIP = frameZip
@@ -73,6 +72,7 @@ class RenderJob:
         self.setState(RenderJobState.WAITING)
 
     def setState(self, state):
+        Log.debug('Render Job State changed to ' + state.name, {'id', self.ID})
         self.STATE = state
         self.PROGRESS = 0
         self.ETA = 0
@@ -364,6 +364,8 @@ class RenderJob:
         thumbImg.save(videoFile + '.thumb.jpg', quality=75)
 
     def runFfmpegWithProgress(self, params, totalFrames=0):
+        Log.debug('Executing FFmpeg', params)
+
         cmd = [self._settings.get(["ffmpegPath"]), '-y']
         cmd += params
         cmd += ['-hide_banner', '-loglevel', 'info', '-progress', 'pipe:1', '-nostats']
@@ -386,11 +388,16 @@ class RenderJob:
 
         if process.returncode != 0:
             for ol in outLines:
-                self._logger.error(ol)
+                Log.error(ol)
 
             raise Exception("Failed to run FFmpeg (Return Code " + str(process.returncode) + ")")
 
     def startPipeline(self):
+        Log.info('Starting Rendering Pipeline', {'id': self.ID})
+        Log.debug('Enhancement Preset', self.ENHANCEMENT_PRESET.getJSON())
+        Log.debug('Render Preset', self.RENDER_PRESET.getJSON())
+        Log.debug('Video Format', self.VIDEO_FORMAT.getJSON())
+
         try:
             self.extractZip()
             self.enhanceImages(self.ENHANCEMENT_PRESET)
@@ -407,6 +414,7 @@ class RenderJob:
 
             self.setState(RenderJobState.FINISHED)
         except Exception as e:
+            Log.error('Render Job failed', e)
             self.ERROR = str(e)
             self.setState(RenderJobState.FAILED)
             raise e

@@ -1,6 +1,7 @@
 import math
 
 from .stabilizationEaseCalculator import StabilizationEaseCalculator
+from ..log import Log
 from ..constants import Constants
 from ..model.stabilizationParkType import StabilizationParkType
 
@@ -134,6 +135,7 @@ class StabilizationHelper:
             if self.shouldDoRetract():
                 newZPos += self.STAB.RETRACT_Z_HOP
 
+        Log.debug('Parking Position calculated', {'x': newXPos, 'y': newYPos, 'z': newZPos})
         self.validateParkingPosition(newXPos, newYPos, newZPos)
 
         oozeOffset = 0
@@ -168,7 +170,10 @@ class StabilizationHelper:
     def stabilizeAndQueueSnapshotRaw(self, printer, positionTracker, currentSnapshotProgress):
         if printer.set_job_on_hold(True):
             try:
+                Log.debug('Generating Stabilization Commands', {'snapshotProgress': currentSnapshotProgress})
                 cmd = self.stabilizeAndQueueSnapshotRawCommands(positionTracker, currentSnapshotProgress)
+
+                Log.debug('Executing Stabilization Commands', cmd)
                 printer.commands(cmd, force=True, tags={Constants.GCODE_TAG_STABILIZATION})
                 # TODO Update PositionTracker with the created Commands
             finally:

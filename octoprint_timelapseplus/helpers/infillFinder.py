@@ -1,6 +1,9 @@
 import os.path
+import sys
 from math import floor
 from threading import Thread
+
+from ..log import Log
 
 
 class InfillFinder:
@@ -46,9 +49,19 @@ class InfillFinder:
         if self.FILE is None or not os.path.isfile(self.FILE):
             return
 
+        Log.info('Starting Infill File Scan')
         Thread(target=self.scanFile, daemon=True).start()
 
     def scanFile(self):
+        try:
+            self.scanFileInner()
+            dictSize = sys.getsizeof(self.POSITION_LINE_DICT) + sys.getsizeof(self.LINE_POSITION_DICT)
+            Log.info('Infill Scan done', {'numInfillBlocks': len(self.INFILL_BLOCKS), 'numSnapshots': len(self.SNAPSHOTS), 'dictSize': dictSize})
+        except Exception as err:
+            # todo send popup to clients
+            Log.error('Infill Scanning failed', err)
+
+    def scanFileInner(self):
         lastInfillStart = None
 
         position = 0

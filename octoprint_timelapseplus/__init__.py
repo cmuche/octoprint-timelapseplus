@@ -50,18 +50,26 @@ class TimelapsePlusPlugin(
         self.ERROR = None
         self.POSITION_TRACKER = None
 
+    def doApiRequest(self, fn):
+        try:
+            Log.debug('API Request', {'name': fn.__name__})
+            return fn()
+        except Exception as err:
+            Log.critical('API Request failed', err)
+            return None
+
     @octoprint.plugin.BlueprintPlugin.route("/webcamCapturePreview", methods=["POST"])
     def apiWebcamCapturePreview(self):
-        return self.API_CONTROLLER.webcamCapturePreview()
+        return self.doApiRequest(self.API_CONTROLLER.webcamCapturePreview)
 
     @octoprint.plugin.BlueprintPlugin.route("/reCheckPrerequisites", methods=["POST"])
     def apiReCheckPrerequisites(self):
-        self.API_CONTROLLER.reCheckPrerequisites()
+        self.doApiRequest(self.API_CONTROLLER.reCheckPrerequisites)
         return self.API_CONTROLLER.emptyResponse()
 
     @octoprint.plugin.BlueprintPlugin.route("/createBlurMask", methods=["POST"])
     def apiCreateBlurMask(self):
-        return self.API_CONTROLLER.createBlurMask()
+        return self.doApiRequest(self.API_CONTROLLER.createBlurMask)
 
     @octoprint.plugin.BlueprintPlugin.route("/getData", methods=["POST"])
     def apiGetData(self):
@@ -74,7 +82,7 @@ class TimelapsePlusPlugin(
 
     @octoprint.plugin.BlueprintPlugin.route("/getRenderPresetVideoLength", methods=["POST"])
     def apiGetRenderPresetVideoLength(self):
-        return self.API_CONTROLLER.getRenderPresetVideoLength()
+        return self.doApiRequest(self.API_CONTROLLER.getRenderPresetVideoLength)
 
     @octoprint.plugin.BlueprintPlugin.route("/defaultRenderPreset", methods=["POST"])
     def apiDefaultRenderPreset(self):
@@ -82,55 +90,55 @@ class TimelapsePlusPlugin(
 
     @octoprint.plugin.BlueprintPlugin.route("/delete", methods=["POST"])
     def apiDelete(self):
-        self.API_CONTROLLER.delete()
+        self.doApiRequest(self.API_CONTROLLER.delete)
         return self.API_CONTROLLER.emptyResponse()
 
     @octoprint.plugin.BlueprintPlugin.route("/listPresets", methods=["POST"])
     def apiListPresets(self):
-        return self.API_CONTROLLER.listPresets()
+        return self.doApiRequest(self.API_CONTROLLER.listPresets)
 
     @octoprint.plugin.BlueprintPlugin.route("/render", methods=["POST"])
     def apiRender(self):
-        self.API_CONTROLLER.render()
+        self.doApiRequest(self.API_CONTROLLER.render)
         return self.API_CONTROLLER.emptyResponse()
 
     @octoprint.plugin.BlueprintPlugin.route("/thumbnail", methods=["GET"])
     def apiThumbnail(self):
-        return self.API_CONTROLLER.thumbnail()
+        return self.doApiRequest(self.API_CONTROLLER.thumbnail)
 
     @octoprint.plugin.BlueprintPlugin.route("/maskPreview", methods=["GET"])
     def apiMaskPreview(self):
-        return self.API_CONTROLLER.maskPreview()
+        return self.doApiRequest(self.API_CONTROLLER.maskPreview)
 
     @octoprint.plugin.BlueprintPlugin.route("/download", methods=["GET"])
     def apiDownload(self):
-        return self.API_CONTROLLER.download()
+        return self.doApiRequest(self.API_CONTROLLER.download)
 
     @octoprint.plugin.BlueprintPlugin.route("/enhancementPreview", methods=["GET"])
     def apiEnhancementPreview(self):
-        return self.API_CONTROLLER.enhancementPreview()
+        return self.doApiRequest(self.API_CONTROLLER.enhancementPreview)
 
     @octoprint.plugin.BlueprintPlugin.route("/enhancementPreviewSettings", methods=["POST"])
     def apiEnhancementPreviewSettings(self):
-        return self.API_CONTROLLER.enhancementPreviewSettings()
+        return self.doApiRequest(self.API_CONTROLLER.enhancementPreviewSettings)
 
     @octoprint.plugin.BlueprintPlugin.route("/listVideoFormats", methods=["POST"])
     def apiListVideoFormats(self):
-        return self.API_CONTROLLER.listVideoFormats()
+        return self.doApiRequest(self.API_CONTROLLER.listVideoFormats)
 
     @octoprint.plugin.BlueprintPlugin.route("/uploadFrameZip", methods=["POST"])
     def apiUploadFrameZip(self):
-        self.API_CONTROLLER.uploadFrameZip()
+        self.doApiRequest(self.API_CONTROLLER.uploadFrameZip)
         return self.API_CONTROLLER.emptyResponse()
 
     @octoprint.plugin.BlueprintPlugin.route("/editQuickSettings", methods=["POST"])
     def apiEditQuickSettings(self):
-        self.API_CONTROLLER.editQuickSettings()
+        self.doApiRequest(self.API_CONTROLLER.editQuickSettings)
         return self.API_CONTROLLER.emptyResponse()
 
     @octoprint.plugin.BlueprintPlugin.route("/stabilizationEaseFnPreview", methods=["GET"])
     def apiStabilizationEaseFnPreview(self):
-        return self.API_CONTROLLER.stabilizationEaseFnPreview()
+        return self.doApiRequest(self.API_CONTROLLER.stabilizationEaseFnPreview)
 
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
@@ -224,7 +232,7 @@ class TimelapsePlusPlugin(
 
     def listFrameZips(self):
         files = glob.glob(self._settings.getBaseFolder('timelapse') + '/*.zip')
-        frameZips = list(map(lambda x: FrameZip(x, self, self._logger), files))
+        frameZips = list(map(lambda x: FrameZip(x, self), files))
         frameZips.sort(key=lambda x: x.TIMESTAMP)
         frameZips.reverse()
         return frameZips
@@ -238,7 +246,7 @@ class TimelapsePlusPlugin(
             if ext in videoExtensions:
                 files.append(f)
 
-        videos = list(map(lambda x: Video(x, self, self._logger, self._settings), files))
+        videos = list(map(lambda x: Video(x, self, self._settings), files))
         videos.sort(key=lambda x: x.TIMESTAMP)
         videos.reverse()
         return videos
@@ -314,7 +322,7 @@ class TimelapsePlusPlugin(
         try:
             handlerConsole = logging.StreamHandler(sys.stdout)
             handlerConsole.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s: %(message)s"))
-            handlerConsole.setLevel(logging.DEBUG)
+            handlerConsole.setLevel(logging.WARNING)
             logger.addHandler(handlerConsole)
         except:
             pass
@@ -324,17 +332,15 @@ class TimelapsePlusPlugin(
 
         Log.LOGGER = logger
 
-    def on_after_startup(self):
-        self.initLogger()
-
+    def startupInner(self):
         allWebcams = []
         if hasattr(octoprint, 'webcams'):
             # Webcam support from 1.9.0
             allWebcams = octoprint.webcams.get_webcams()
+            Log.info('Webcam Plugins are supported', allWebcams)
 
-        self.PLUGIN_VERSION = self._plugin_version
         self.CACHE_CONTROLLER = CacheController(self, self.get_plugin_data_folder(), self._settings)
-        self.WEBCAM_CONTROLLER = WebcamController(self, self._logger, self.get_plugin_data_folder(), self._settings, allWebcams)
+        self.WEBCAM_CONTROLLER = WebcamController(self, self.get_plugin_data_folder(), self._settings, allWebcams)
         self.API_CONTROLLER = ApiController(self, self.get_plugin_data_folder(), self._basefolder, self._settings, self.CACHE_CONTROLLER, self.WEBCAM_CONTROLLER)
         self.CLEANUP_CONTROLLER = CleanupController(self, self.get_plugin_data_folder(), self._settings)
         self.CLIENT_CONTROLLER = ClientController(self, self._identifier, self._plugin_manager)
@@ -363,13 +369,28 @@ class TimelapsePlusPlugin(
         self.resetPositionTracker()
         self.checkPrerequisites()
 
+    def on_after_startup(self):
+        self.PLUGIN_VERSION = self._plugin_version
+        self.initLogger()
+
+        Log.info('Timelapse+ is starting...')
+        Log.info('Plugin Version: ' + str(self._plugin_version))
+
+        try:
+            self.startupInner()
+            Log.info('Startup completed')
+        except Exception as err:
+            Log.critical('Startup failed', err)
+
     def updateConstants(self):
         Constants.GCODE_G90_G91_EXTRUDER_OVERWRITE = StabilizationSettings(self._settings.get(["stabilizationSettings"])).GCODE_G90_G91_EXTRUDER_OVERWRITE
 
     def resetPositionTracker(self):
+        Log.debug('Reset Position Tracker')
         self.POSITION_TRACKER = PositionTracker()
 
     def on_settings_save(self, data):
+        Log.debug('Settings were changed')
         ret = super().on_settings_save(data)
         self.updateConstants()
         self.checkPrerequisites()
@@ -377,10 +398,12 @@ class TimelapsePlusPlugin(
 
     def checkPrerequisites(self):
         try:
+            Log.debug('Checking Prerequisites')
             PrerequisitesController.check(self._settings, self.WEBCAM_CONTROLLER)
             self.ERROR = None
-        except Exception as ex:
-            self.ERROR = str(ex)
+        except Exception as err:
+            Log.error('Prerequisites Check failed', err)
+            self.ERROR = str(err)
 
         self.sendClientData()
 
@@ -407,6 +430,7 @@ class TimelapsePlusPlugin(
         self.sendClientData()
 
     def errorSnapshot(self, err):
+        Log.error('Webcam Capture failed', err)
         self.sendClientPopup('error', 'Webcam Capture failed', str(err))
 
     def isSnapshotCommand(self, command, suffix=None):
@@ -465,7 +489,7 @@ class TimelapsePlusPlugin(
         return self.PRINTJOB.gcodeQueuing(gcode, cmd, tags, snapshotCommand)
 
     def render(self, frameZip, enhancementPreset=None, renderPreset=None, videoFormat=None):
-        job = RenderJob(self._basefolder, frameZip, self, self._logger, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset, videoFormat)
+        job = RenderJob(self._basefolder, frameZip, self, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset, videoFormat)
         job.start()
         self.RENDERJOBS.append(job)
 
@@ -480,18 +504,22 @@ class TimelapsePlusPlugin(
         if self.ERROR is not None and not self._settings.get(["forceCapturing"]):
             return
 
+        Log.info('Starting Print')
+
         printerFile = self._printer.get_current_job()['file']['path']
         baseName = os.path.splitext(os.path.basename(printerFile))[0]
 
         gcodeFile = None
-        if self._printer.get_current_job()['file']['origin'] == 'local':
+        origin = self._printer.get_current_job()['file']['origin']
+        if origin == 'local':
             gcodeFile = self._settings.getBaseFolder('uploads') + '/' + printerFile
             if not os.path.isfile(gcodeFile):
                 gcodeFile = None
 
-        id = self.getRandomString(32)
+        Log.debug('Gathered Print File Information', {'origin': origin, 'printerFile': printerFile, 'baseName': baseName, 'gcodeFile': gcodeFile})
 
-        self.PRINTJOB = PrintJob(id, baseName, self, self._logger, self._settings, self.get_plugin_data_folder(), self.WEBCAM_CONTROLLER, self._printer, self.POSITION_TRACKER, gcodeFile)
+        id = self.getRandomString(32)
+        self.PRINTJOB = PrintJob(id, baseName, self, self._settings, self.get_plugin_data_folder(), self.WEBCAM_CONTROLLER, self._printer, self.POSITION_TRACKER, gcodeFile)
         self.PRINTJOB.start()
         self.sendClientData()
 
@@ -505,7 +533,7 @@ class TimelapsePlusPlugin(
 
         if self._settings.get(["renderAfterPrint"]):
             if zipFileName != None:
-                frameZip = FrameZip(zipFileName, self, self._logger)
+                frameZip = FrameZip(zipFileName, self)
                 self.render(frameZip)
 
     def printPaused(self):
