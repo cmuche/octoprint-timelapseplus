@@ -312,7 +312,7 @@ class TimelapsePlusPlugin(
         logger = logging.getLogger(__name__)
 
         try:
-            handlerFile = logging.handlers.RotatingFileHandler(self._settings.get_plugin_logfile_path(), maxBytes=16 * 1024 * 1024)
+            handlerFile = logging.handlers.RotatingFileHandler(self._settings.get_plugin_logfile_path(), maxBytes=8 * 1024 * 1024, backupCount=5)
             handlerFile.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s: %(message)s"))
             handlerFile.setLevel(logging.DEBUG)
             logger.addHandler(handlerFile)
