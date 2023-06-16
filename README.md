@@ -103,9 +103,12 @@ You can find the Documentation and Help on the [Timelapse+ Wiki Pages](https://g
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-enhancement.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-enhancement.png)
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-render-1.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-render-1.png)
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-render-2.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-render-2.png)
+[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-enhancement-2.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-enhancement-2.png)
+[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-stab-parking.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-stab-parking.png)
 
 ### More Features
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-test-capture.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-test-capture.png)
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-live-preview.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/settings-live-preview.png)
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/prerequisites.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/prerequisites.png)
 [![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/toast.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/toast.png)
+[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/quick-actions.png)](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/screenshots/quick-actions.png)
