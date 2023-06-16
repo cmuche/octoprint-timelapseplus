@@ -313,7 +313,7 @@ class TimelapsePlusPlugin(
 
         try:
             handlerFile = logging.handlers.RotatingFileHandler(self._settings.get_plugin_logfile_path(), maxBytes=8 * 1024 * 1024, backupCount=5)
-            handlerFile.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s: %(message)s"))
+            handlerFile.setFormatter(logging.Formatter('[%(asctime)s.%(msecs)03d] %(levelname)s: %(message)s', '%Y-%m-%d %H:%M:%S'))
             handlerFile.setLevel(logging.DEBUG)
             logger.addHandler(handlerFile)
         except:
@@ -321,7 +321,7 @@ class TimelapsePlusPlugin(
 
         try:
             handlerConsole = logging.StreamHandler(sys.stdout)
-            handlerConsole.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s: %(message)s"))
+            handlerConsole.setFormatter(logging.Formatter('[%(asctime)s] %(message)s', '%H:%M:%S'))
             handlerConsole.setLevel(logging.WARNING)
             logger.addHandler(handlerConsole)
         except:
