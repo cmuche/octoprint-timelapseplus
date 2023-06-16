@@ -55,8 +55,9 @@ class PrintJob:
         self.createFolder(dataFolder)
 
         self.GCODE_FILE = gcodeFile
-        self.INFILL_FINDER = InfillFinder(gcodeFile, settings)
-        self.INFILL_FINDER.startScanFile()
+        infillNotify = self.CAPTURE_MODE == CaptureMode.COMMAND and self.STABILIZE and stabilizationSettings.INFILL_LOOKAHEAD
+        self.INFILL_FINDER = InfillFinder(parent, gcodeFile, settings)
+        self.INFILL_FINDER.startScanFile(infillNotify)
         self.SNAPSHOT_QUEUED_POSITION = None
         self.LAST_QUEUED_POSITION = 0
 

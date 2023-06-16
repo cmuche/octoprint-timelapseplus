@@ -8,7 +8,8 @@ from ..log import Log
 
 
 class InfillFinder:
-    def __init__(self, gcodeFile, settings):
+    def __init__(self, parent, gcodeFile, settings):
+        self.PARENT = parent
         self.FILE = gcodeFile
         self.INFILL_BLOCKS = []
         self.POSITION_LINE_DICT = dict()
@@ -52,14 +53,14 @@ class InfillFinder:
 
         return nextInfillBlock[0] < nextSnapshotPos
 
-    def startScanFile(self):
+    def startScanFile(self, notify=False):
         if self.FILE is None or not os.path.isfile(self.FILE):
             return
 
         Log.info('Starting Infill File Scan')
-        Thread(target=self.scanFile, daemon=True).start()
+        Thread(target=self.scanFile, daemon=True, args=(notify,)).start()
 
-    def scanFile(self):
+    def scanFile(self, notify):
         try:
             timeStart = time.time()
             self.scanFileInner()
@@ -68,6 +69,17 @@ class InfillFinder:
             timeElapsed = int((timeEnd - timeStart) * 1000)
             dictSize = sys.getsizeof(self.POSITION_LINE_DICT) + sys.getsizeof(self.LINE_POSITION_DICT)
             Log.info('Infill Scan done', {'elapsedTimeMs': timeElapsed, 'numInfillBlocks': len(self.INFILL_BLOCKS), 'numSnapshots': len(self.SNAPSHOTS), 'dictSize': dictSize})
+
+            if len(self.SNAPSHOTS) == 0:
+                Log.warning('No Snapshots found')
+                if notify:
+                    self.PARENT.sendClientPopup('warning', 'Infill Look-Ahead', 'No Snapshot Commands were found in the GCODE File')
+
+            if len(self.INFILL_BLOCKS) == 0:
+                Log.warning('No Infill Blocks found')
+                if notify:
+                    self.PARENT.sendClientPopup('warning', 'Infill Look-Ahead', 'No Infill Blocks were found in the GCODE File')
+
         except Exception as err:
             # todo send popup to clients
             Log.error('Infill Scanning failed', err)
