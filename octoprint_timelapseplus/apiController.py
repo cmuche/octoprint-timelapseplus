@@ -345,7 +345,7 @@ class ApiController:
                 self.HAS_POS = False
 
             def process(self, line):
-                reStr = '.*X:([0-9.]+).*Y:([0-9.]+).*Z:([0-9.]+).*'
+                reStr = '.?X:([0-9.]+).?Y:([0-9.]+).?Z:([0-9.]+).*'
                 match = re.search(reStr, line)
                 if not match:
                     return
