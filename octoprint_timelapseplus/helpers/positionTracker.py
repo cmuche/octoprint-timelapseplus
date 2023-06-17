@@ -86,6 +86,9 @@ class PositionTracker:
         if gcode == 'G0' or gcode == 'G1':
             # Linear Move https://marlinfw.org/docs/gcode/G000-G001.html
             self.setPosition(propX, propY, propZ, propE, propF)
+        if gcode == 'G2' or gcode == 'G3':
+            # Arc or Circle Move https://marlinfw.org/docs/gcode/G002-G003.html
+            self.setPosition(propX, propY, propZ, propE, propF)
         elif gcode == 'M82':
             # E Absolute https://marlinfw.org/docs/gcode/M083.html
             self.RELATIVE_MODE_EXTRUDER = False
