@@ -10,6 +10,7 @@ from zipfile import ZipFile
 from PIL import Image, ImageDraw
 from flask import make_response, send_file
 
+from .constants import Constants
 from .log import Log
 from .helpers.listHelper import ListHelper
 from .helpers.stabilizationEaseCalculator import StabilizationEaseCalculator
@@ -365,7 +366,7 @@ class ApiController:
                 return dict(error=True, msg='Printer is not ready')
 
             self.PARENT.GCODE_RECEIVED_LISTENER = callback
-            printer.commands(['G28', 'M114 D E R'])
+            printer.commands(['G28', 'M114 D E R'], force=True, tags={Constants.GCODE_TAG_STABILIZATION})
 
             timeTimeout = time.time() + 30
             while not callback.HAS_POS and time.time() < timeTimeout:
