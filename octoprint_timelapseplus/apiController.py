@@ -10,6 +10,7 @@ from zipfile import ZipFile
 from PIL import Image, ImageDraw
 from flask import make_response, send_file
 
+from .log import Log
 from .helpers.listHelper import ListHelper
 from .helpers.stabilizationEaseCalculator import StabilizationEaseCalculator
 from .model.captureMode import CaptureMode
@@ -335,6 +336,7 @@ class ApiController:
 
     def findHomePosition(self):
         if self.PARENT.GCODE_RECEIVED_LISTENER is not None:
+            Log.error('Finding Home Position failed: Already in progress')
             return dict(error=True, msg='Already in progress')
 
         class GcodeCallback:
@@ -359,6 +361,7 @@ class ApiController:
             printer = self.PARENT.getPrinter()
 
             if not printer.is_ready():
+                Log.error('Finding Home Position failed: Printer is not ready')
                 return dict(error=True, msg='Printer is not ready')
 
             self.PARENT.GCODE_RECEIVED_LISTENER = callback
@@ -369,8 +372,11 @@ class ApiController:
                 continue
 
             if not callback.HAS_POS:
+                Log.error('Finding Home Position timed out')
                 return dict(error=True, msg='Timed out')
 
-            return dict(error=False, msg=None, x=callback.X, y=callback.Y, z=callback.Z)
+            posDict = dict(x=callback.X, y=callback.Y, z=callback.Z)
+            Log.info('Home Position found', posDict)
+            return dict(error=False, msg=None, pos=posDict)
         finally:
             self.PARENT.GCODE_RECEIVED_LISTENER = None
