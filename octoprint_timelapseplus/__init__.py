@@ -145,8 +145,8 @@ class TimelapsePlusPlugin(
     def apiDownloadLog(self):
         return self.doApiRequest(self.API_CONTROLLER.downloadLog)
 
-    @octoprint.plugin.BlueprintPlugin.route("/findHomePosition", methods=["GET"])
-    def apiFingHomePosition(self):
+    @octoprint.plugin.BlueprintPlugin.route("/findHomePosition", methods=["POST"])
+    def apiFindHomePosition(self):
         return self.doApiRequest(self.API_CONTROLLER.findHomePosition)
 
     def getPrinter(self):

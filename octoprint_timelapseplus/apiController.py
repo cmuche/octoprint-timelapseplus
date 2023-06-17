@@ -369,7 +369,7 @@ class ApiController:
 
             timeTimeout = time.time() + 30
             while not callback.HAS_POS and time.time() < timeTimeout:
-                continue
+                time.sleep(0.1)
 
             if not callback.HAS_POS:
                 Log.error('Finding Home Position timed out')

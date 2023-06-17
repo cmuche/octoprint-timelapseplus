@@ -75,6 +75,11 @@ $(function() {
         self.editPreEnhancement = ko.observable(null);
         self.editPreRender = ko.observable(null);
 
+        self.autoDetectHomeStarted = ko.observable(false);
+        self.autoDetectHomeError = ko.observable(null);
+        self.autoDetectHomeRunning = ko.observable(false);
+        self.autoDetectHomeSuccess = ko.observable(false);
+
         self.videoFormats.subscribe(function(data) {
             const groups = {};
             for (const obj of data) {
@@ -522,6 +527,38 @@ $(function() {
                 let cfg = self.config();
                 cfgEditFn(cfg);
                 self.config(cfg);
+            });
+        };
+
+        self.openHomeAutoDetect = function() {
+            self.autoDetectHomeStarted(false);
+            self.autoDetectHomeError(null);
+            self.autoDetectHomeRunning(false);
+            self.autoDetectHomeSuccess(false);
+
+            $("div#tlp-modal-auto-detect-home").modal({
+                width: "auto"
+            });
+        };
+
+        self.executeHomeAutoDetect = function() {
+            self.autoDetectHomeStarted(true);
+            self.autoDetectHomeRunning(true);
+            self.api("findHomePosition", {}, function(data) {
+                console.log(data);
+
+                if (data.error) {
+                    self.autoDetectHomeSuccess(false);
+                    self.autoDetectHomeError(data.msg);
+                } else {
+                    self.autoDetectHomeSuccess(true);
+                    self.settings.settings.plugins.timelapseplus.stabilizationSettings.printerHomeX(data.pos.x);
+                    self.settings.settings.plugins.timelapseplus.stabilizationSettings.printerHomeY(data.pos.y);
+                    self.settings.settings.plugins.timelapseplus.stabilizationSettings.printerHomeZ(data.pos.z);
+                }
+
+            }, null, function() {
+                self.autoDetectHomeRunning(false);
             });
         };
 
