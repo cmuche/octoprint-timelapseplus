@@ -15,6 +15,10 @@ class StabilizationSettings:
         self.PRINTER_Y_MAX = 220
         self.PRINTER_Z_MAX = 250
 
+        self.PRINTER_HOME_X = 0
+        self.PRINTER_HOME_Y = 0
+        self.PRINTER_HOME_Z = 0
+
         self.PARK_X_TYPE = StabilizationParkType.FIXED
         self.PARK_X = 0
         self.PARK_X_SWEEP_FN = StabilizationEaseFn.LINEAR
@@ -88,6 +92,10 @@ class StabilizationSettings:
         if 'printerYMax' in d: self.PRINTER_Y_MAX = float(d['printerYMax'])
         if 'printerZMax' in d: self.PRINTER_Z_MAX = float(d['printerZMax'])
 
+        if 'printerHomeX' in d: self.PRINTER_HOME_X = float(d['printerHomeX'])
+        if 'printerHomeY' in d: self.PRINTER_HOME_Y = float(d['printerHomeY'])
+        if 'printerHomeZ' in d: self.PRINTER_HOME_Z = float(d['printerHomeZ'])
+
         if 'gcodeG90G91ExtruderOverwrite' in d: self.GCODE_G90_G91_EXTRUDER_OVERWRITE = d['gcodeG90G91ExtruderOverwrite']
 
     def getJSON(self):
@@ -121,5 +129,8 @@ class StabilizationSettings:
             printerXMax=self.PRINTER_X_MAX,
             printerYMin=self.PRINTER_Y_MIN,
             printerYMax=self.PRINTER_Y_MAX,
-            printerZMax=self.PRINTER_Z_MAX
+            printerZMax=self.PRINTER_Z_MAX,
+            printerHomeX=self.PRINTER_HOME_X,
+            printerHomeY=self.PRINTER_HOME_Y,
+            printerHomeZ=self.PRINTER_HOME_Z
         )
