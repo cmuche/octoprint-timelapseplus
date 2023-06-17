@@ -332,3 +332,45 @@ class ApiController:
     def downloadLog(self):
         logFile = self._settings.get_plugin_logfile_path()
         return send_file(logFile, as_attachment=False, mimetype='text/plain')
+
+    def findHomePosition(self):
+        if self.PARENT.GCODE_RECEIVED_LISTENER is not None:
+            return dict(error=True, msg='Already in progress')
+
+        class GcodeCallback:
+            def __init__(self):
+                self.X = 0
+                self.Y = 0
+                self.Z = 0
+                self.HAS_POS = False
+
+            def process(self, line):
+                reStr = '.*X:([0-9.]+).*Y:([0-9.]+).*Z:([0-9.]+).*'
+                match = re.search(reStr, line)
+                if not match:
+                    return
+                self.X = float(match.group(1))
+                self.Y = float(match.group(2))
+                self.Z = float(match.group(3))
+                self.HAS_POS = True
+
+        try:
+            callback = GcodeCallback()
+            printer = self.PARENT.getPrinter()
+
+            if not printer.is_ready():
+                return dict(error=True, msg='Printer is not ready')
+
+            self.PARENT.GCODE_RECEIVED_LISTENER = callback
+            printer.commands(['G28', 'M114 D E R'])
+
+            timeTimeout = time.time() + 30
+            while not callback.HAS_POS and time.time() < timeTimeout:
+                continue
+
+            if not callback.HAS_POS:
+                return dict(error=True, msg='Timed out')
+
+            return dict(error=False, msg=None, x=callback.X, y=callback.Y, z=callback.Z)
+        finally:
+            self.PARENT.GCODE_RECEIVED_LISTENER = None

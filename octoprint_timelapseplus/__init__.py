@@ -49,6 +49,7 @@ class TimelapsePlusPlugin(
         self.RENDERJOBS = []
         self.ERROR = None
         self.POSITION_TRACKER = None
+        self.GCODE_RECEIVED_LISTENER = None
 
     def doApiRequest(self, fn):
         try:
@@ -143,6 +144,13 @@ class TimelapsePlusPlugin(
     @octoprint.plugin.BlueprintPlugin.route("/downloadLog", methods=["GET"])
     def apiDownloadLog(self):
         return self.doApiRequest(self.API_CONTROLLER.downloadLog)
+
+    @octoprint.plugin.BlueprintPlugin.route("/findHomePosition", methods=["GET"])
+    def apiFingHomePosition(self):
+        return self.doApiRequest(self.API_CONTROLLER.findHomePosition)
+
+    def getPrinter(self):
+        return self._printer
 
     def makeThumbnail(self, img, size=(320, 180)):
         img.thumbnail(size)
@@ -499,6 +507,13 @@ class TimelapsePlusPlugin(
         snapshotCommand = self._settings.get(["snapshotCommand"])
         return self.PRINTJOB.gcodeQueuing(gcode, cmd, tags, snapshotCommand)
 
+    def processGcodeReceived(self, comm, line, *args, **kwargs):
+        try:
+            if self.GCODE_RECEIVED_LISTENER is not None:
+                self.GCODE_RECEIVED_LISTENER.process(line)
+        finally:
+            return line
+
     def render(self, frameZip, enhancementPreset=None, renderPreset=None, videoFormat=None):
         job = RenderJob(self._basefolder, frameZip, self, self._settings, self.get_plugin_data_folder(), enhancementPreset, renderPreset, videoFormat)
         job.start()
@@ -633,5 +648,6 @@ def __plugin_load__():
         "octoprint.comm.protocol.action": __plugin_implementation__.atAction,
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.getUpdateInformation,
         "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.processGcodeSending,
-        "octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.processGcodeQueuing
+        "octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.processGcodeQueuing,
+        "octoprint.comm.protocol.gcode.received": __plugin_implementation__.processGcodeReceived
     }
