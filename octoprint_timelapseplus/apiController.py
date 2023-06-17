@@ -338,7 +338,7 @@ class ApiController:
     def findHomePosition(self):
         if self.PARENT.GCODE_RECEIVED_LISTENER is not None:
             Log.error('Finding Home Position failed: Already in progress')
-            return dict(error=True, msg='Already in progress')
+            return dict(error=True, msg='Finding the Home Position is already in progress')
 
         class GcodeCallback:
             def __init__(self):
@@ -374,7 +374,7 @@ class ApiController:
 
             if not callback.HAS_POS:
                 Log.error('Finding Home Position timed out')
-                return dict(error=True, msg='Timed out')
+                return dict(error=True, msg='Did\'t receive the position. The process timed out.')
 
             posDict = dict(x=callback.X, y=callback.Y, z=callback.Z)
             Log.info('Home Position found', posDict)
