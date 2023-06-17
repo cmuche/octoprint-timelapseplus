@@ -402,7 +402,11 @@ class TimelapsePlusPlugin(
             Log.critical('Startup failed', err)
 
     def updateConstants(self):
-        Constants.GCODE_G90_G91_EXTRUDER_OVERWRITE = StabilizationSettings(self._settings.get(["stabilizationSettings"])).GCODE_G90_G91_EXTRUDER_OVERWRITE
+        stab = StabilizationSettings(self._settings.get(["stabilizationSettings"]))
+        Constants.GCODE_G90_G91_EXTRUDER_OVERWRITE = stab.GCODE_G90_G91_EXTRUDER_OVERWRITE
+        Constants.PRINTER_HOME_X = stab.PRINTER_HOME_X
+        Constants.PRINTER_HOME_Y = stab.PRINTER_HOME_Y
+        Constants.PRINTER_HOME_Z = stab.PRINTER_HOME_Z
 
     def resetPositionTracker(self):
         Log.debug('Reset Position Tracker')

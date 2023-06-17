@@ -109,5 +109,8 @@ class PositionTracker:
         elif gcode == 'G92':
             # Set Position https://marlinfw.org/docs/gcode/G092.html
             self.setPosition(propX, propY, propZ, propE, propF, True)
+        elif gcode == 'G28':
+            # Auto Home https://marlinfw.org/docs/gcode/G028.html
+            self.setPosition(Constants.PRINTER_HOME_X, Constants.PRINTER_HOME_Y, Constants.PRINTER_HOME_Z, None, None, True)
         else:
             return
