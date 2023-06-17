@@ -1272,11 +1272,11 @@
                 <h4 style="margin-top: 0">Please wait</h4>
                 <i style="font-size: 2em" class="fa-solid fa-spinner fa-spin"></i>
             </div>
-            <div data-bind="if: parent.autoDetectHomeError() != null">
+            <div data-bind="if: parent.autoDetectHomeError() != null && !parent.autoDetectHomeRunning()">
                 <h4 style="margin-top: 0">An Error occured</h4>
                 <div data-bind="text: parent.autoDetectHomeError"></div>
             </div>
-            <div data-bind="if: parent.autoDetectHomeSuccess()">
+            <div data-bind="if: parent.autoDetectHomeSuccess() && !parent.autoDetectHomeRunning()">
                 <h4 style="margin-top: 0">Success</h4>
                 The Home Position is:<br><br>
                 X: <span data-bind="text: settings.plugins.timelapseplus.stabilizationSettings.printerHomeX"></span><br>
