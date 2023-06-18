@@ -14,6 +14,25 @@ class PositionTracker:
         self.RELATIVE_MODE = False
         self.RELATIVE_MODE_EXTRUDER = False
 
+        self.RECORDING = []
+        self.RECORDING_ENABLED = False
+
+    def resetRecording(self):
+        self.RECORDING = []
+
+    def setRecordingEnabled(self, val):
+        self.RECORDING_ENABLED = val
+        self.resetRecording()
+
+        if val:
+            self.addRecordingPosition()
+
+    def addRecordingPosition(self):
+        if not self.RECORDING_ENABLED:
+            return
+
+        self.RECORDING.append((self.POS_X, self.POS_Y, self.POS_X))
+
     def getMatchForProp(self, gcode, command, prop):
         if gcode is None or command is None:
             return None
@@ -47,6 +66,8 @@ class PositionTracker:
             return None
 
     def setPosition(self, x, y, z, e, f, override=False):
+        oldE = self.POS_E
+
         if x is not None:
             if self.RELATIVE_MODE and not override:
                 self.POS_X += x
@@ -72,6 +93,8 @@ class PositionTracker:
         if f is not None:
             self.FEEDRATE = f
 
+        if self.POS_E > oldE:
+            self.addRecordingPosition()
 
     def consumeGcode(self, gcode, command, tags):
         if Constants.GCODE_TAG_STABILIZATION in tags:

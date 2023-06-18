@@ -221,6 +221,9 @@ class PrintJob:
         thread.start()
 
     def doSnapshotInner(self):
+        positionRecording = self.PARENT.POSITION_TRACKER.RECORDING
+        self.PARENT.POSITION_TRACKER.resetRecording()
+
         ssTime = TimeHelper.getUnixTimestamp()
         snapshotFile = self.WEBCAM_CONTROLLER.getSnapshot()
 

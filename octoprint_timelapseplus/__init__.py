@@ -530,8 +530,11 @@ class TimelapsePlusPlugin(
         if self.PRINTJOB is not None and self.PRINTJOB.RUNNING:
             return
 
+        self.POSITION_TRACKER.setRecordingEnabled(True)
+
         self.checkPrerequisites()
         if self.ERROR is not None and not self._settings.get(["forceCapturing"]):
+            self.POSITION_TRACKER.setRecordingEnabled(False)
             return
 
         Log.info('Starting Print')
@@ -558,6 +561,7 @@ class TimelapsePlusPlugin(
             return
 
         zipFileName = self.PRINTJOB.finish(success)
+        self.POSITION_TRACKER.setRecordingEnabled(False)
         self.resetPositionTracker()
         self.sendClientData()
 
