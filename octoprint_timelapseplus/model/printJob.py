@@ -12,6 +12,7 @@ from PIL import Image
 from octoprint.util import ResettableTimer
 from .captureMode import CaptureMode
 from .stabilizatonSettings import StabilizationSettings
+from ..helpers.snapshotInfoRenderer import SnapshotInfoRenderer
 from ..log import Log
 from ..constants import Constants
 from ..helpers.fileHelper import FileHelper
@@ -32,6 +33,7 @@ class PrintJob:
 
         self.STABILIZE = self._settings.get(["stabilization"])
         self.POSITION_TRACKER = positionTracker
+        self.SNAPSHOT_INFO_RENDERER = SnapshotInfoRenderer(settings)
 
         stabilizationSettings = StabilizationSettings(self._settings.get(["stabilizationSettings"]))
         self.STABILIZATION_HELPER = StabilizationHelper(settings, stabilizationSettings)
@@ -235,6 +237,8 @@ class PrintJob:
         self.CURRENT_INDEX += 1
         self.METADATA['timestamps'][fileBaseName] = ssTime
         self.FRAMES.append(fileName)
+
+        self.SNAPSHOT_INFO_RENDERER.render(positionRecording)
 
         self.generatePreviewImage()
         self.PARENT.doneSnapshot()
