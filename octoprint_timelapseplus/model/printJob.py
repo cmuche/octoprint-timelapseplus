@@ -61,7 +61,7 @@ class PrintJob:
         self.INFILL_FINDER = InfillFinder(parent, gcodeFile, settings)
         self.INFILL_FINDER.startScanFile(infillNotify)
         self.SNAPSHOT_QUEUED_POSITION = None
-        self.LAST_QUEUED_POSITION = 0
+        self.LAST_QUEUED_FILEPOS = 0
 
     def gcodeQueuing(self, gcode, command, tags, snapshotCommand):
         if self.SNAPSHOT_QUEUED_POSITION is None:
@@ -71,7 +71,7 @@ class PrintJob:
         if filepos is None:
             return None
 
-        self.LAST_QUEUED_POSITION = filepos
+        self.LAST_QUEUED_FILEPOS = filepos
 
         if filepos < self.SNAPSHOT_QUEUED_POSITION:
             return None
@@ -188,7 +188,7 @@ class PrintJob:
         Log.info('Triggering Snapshot', {'queued': isQueued, 'filePos': filepos})
 
         if self.STABILIZE:
-            fileposAlreadyQueuedToPrinter = filepos is not None and filepos <= self.LAST_QUEUED_POSITION
+            fileposAlreadyQueuedToPrinter = filepos is not None and filepos <= self.LAST_QUEUED_FILEPOS
             canQueue = self.STABILIZATION_HELPER.STAB.INFILL_LOOKAHEAD and \
                        (not fileposAlreadyQueuedToPrinter) and \
                        (not isQueued) and \
