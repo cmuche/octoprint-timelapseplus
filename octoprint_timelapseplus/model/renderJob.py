@@ -175,6 +175,15 @@ class RenderJob:
         jobs = [(frame, preset) for frame in frameFiles]
         JobExecutor(jobs, self.enhanceImagesInner, self.setProgress).start()
 
+    def analyzeBrightnessAndContrast(image):
+        grayscaleImage = image.convert('L')
+        histogram = grayscaleImage.histogram()
+        pixels = sum(histogram)
+        brightness = sum(i * histogram[i] for i in range(256)) / pixels
+        contrast = (sum((i - brightness) ** 2 * histogram[i] for i in range(256)) / pixels) ** 0.5
+        grayscaleImage.close()
+        return brightness, contrast
+
     def normalizeImages(self, preset):
         if not preset.NORMALIZE:
             return
@@ -188,24 +197,25 @@ class RenderJob:
 
         self.setState(RenderJobState.NORMALIZING)
         targetBrightness = sum(analyzedValues[k][0] for k in analyzedValues.keys()) / len(analyzedValues.keys())
-        targetContrast = sum(analyzedValues[k][0] for k in analyzedValues.keys()) / len(analyzedValues.keys())
+        targetContrast = sum(analyzedValues[k][1] for k in analyzedValues.keys()) / len(analyzedValues.keys())
 
         jobs = [(frame, preset, analyzedValues[frame], targetBrightness, targetContrast) for frame in frameFiles]
         JobExecutor(jobs, self.normalizeImagesInner, self.setProgress).start()
 
     def normalizeImagesInner(self, j):
         frame, preset, frameValues, targetBrightness, targetContrast = j
-        frameBrightness, frameContrast = frameValues
 
         img = Image.open(frame)
 
-        factorBrightness = targetBrightness / frameBrightness
-        factorContrast = targetContrast / frameContrast
+        frameBrightness = frameValues[0]
 
+        factorBrightness = targetBrightness / frameBrightness
         enhancerBrightness = ImageEnhance.Brightness(img)
         imgRes1 = enhancerBrightness.enhance(factorBrightness)
 
+        frameContrast = self.analyzeBrightnessAndContrast(img)[1]
         enhancerContrast = ImageEnhance.Contrast(imgRes1)
+        factorContrast = targetContrast / frameContrast
         imgRes2 = enhancerContrast.enhance(factorContrast)
 
         imgRes2.save(frame, quality=100, subsampling=0)
@@ -216,16 +226,9 @@ class RenderJob:
     def analyzeImagesInner(self, j):
         frame, preset, analyzedValues = j
         img = Image.open(frame)
-        imgGrayscale = img.convert('L')
 
-        hist = imgGrayscale.histogram()
-        pixels = sum(hist)
-        brightness = sum(i * hist[i] for i in range(256)) / pixels
-        contrast = (sum((i - brightness) ** 2 * hist[i] for i in range(256)) / pixels) ** 0.5
-
+        brightness, contrast = self.analyzeBrightnessAndContrast(img)
         analyzedValues[frame] = (brightness, contrast)
-
-        imgGrayscale.close()
         img.close()
 
     def enhanceImagesInner(self, j):
