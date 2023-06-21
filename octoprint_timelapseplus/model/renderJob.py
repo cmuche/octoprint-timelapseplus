@@ -175,7 +175,7 @@ class RenderJob:
         jobs = [(frame, preset) for frame in frameFiles]
         JobExecutor(jobs, self.enhanceImagesInner, self.setProgress).start()
 
-    def analyzeBrightnessAndContrast(image):
+    def analyzeBrightnessAndContrast(self, image):
         grayscaleImage = image.convert('L')
         histogram = grayscaleImage.histogram()
         pixels = sum(histogram)
@@ -217,7 +217,7 @@ class RenderJob:
         enhancerBrightness = ImageEnhance.Brightness(img)
         imgRes1 = enhancerBrightness.enhance(factorBrightness)
 
-        frameContrast = self.analyzeBrightnessAndContrast(img)[1]
+        frameContrast = self.analyzeBrightnessAndContrast(imgRes1)[1]
         enhancerContrast = ImageEnhance.Contrast(imgRes1)
         factorContrast = targetContrast / frameContrast
         imgRes2 = enhancerContrast.enhance(factorContrast)
