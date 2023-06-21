@@ -13,7 +13,7 @@ class EnhancementPreset:
         self.EQUALIZE = False
         self.BRIGHTNESS = 1
         self.CONTRAST = 1
-        self.NORMALIZE = True
+        self.NORMALIZE = False
 
         self.BLUR = False
         self.BLUR_RADIUS = 30
@@ -62,6 +62,7 @@ class EnhancementPreset:
 
     def setJSON(self, parent, d):
         if 'name' in d: self.NAME = d['name']
+        if 'normalize' in d: self.NORMALIZE = d['normalize']
         if 'enhance' in d: self.ENHANCE = d['enhance']
         if 'equalize' in d: self.EQUALIZE = d['equalize']
         if 'brightness' in d: self.BRIGHTNESS = float(d['brightness'])
@@ -86,6 +87,7 @@ class EnhancementPreset:
     def getJSON(self):
         d = dict(
             name=self.NAME,
+            normalize=self.NORMALIZE,
             enhance=self.ENHANCE,
             equalize=self.EQUALIZE,
             brightness=self.BRIGHTNESS,
