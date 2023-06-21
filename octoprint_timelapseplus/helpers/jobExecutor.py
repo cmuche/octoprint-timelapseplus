@@ -4,7 +4,8 @@ import os
 
 class JobExecutor:
 
-    def __init__(self, jobs, callbackExecute, callbackProgress):
+    def __init__(self, settings, jobs, callbackExecute, callbackProgress):
+        self._settings = settings
         self.JOBS = jobs
         self.COUNT_JOBS = len(jobs)
 
@@ -16,7 +17,10 @@ class JobExecutor:
         self.CPU_COUNT = os.cpu_count()
 
     def start(self):
-        numWorkers = max(1, int(self.CPU_COUNT / 2))
+        numWorkers = 1
+        if self._settings.get(["renderMultithreading"]):
+            numWorkers = max(1, int(self.CPU_COUNT / 2))
+
         with concurrent.futures.ThreadPoolExecutor(max_workers=numWorkers) as executor:
             futures = [executor.submit(self.processJob, job) for job in self.JOBS]
             concurrent.futures.wait(futures)
