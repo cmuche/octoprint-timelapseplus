@@ -60,7 +60,7 @@ class EnhancementPreset:
 
         if self.EQUALIZE:
             img = ImageOps.equalize(img)
-        # img = ImageOps.autocontrast(img)
+                l_channel, a_channel, b_channel = imgLab.split()
         return img
 
     def setJSON(self, parent, d):
