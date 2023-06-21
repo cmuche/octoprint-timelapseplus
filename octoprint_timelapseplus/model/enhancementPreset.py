@@ -13,6 +13,7 @@ class EnhancementPreset:
         self.EQUALIZE = False
         self.BRIGHTNESS = 1
         self.CONTRAST = 1
+        self.NORMALIZE = True
 
         self.BLUR = False
         self.BLUR_RADIUS = 30
