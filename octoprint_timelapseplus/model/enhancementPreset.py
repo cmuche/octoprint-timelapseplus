@@ -52,11 +52,18 @@ class EnhancementPreset:
         if not self.ENHANCE:
             return img
 
-        img = ImageEnhance.Brightness(img).enhance(self.BRIGHTNESS)
-        img = ImageEnhance.Contrast(img).enhance(self.CONTRAST)
+        if self.BRIGHTNESS != 1:
+            img = ImageEnhance.Brightness(img).enhance(self.BRIGHTNESS)
+
+        if self.CONTRAST != 1:
+            img = ImageEnhance.Contrast(img).enhance(self.CONTRAST)
+
         if self.EQUALIZE:
-            img = ImageOps.equalize(img)
-        # img = ImageOps.autocontrast(img)
+            with img.convert('LAB') as imgLab:
+                l_channel, a_channel, b_channel = imgLab.split()
+            clahe = ImageOps.equalize(l_channel)
+            img = Image.merge('LAB', (clahe, a_channel, b_channel)).convert('RGB')
+
         return img
 
     def setJSON(self, parent, d):
