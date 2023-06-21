@@ -197,9 +197,6 @@ class RenderJob:
 
         self.setState(RenderJobState.NORMALIZING)
 
-        if len(analyzedValues.keys()) == 0:
-            return
-
         targetBrightness = sum(analyzedValues[k][0] for k in analyzedValues.keys()) / len(analyzedValues.keys())
         targetContrast = sum(analyzedValues[k][1] for k in analyzedValues.keys()) / len(analyzedValues.keys())
 
