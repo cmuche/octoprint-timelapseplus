@@ -374,8 +374,8 @@ $(function() {
                 "APPLYING_FADE": {title: "Applying Fade Effect", showProgress: true, icon: "fas fa-fill"},
                 "MOVING_FRAMES": {title: "Moving Frames", showProgress: false, icon: "fas fa-copy"},
                 "INTERPOLATING": {title: "Interpolating Frames", showProgress: true, icon: "fas fa-object-group"},
-                "ANALYZING": {title: "Analyzing", showProgress: true, icon: "fas fa-object-group"},
-                "NORMALIZING": {title: "Normalizing Frames", showProgress: true, icon: "fas fa-object-group"}
+                "ANALYZING": {title: "Analyzing Levels", showProgress: true, icon: "fas fa-search"},
+                "NORMALIZING": {title: "Normalizing Levels", showProgress: true, icon: "fas fa-wave-square"}
             };
 
             if (job.state in stateVms)
