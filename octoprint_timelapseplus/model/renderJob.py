@@ -193,7 +193,7 @@ class RenderJob:
 
         analyzedValues = {}
         jobs = [(frame, preset, analyzedValues) for frame in frameFiles]
-        JobExecutor(jobs, self.analyzeImagesInner, self.setProgress).start()
+        JobExecutor(self._settings, jobs, self.analyzeImagesInner, self.setProgress).start()
 
         self.setState(RenderJobState.NORMALIZING)
 
@@ -204,7 +204,7 @@ class RenderJob:
         targetContrast = sum(analyzedValues[k][1] for k in analyzedValues.keys()) / len(analyzedValues.keys())
 
         jobs = [(frame, preset, analyzedValues[frame], targetBrightness, targetContrast) for frame in frameFiles]
-        JobExecutor(jobs, self.normalizeImagesInner, self.setProgress).start()
+        JobExecutor(self._settings, jobs, self.normalizeImagesInner, self.setProgress).start()
 
     def normalizeImagesInner(self, j):
         frame, preset, frameValues, targetBrightness, targetContrast = j
