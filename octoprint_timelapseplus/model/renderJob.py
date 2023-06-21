@@ -131,7 +131,7 @@ class RenderJob:
         chunks = ListHelper.chunkList(frameFiles, preset.COMBINE_SIZE)
 
         jobs = [(chunk, preset, i) for i, chunk in enumerate(chunks)]
-        JobExecutor(jobs, self.combineImagesInner, self.setProgress).start()
+        JobExecutor(self._settings, jobs, self.combineImagesInner, self.setProgress).start()
 
     def combineImagesInner(self, j):
         chunk, preset, i = j
@@ -156,7 +156,7 @@ class RenderJob:
         frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
 
         jobs = [(frame, preset) for frame in frameFiles]
-        JobExecutor(jobs, self.blurImagesInner, self.setProgress).start()
+        JobExecutor(self._settings, jobs, self.blurImagesInner, self.setProgress).start()
 
     def blurImagesInner(self, j):
         frame, preset = j
@@ -173,7 +173,7 @@ class RenderJob:
         frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
 
         jobs = [(frame, preset) for frame in frameFiles]
-        JobExecutor(jobs, self.enhanceImagesInner, self.setProgress).start()
+        JobExecutor(self._settings, jobs, self.enhanceImagesInner, self.setProgress).start()
 
     def analyzeBrightnessAndContrast(self, image):
         grayscaleImage = image.convert('L')
@@ -250,7 +250,7 @@ class RenderJob:
         frameFiles = sorted(glob.glob(self.FOLDER + '/*.jpg'))
 
         jobs = [(frame, preset) for frame in frameFiles]
-        JobExecutor(jobs, self.resizeImagesInner, self.setProgress).start()
+        JobExecutor(self._settings, jobs, self.resizeImagesInner, self.setProgress).start()
 
     def resizeImagesInner(self, j):
         frame, preset = j
@@ -273,7 +273,7 @@ class RenderJob:
         frameFiles = sorted(glob.glob(self.FOLDER + '/[!PPROLL]*.jpg'))
 
         jobs = [(frame, timecodeRenderer, preset) for frame in frameFiles]
-        JobExecutor(jobs, self.addTimecodesInner, self.setProgress).start()
+        JobExecutor(self._settings, jobs, self.addTimecodesInner, self.setProgress).start()
 
     def addTimecodesInner(self, j):
         frame, timecodeRenderer, preset = j
@@ -305,7 +305,7 @@ class RenderJob:
             thisOutFile = self.FOLDER + '/' + "PPROLL_POST_{:05d}".format(i) + ".jpg"
             jobs.append((thisRatio, frameFiles, thisOutFile, preset, PPRollPhase.POST))
 
-        JobExecutor(jobs, self.createPPRollInner, self.setProgress).start()
+        JobExecutor(self._settings, jobs, self.createPPRollInner, self.setProgress).start()
 
     def createPPRollInner(self, j):
         thisRatio, frameFiles, thisOutFile, preset, phase = j
@@ -336,7 +336,7 @@ class RenderJob:
                 r = (i + 1) / len(fadeOutElements)
                 fadeJobs.append((r, element, preset.FADE_COLOR))
 
-        JobExecutor(fadeJobs, self.generateFadeInner, self.setProgress).start()
+        JobExecutor(self._settings, fadeJobs, self.generateFadeInner, self.setProgress).start()
 
     def generateFadeInner(self, j):
         r, imgFile, fadeColor = j

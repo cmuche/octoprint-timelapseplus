@@ -205,7 +205,8 @@ class TimelapsePlusPlugin(
             purgeVideos=False,
             purgeVideosDays=90,
             stabilization=False,
-            stabilizationSettings=StabilizationSettings().getJSON()
+            stabilizationSettings=StabilizationSettings().getJSON(),
+            renderMultithreading=True
         )
 
     def get_template_vars(self):
@@ -240,7 +241,8 @@ class TimelapsePlusPlugin(
             purgeVideos=self._settings.get(["purgeVideos"]),
             purgeVideosDays=self._settings.get(["purgeVideosDays"]),
             stabilization=self._settings.get(["stabilization"]),
-            stabilizationSettings=stabilizationSettings
+            stabilizationSettings=stabilizationSettings,
+            renderMultithreading=self._settings.get(["renderMultithreading"])
         )
 
     def listFrameZips(self):
