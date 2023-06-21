@@ -1,4 +1,5 @@
 import concurrent
+import os
 
 
 class JobExecutor:
@@ -12,8 +13,11 @@ class JobExecutor:
 
         self.LAST_PROGRESS = 0
 
+        self.CPU_COUNT = os.cpu_count()
+
     def start(self):
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        numWorkers = max(1, int(self.CPU_COUNT / 2))
+        with concurrent.futures.ThreadPoolExecutor(max_workers=numWorkers) as executor:
             futures = [executor.submit(self.processJob, job) for job in self.JOBS]
             concurrent.futures.wait(futures)
 
