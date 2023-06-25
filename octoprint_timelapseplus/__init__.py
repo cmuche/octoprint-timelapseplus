@@ -299,6 +299,7 @@ class TimelapsePlusPlugin(
             snapshotCommand=self._settings.get(["snapshotCommand"]),
             snapshotCount=0,
             previewImage=None,
+            snapshotInfoImage=None,
             frameCollections=list(map(lambda x: x.getJSON(), allFrameZips)),
             renderJobs=list(map(lambda x: x.getJSON(), self.RENDERJOBS)),
             videos=list(map(lambda x: x.getJSON(), allVideos)),
@@ -311,6 +312,7 @@ class TimelapsePlusPlugin(
             data['captureMode'] = self.PRINTJOB.CAPTURE_MODE.name
             data['captureTimerInterval'] = self.PRINTJOB.CAPTURE_TIMER_INTERVAL
             data['previewImage'] = self.PRINTJOB.PREVIEW_IMAGE
+            data['snapshotInfoImage'] = self.PRINTJOB.SNAPSHOT_INFO_IMAGE
             data['isRunning'] = self.PRINTJOB.RUNNING
             data['isCapturing'] = self.PRINTJOB.isCapturing()
             data['snapshotCount'] = len(self.PRINTJOB.FRAMES)
