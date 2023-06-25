@@ -11,6 +11,8 @@ class SnapshotInfoRenderer:
         self.COLOR_FADE_MIN = 200
         self.DOT_CURRENT_R = 30
         self.DOT_CURRENT_COLOR = (114, 137, 218)
+        self.DOT_QUEUED_R = 30
+        self.DOT_QUEUED_COLOR = (255, 0, 0)
 
     def getMinMaxPos(self, recording):
         minX = minY = minZ = float('inf')
@@ -59,7 +61,7 @@ class SnapshotInfoRenderer:
 
         return int(pX) + self.IMG_PADDING * self.IMG_SCALE, (self.IMG_SIZE[1] * self.IMG_SCALE) - (int(pY) + self.IMG_PADDING * self.IMG_SCALE), pZ
 
-    def render(self, recording, currentPos):
+    def render(self, recording, currentPos, queuedPos):
         imgSize = (self.IMG_SIZE[0] * self.IMG_SCALE, self.IMG_SIZE[1] * self.IMG_SCALE)
 
         img = Image.new('RGBA', imgSize, (127, 127, 127, 255))
@@ -86,6 +88,10 @@ class SnapshotInfoRenderer:
 
         curDotPos = self.mapImgPosition(currentPos[0], currentPos[1], currentPos[2], minmax)
         draw.ellipse((curDotPos[0] - self.DOT_CURRENT_R, curDotPos[1] - self.DOT_CURRENT_R, curDotPos[0] + self.DOT_CURRENT_R, curDotPos[1] + self.DOT_CURRENT_R), fill=self.DOT_CURRENT_COLOR)
+
+        if queuedPos is not None:
+            queuedDotPos = self.mapImgPosition(queuedPos[0], queuedPos[1], queuedPos[2], minmax)
+            draw.ellipse((queuedDotPos[0] - self.DOT_QUEUED_R, queuedDotPos[1] - self.DOT_QUEUED_R, queuedDotPos[0] + self.DOT_QUEUED_R, queuedDotPos[1] + self.DOT_QUEUED_R), fill=self.DOT_QUEUED_COLOR)
 
         imgOut = img.resize(self.IMG_SIZE)
         img.close()

@@ -63,6 +63,10 @@ class PrintJob:
         self.INFILL_FINDER.startScanFile(infillNotify)
         self.SNAPSHOT_QUEUED_POSITION = None
         self.LAST_QUEUED_FILEPOS = 0
+        self.PRINTER_POS_AT_QUEUING = None
+
+    def getCurrentPrinterPosition(self):
+        return (self.PARENT.POSITION_TRACKER.POS_X, self.PARENT.POSITION_TRACKER.POS_Y, self.PARENT.POSITION_TRACKER.POS_Z)
 
     def gcodeQueuing(self, gcode, command, tags, snapshotCommand):
         if self.SNAPSHOT_QUEUED_POSITION is None:
@@ -200,12 +204,14 @@ class PrintJob:
             Log.debug('Snapshot should be stabilized', {'canQueue': canQueue})
 
             if canQueue:
+                self.PRINTER_POS_AT_QUEUING = self.getCurrentPrinterPosition()
                 self.SNAPSHOT_QUEUED_POSITION = self.INFILL_FINDER.getNextInfillPosition(filepos)
             else:
+                self.PRINTER_POS_AT_QUEUING = None
+
                 currentSnapshotProgress = 0
                 if len(self.INFILL_FINDER.SNAPSHOTS) > 0:
                     currentSnapshotProgress = len(self.FRAMES) / len(self.INFILL_FINDER.SNAPSHOTS)
-
                 try:
                     self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER, currentSnapshotProgress)
                 except Exception as err:
@@ -221,15 +227,16 @@ class PrintJob:
 
         Log.info('Performing unstable Snapshot')
 
-        currentPos = (self.PARENT.POSITION_TRACKER.POS_X, self.PARENT.POSITION_TRACKER.POS_Y, self.PARENT.POSITION_TRACKER.POS_Z)
+        currentPos = self.getCurrentPrinterPosition()
+        queuedPos = self.PRINTER_POS_AT_QUEUING
         positionRecording = self.PARENT.POSITION_TRACKER.RECORDING
         self.PARENT.POSITION_TRACKER.resetRecording()
 
-        thread = Thread(target=self.doSnapshotInner, args=(positionRecording, currentPos,), daemon=True)
+        thread = Thread(target=self.doSnapshotInner, args=(positionRecording, currentPos, queuedPos,), daemon=True)
         self.CAPTURE_THREADS.append(thread)
         thread.start()
 
-    def doSnapshotInner(self, positionRecording, currentPos):
+    def doSnapshotInner(self, positionRecording, currentPos, queuedPos):
         ssTime = TimeHelper.getUnixTimestamp()
         snapshotFile = self.WEBCAM_CONTROLLER.getSnapshot()
 
@@ -242,7 +249,7 @@ class PrintJob:
         self.METADATA['timestamps'][fileBaseName] = ssTime
         self.FRAMES.append(fileName)
 
-        snapshotInfoImg = self.SNAPSHOT_INFO_RENDERER.render(positionRecording, currentPos)
+        snapshotInfoImg = self.SNAPSHOT_INFO_RENDERER.render(positionRecording, currentPos, queuedPos)
         self.generateSnapshotInfoImage(snapshotInfoImg)
 
         self.generatePreviewImage()
