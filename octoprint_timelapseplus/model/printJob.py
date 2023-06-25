@@ -64,6 +64,7 @@ class PrintJob:
         self.SNAPSHOT_QUEUED_POSITION = None
         self.LAST_QUEUED_FILEPOS = 0
         self.PRINTER_POS_AT_QUEUING = None
+        self.PRINTER_POS_PARKING = None
 
     def getCurrentPrinterPosition(self):
         return (self.PARENT.POSITION_TRACKER.POS_X, self.PARENT.POSITION_TRACKER.POS_Y, self.PARENT.POSITION_TRACKER.POS_Z)
@@ -207,13 +208,11 @@ class PrintJob:
                 self.PRINTER_POS_AT_QUEUING = self.getCurrentPrinterPosition()
                 self.SNAPSHOT_QUEUED_POSITION = self.INFILL_FINDER.getNextInfillPosition(filepos)
             else:
-                self.PRINTER_POS_AT_QUEUING = None
-
                 currentSnapshotProgress = 0
                 if len(self.INFILL_FINDER.SNAPSHOTS) > 0:
                     currentSnapshotProgress = len(self.FRAMES) / len(self.INFILL_FINDER.SNAPSHOTS)
                 try:
-                    self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER, currentSnapshotProgress)
+                    self.PRINTER_POS_PARKING = self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER, currentSnapshotProgress)
                 except Exception as err:
                     Log.warning('Stabilization failed', err)
                     self.PARENT.sendClientPopup('error', 'Stabilization failed', str(err) + '\n\nAn unstable Snapshot will be taken instead.')
@@ -229,14 +228,17 @@ class PrintJob:
 
         currentPos = self.getCurrentPrinterPosition()
         queuedPos = self.PRINTER_POS_AT_QUEUING
+        parkingPos = self.PRINTER_POS_PARKING
         positionRecording = self.PARENT.POSITION_TRACKER.RECORDING
         self.PARENT.POSITION_TRACKER.resetRecording()
+        self.PRINTER_POS_AT_QUEUING = None
+        self.PRINTER_POS_PARKING = None
 
-        thread = Thread(target=self.doSnapshotInner, args=(positionRecording, currentPos, queuedPos,), daemon=True)
+        thread = Thread(target=self.doSnapshotInner, args=(positionRecording, currentPos, queuedPos, parkingPos,), daemon=True)
         self.CAPTURE_THREADS.append(thread)
         thread.start()
 
-    def doSnapshotInner(self, positionRecording, currentPos, queuedPos):
+    def doSnapshotInner(self, positionRecording, currentPos, queuedPos, parkingPos):
         ssTime = TimeHelper.getUnixTimestamp()
         snapshotFile = self.WEBCAM_CONTROLLER.getSnapshot()
 
@@ -249,7 +251,7 @@ class PrintJob:
         self.METADATA['timestamps'][fileBaseName] = ssTime
         self.FRAMES.append(fileName)
 
-        snapshotInfoImg = self.SNAPSHOT_INFO_RENDERER.render(positionRecording, currentPos, queuedPos)
+        snapshotInfoImg = self.SNAPSHOT_INFO_RENDERER.render(positionRecording, currentPos, queuedPos, parkingPos)
         self.generateSnapshotInfoImage(snapshotInfoImg)
 
         self.generatePreviewImage()

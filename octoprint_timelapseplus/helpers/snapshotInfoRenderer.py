@@ -8,13 +8,18 @@ class SnapshotInfoRenderer:
         self.IMG_PADDING = 10
         self.LINE_WIDTH_FACTOR = 60
         self.LINE_WIDTH_MAX = 10
-        self.COLOR_FADE_MIN = 200
-        self.DOT_CURRENT_R = 30
-        self.DOT_CURRENT_COLOR = (114, 137, 218)
-        self.DOT_QUEUED_R = 30
-        self.DOT_QUEUED_COLOR = (255, 0, 0)
+        self.LINE_PARKING_WIDTH = 5
+        self.LINE_PARKING_COLOR = (253, 247, 195)
+        self.COLOR_FADE_MIN = 180
+        self.DOT_BORDER_RATIO = 0.25
+        self.DOT_CURRENT_R = 20
+        self.DOT_CURRENT_COLOR = (0, 223, 162)
+        self.DOT_QUEUED_R = 20
+        self.DOT_QUEUED_COLOR = (255, 0, 96)
+        self.DOT_PARKING_R = 20
+        self.DOT_PARKING_COLOR = (0, 121, 255)
 
-    def getMinMaxPos(self, recording):
+    def getMinMaxPos(self, recording, additionalPoints):
         minX = minY = minZ = float('inf')
         maxX = maxY = maxZ = float('-inf')
 
@@ -27,6 +32,17 @@ class SnapshotInfoRenderer:
             maxY = max(maxY, posFrom[1], posTo[1])
             minZ = min(minZ, posFrom[2], posTo[2])
             maxZ = max(maxZ, posFrom[2], posTo[2])
+
+        for ap in additionalPoints:
+            if ap is None:
+                continue
+
+            minX = min(minX, ap[0])
+            maxX = max(maxX, ap[0])
+            minY = min(minY, ap[1])
+            maxY = max(maxY, ap[1])
+            minZ = min(minZ, ap[2])
+            maxZ = max(maxZ, ap[2])
 
         minX = minX if minX != float('inf') else 0
         minY = minY if minY != float('inf') else 0
@@ -61,13 +77,21 @@ class SnapshotInfoRenderer:
 
         return int(pX) + self.IMG_PADDING * self.IMG_SCALE, (self.IMG_SIZE[1] * self.IMG_SCALE) - (int(pY) + self.IMG_PADDING * self.IMG_SCALE), pZ
 
-    def render(self, recording, currentPos, queuedPos):
+    def drawPoint(self, draw, pos, size, color):
+        sizeInner = int(size * (1 - self.DOT_BORDER_RATIO))
+        colorInner = (color[0], color[1], color[2], 127)
+        dotRect = (pos[0] - size, pos[1] - size, pos[0] + size, pos[1] + size)
+        dotRectInner = (pos[0] - sizeInner, pos[1] - sizeInner, pos[0] + sizeInner, pos[1] + sizeInner)
+        draw.ellipse(dotRect, fill=color)
+        draw.ellipse(dotRectInner, fill=colorInner)
+
+    def render(self, recording, currentPos, queuedPos, parkingPos):
         imgSize = (self.IMG_SIZE[0] * self.IMG_SCALE, self.IMG_SIZE[1] * self.IMG_SCALE)
 
-        img = Image.new('RGBA', imgSize, (127, 127, 127, 255))
+        img = Image.new('RGBA', imgSize, (0, 0, 0, 0))
         draw = ImageDraw.Draw(img)
 
-        minmax = self.getMinMaxPos(recording)
+        minmax = self.getMinMaxPos(recording, [currentPos, queuedPos, parkingPos])
 
         lineWidth = 1
         maxSpan = max(minmax[6], minmax[7])
@@ -87,11 +111,17 @@ class SnapshotInfoRenderer:
             draw.line((lFrom[0], lFrom[1], lTo[0], lTo[1]), fill=(255, 255, 255, opacity), width=int(lineWidth), joint='curve')
 
         curDotPos = self.mapImgPosition(currentPos[0], currentPos[1], currentPos[2], minmax)
-        draw.ellipse((curDotPos[0] - self.DOT_CURRENT_R, curDotPos[1] - self.DOT_CURRENT_R, curDotPos[0] + self.DOT_CURRENT_R, curDotPos[1] + self.DOT_CURRENT_R), fill=self.DOT_CURRENT_COLOR)
+
+        if parkingPos is not None:
+            parkingDotPos = self.mapImgPosition(parkingPos[0], parkingPos[1], parkingPos[2], minmax)
+            draw.line((curDotPos[0], curDotPos[1], parkingDotPos[0], parkingDotPos[1]), fill=self.LINE_PARKING_COLOR, width=self.LINE_PARKING_WIDTH)
+            self.drawPoint(draw, parkingDotPos, self.DOT_PARKING_R, self.DOT_PARKING_COLOR)
 
         if queuedPos is not None:
             queuedDotPos = self.mapImgPosition(queuedPos[0], queuedPos[1], queuedPos[2], minmax)
-            draw.ellipse((queuedDotPos[0] - self.DOT_QUEUED_R, queuedDotPos[1] - self.DOT_QUEUED_R, queuedDotPos[0] + self.DOT_QUEUED_R, queuedDotPos[1] + self.DOT_QUEUED_R), fill=self.DOT_QUEUED_COLOR)
+            self.drawPoint(draw, queuedDotPos, self.DOT_QUEUED_R, self.DOT_QUEUED_COLOR)
+
+        self.drawPoint(draw, curDotPos, self.DOT_CURRENT_R, self.DOT_CURRENT_COLOR)
 
         imgOut = img.resize(self.IMG_SIZE)
         img.close()
