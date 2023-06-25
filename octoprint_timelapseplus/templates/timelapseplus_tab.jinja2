@@ -109,7 +109,9 @@
                     No Snapshots yet
                 </div>
             </div>
-            <img data-bind="visible: snapshotInfoImage() !== null ,attr: {src: snapshotInfoImage}" />
+            <div class="snapshot-info" data-bind="visible: snapshotInfoImage() !== null">
+                <img data-bind="attr: {src: snapshotInfoImage}" />
+            </div>
         </div>
     </div>
 
