@@ -3,11 +3,14 @@ from PIL import Image, ImageDraw
 
 class SnapshotInfoRenderer:
     def __init__(self, settings):
-        self.IMG_SCALE = 2
+        self.IMG_SCALE = 3
         self.IMG_SIZE = (200, 200)
-        self.IMG_PADDING = 5
+        self.IMG_PADDING = 10
         self.LINE_WIDTH_FACTOR = 60
         self.LINE_WIDTH_MAX = 10
+        self.COLOR_FADE_MIN = 200
+        self.DOT_CURRENT_R = 30
+        self.DOT_CURRENT_COLOR = (114, 137, 218)
 
     def getMinMaxPos(self, recording):
         minX = minY = minZ = float('inf')
@@ -56,7 +59,7 @@ class SnapshotInfoRenderer:
 
         return int(pX) + self.IMG_PADDING * self.IMG_SCALE, (self.IMG_SIZE[1] * self.IMG_SCALE) - (int(pY) + self.IMG_PADDING * self.IMG_SCALE), pZ
 
-    def render(self, recording):
+    def render(self, recording, currentPos):
         imgSize = (self.IMG_SIZE[0] * self.IMG_SCALE, self.IMG_SIZE[1] * self.IMG_SCALE)
 
         img = Image.new('RGBA', imgSize, (127, 127, 127, 255))
@@ -71,17 +74,20 @@ class SnapshotInfoRenderer:
         lineWidth = min(self.LINE_WIDTH_MAX * self.IMG_SCALE, lineWidth)
         lineWidth = max(1 * self.IMG_SCALE, lineWidth)
 
-        for r in recording:
-            posFrom = r[0]
-            posTo = r[1]
+        for i, rec in enumerate(recording):
+            posFrom = rec[0]
+            posTo = rec[1]
             lFrom = self.mapImgPosition(posFrom[0], posFrom[1], 0, minmax)
             lTo = self.mapImgPosition(posTo[0], posTo[1], 0, minmax)
-            draw.line((lFrom[0], lFrom[1], lTo[0], lTo[1]), fill=(127, 127, 127, 255), width=int(lineWidth), joint='curve')
+
+            r = i / len(recording)
+            opacity = int(self.COLOR_FADE_MIN + (255 - self.COLOR_FADE_MIN) * r)
+            draw.line((lFrom[0], lFrom[1], lTo[0], lTo[1]), fill=(255, 255, 255, opacity), width=int(lineWidth), joint='curve')
+
+        curDotPos = self.mapImgPosition(currentPos[0], currentPos[1], currentPos[2], minmax)
+        draw.ellipse((curDotPos[0] - self.DOT_CURRENT_R, curDotPos[1] - self.DOT_CURRENT_R, curDotPos[0] + self.DOT_CURRENT_R, curDotPos[1] + self.DOT_CURRENT_R), fill=self.DOT_CURRENT_COLOR)
 
         imgOut = img.resize(self.IMG_SIZE)
-
-        imgOut.show()
         img.close()
-        imgOut.close()
 
         return imgOut

@@ -53,6 +53,7 @@ class PrintJob:
         self.CAPTURE_TIMER = ResettableTimer(self.CAPTURE_TIMER_INTERVAL, self.captureTimerTriggered)
 
         self.PREVIEW_IMAGE = None
+        self.SNAPSHOT_INFO_IMAGE = None
 
         self.createFolder(dataFolder)
 
@@ -139,6 +140,8 @@ class PrintJob:
             x.join()
 
         self.PREVIEW_IMAGE = None
+        self.SNAPSHOT_INFO_IMAGE = None
+
         finishedFiles = self.FRAMES.copy()
         self.FRAMES = []
         self.CAPTURE_THREADS = []
@@ -218,14 +221,15 @@ class PrintJob:
 
         Log.info('Performing unstable Snapshot')
 
-        thread = Thread(target=self.doSnapshotInner, daemon=True)
-        self.CAPTURE_THREADS.append(thread)
-        thread.start()
-
-    def doSnapshotInner(self):
+        currentPos = (self.PARENT.POSITION_TRACKER.POS_X, self.PARENT.POSITION_TRACKER.POS_Y, self.PARENT.POSITION_TRACKER.POS_Z)
         positionRecording = self.PARENT.POSITION_TRACKER.RECORDING
         self.PARENT.POSITION_TRACKER.resetRecording()
 
+        thread = Thread(target=self.doSnapshotInner, args=(positionRecording, currentPos,), daemon=True)
+        self.CAPTURE_THREADS.append(thread)
+        thread.start()
+
+    def doSnapshotInner(self, positionRecording, currentPos):
         ssTime = TimeHelper.getUnixTimestamp()
         snapshotFile = self.WEBCAM_CONTROLLER.getSnapshot()
 
@@ -238,10 +242,18 @@ class PrintJob:
         self.METADATA['timestamps'][fileBaseName] = ssTime
         self.FRAMES.append(fileName)
 
-        self.SNAPSHOT_INFO_RENDERER.render(positionRecording)
+        snapshotInfoImg = self.SNAPSHOT_INFO_RENDERER.render(positionRecording, currentPos)
+        self.generateSnapshotInfoImage(snapshotInfoImg)
 
         self.generatePreviewImage()
         self.PARENT.doneSnapshot()
+
+    def generateSnapshotInfoImage(self, img):
+        buf = io.BytesIO()
+        img.save(buf, format='PNG')
+        img.close()
+        byteArr = buf.getvalue()
+        self.SNAPSHOT_INFO_IMAGE = base64.b64encode(byteArr)
 
     def generatePreviewImage(self):
         with open(self.FRAMES[-1], 'rb') as image_file:

@@ -56,6 +56,7 @@ $(function() {
         self.currentFileSize = ko.observable(0);
         self.snapshotCount = ko.observable(0);
         self.previewImage = ko.observable(null);
+        self.snapshotInfoImage = ko.observable(null);
         self.renderJobs = ko.observable([]);
         self.sizeFrameCollections = ko.observable(0);
         self.sizeVideos = ko.observable(0);
@@ -622,6 +623,9 @@ $(function() {
 
             if ("previewImage" in data)
                 self.previewImage(data.previewImage == null ? null : "data:image/jpeg;base64," + data.previewImage);
+
+            if ("snapshotInfoImage" in data)
+                self.snapshotInfoImage(data.snapshotInfoImage == null ? null : "data:image/png;base64," + data.snapshotInfoImage);
 
             if ("renderJobs" in data)
                 self.renderJobs(data.renderJobs);
