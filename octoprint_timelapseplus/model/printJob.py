@@ -33,7 +33,7 @@ class PrintJob:
 
         self.STABILIZE = self._settings.get(["stabilization"])
         self.POSITION_TRACKER = positionTracker
-        self.SNAPSHOT_INFO_RENDERER = SnapshotInfoRenderer(settings)
+        self.SNAPSHOT_INFO_RENDERER = SnapshotInfoRenderer(settings, printer)
 
         stabilizationSettings = StabilizationSettings(self._settings.get(["stabilizationSettings"]))
         self.STABILIZATION_HELPER = StabilizationHelper(settings, stabilizationSettings)

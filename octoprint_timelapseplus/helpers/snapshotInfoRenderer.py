@@ -1,8 +1,10 @@
 from PIL import Image, ImageDraw
 
+from ..log import Log
+
 
 class SnapshotInfoRenderer:
-    def __init__(self, settings):
+    def __init__(self, settings, printer):
         self.IMG_SCALE = 3
         self.IMG_SIZE = (200, 200)
         self.IMG_PADDING = 10
@@ -19,6 +21,17 @@ class SnapshotInfoRenderer:
         self.DOT_PARKING_R = 20
         self.DOT_PARKING_COLOR = (0, 121, 255)
 
+        self.PRINTER_PROFILE_AVAILABLE = False
+        self.PRINTER_PROFILE_WIDTH = None
+        self.PRINTER_PROFILE_HEIGHT = None
+
+        try:
+            self.PRINTER_PROFILE_WIDTH = float(printer._printerProfileManager.default['volume']['width'])
+            self.PRINTER_PROFILE_HEIGHT = float(printer._printerProfileManager.default['volume']['height'])
+            self.PRINTER_PROFILE_AVAILABLE = True
+        except Exception as err:
+            Log.warning('Could not set Printer Profile Volume', err)
+
     def getMinMaxPos(self, recording, additionalPoints):
         minX = minY = minZ = float('inf')
         maxX = maxY = maxZ = float('-inf')
@@ -32,6 +45,10 @@ class SnapshotInfoRenderer:
             maxY = max(maxY, posFrom[1], posTo[1])
             minZ = min(minZ, posFrom[2], posTo[2])
             maxZ = max(maxZ, posFrom[2], posTo[2])
+
+        if self.PRINTER_PROFILE_AVAILABLE:
+            additionalPoints.append((0, 0, 0))
+            additionalPoints.append((self.PRINTER_PROFILE_WIDTH, self.PRINTER_PROFILE_HEIGHT, 0))
 
         for ap in additionalPoints:
             if ap is None:
