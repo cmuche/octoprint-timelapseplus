@@ -120,6 +120,7 @@
 }
 
 #timelapseplus .current .preview .no-img {
+    width: 16em;
     background: rgba(127, 127, 127, 0.1);
     display: flex;
     height: 100%;

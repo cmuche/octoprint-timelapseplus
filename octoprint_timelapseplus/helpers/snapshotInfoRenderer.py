@@ -14,11 +14,12 @@ class SnapshotInfoRenderer:
         self.LINE_PARKING_COLOR = (253, 247, 195)
         self.COLOR_FADE_MIN = 180
         self.DOT_BORDER_RATIO = 0.25
-        self.DOT_CURRENT_R = 30
+        self.DOT_CURRENT_R = 25
+        
         self.DOT_CURRENT_COLOR = (0, 223, 162)
-        self.DOT_QUEUED_R = 30
+        self.DOT_QUEUED_R = 25
         self.DOT_QUEUED_COLOR = (255, 0, 96)
-        self.DOT_PARKING_R = 30
+        self.DOT_PARKING_R = 25
         self.DOT_PARKING_COLOR = (0, 121, 255)
 
         self.PRINTER_PROFILE_AVAILABLE = False

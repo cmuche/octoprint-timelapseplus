@@ -110,9 +110,9 @@
                     <img data-bind="attr: {src: snapshotInfoImage}" />
                 </div>
             </div>
-            <div class="preview" data-bind="visible: previewImage() !== null">
+            <div class="preview">
                 <h4>Last Snapshot</h4>
-                <img class="canvas" data-bind="attr: {src: previewImage}" />
+                <img class="canvas" data-bind="visible: previewImage() !== null, attr: {src: previewImage}" />
                 <div class="no-img canvas" data-bind="visible: previewImage() === null">
                     No Snapshots yet
                 </div>
