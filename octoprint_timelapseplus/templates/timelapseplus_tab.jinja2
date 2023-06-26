@@ -75,6 +75,7 @@
         <h1>Current Print Job</h1>
         <div class="current">
             <div class="info">
+                <h4>Info</h4>
                 <div class="properties">
                     <div>
                         <span>Capturing:</span>
@@ -87,15 +88,15 @@
                         <i data-bind="visible: !isStabilized()" class="fa fa-times" style="color: #a50d00"></i>
                     </div>
                     <div>
-                        <span>Frames captured:</span>
+                        <span>Frames:</span>
                         <span data-bind="text: snapshotCount"></span>
                     </div>
                     <div>
-                        <span>Total File Size:</span>
+                        <span>Size:</span>
                         <span data-bind="text: humanFileSize(currentFileSize())"></span>
                     </div>
                     <div>
-                        <span>Capture Mode:</span>
+                        <span>Mode:</span>
                         <span data-bind="text: getCaptureModeName(captureMode())"></span>
                         <span data-bind="if: captureMode() == 'TIMED'">
                             (<span data-bind="text: captureTimerInterval"></span>s)
@@ -103,14 +104,18 @@
                     </div>
                 </div>
             </div>
-            <div class="preview">
-                <img data-bind="visible: previewImage() !== null ,attr: {src: previewImage}" />
-                <div class="no-img" data-bind="visible: previewImage() === null">
-                    No Snapshots yet
+            <div class="render" data-bind="visible: snapshotInfoImage() !== null">
+                <h4>Captured</h4>
+                <div class="snapshot-info">
+                    <img data-bind="attr: {src: snapshotInfoImage}" />
                 </div>
             </div>
-            <div class="snapshot-info" data-bind="visible: snapshotInfoImage() !== null">
-                <img data-bind="attr: {src: snapshotInfoImage}" />
+            <div class="preview" data-bind="visible: previewImage() !== null">
+                <h4>Last Snapshot</h4>
+                <img class="canvas" data-bind="attr: {src: previewImage}" />
+                <div class="no-img canvas" data-bind="visible: previewImage() === null">
+                    No Snapshots yet
+                </div>
             </div>
         </div>
     </div>
