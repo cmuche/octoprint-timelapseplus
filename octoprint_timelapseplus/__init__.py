@@ -27,6 +27,7 @@ from .model.printJob import PrintJob
 from .model.renderJob import RenderJob
 from .model.renderJobState import RenderJobState
 from .model.renderPreset import RenderPreset
+from .model.snapshotInfoFrame import SnapshotInfoFrame
 from .model.stabilizatonSettings import StabilizationSettings
 from .model.video import Video
 from .model.webcamType import WebcamType
@@ -205,7 +206,9 @@ class TimelapsePlusPlugin(
             purgeVideos=False,
             purgeVideosDays=90,
             stabilization=False,
-            stabilizationSettings=StabilizationSettings().getJSON()
+            stabilizationSettings=StabilizationSettings().getJSON(),
+            snapshotInfo=True,
+            snapshotInfoFrame=SnapshotInfoFrame.ZOOM_ALL.name
         )
 
     def get_template_vars(self):
@@ -240,7 +243,9 @@ class TimelapsePlusPlugin(
             purgeVideos=self._settings.get(["purgeVideos"]),
             purgeVideosDays=self._settings.get(["purgeVideosDays"]),
             stabilization=self._settings.get(["stabilization"]),
-            stabilizationSettings=stabilizationSettings
+            stabilizationSettings=stabilizationSettings,
+            snapshotInfo=self._settings.get(["snapshotInfo"]),
+            snapshotInfoFrame=self._settings.get(["snapshotInfoFrame"])
         )
 
     def listFrameZips(self):

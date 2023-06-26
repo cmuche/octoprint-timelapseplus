@@ -251,8 +251,11 @@ class PrintJob:
         self.METADATA['timestamps'][fileBaseName] = ssTime
         self.FRAMES.append(fileName)
 
-        snapshotInfoImg = self.SNAPSHOT_INFO_RENDERER.render(positionRecording, currentPos, queuedPos, parkingPos)
-        self.generateSnapshotInfoImage(snapshotInfoImg)
+        if self._settings.get(["snapshotInfo"]):
+            snapshotInfoImg = self.SNAPSHOT_INFO_RENDERER.render(positionRecording, currentPos, queuedPos, parkingPos)
+            self.generateSnapshotInfoImage(snapshotInfoImg)
+        else:
+            self.SNAPSHOT_INFO_IMAGE = None
 
         self.generatePreviewImage()
         self.PARENT.doneSnapshot()

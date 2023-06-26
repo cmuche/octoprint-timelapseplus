@@ -1,10 +1,13 @@
 from PIL import Image, ImageDraw
 
+from ..model.snapshotInfoFrame import SnapshotInfoFrame
 from ..log import Log
 
 
 class SnapshotInfoRenderer:
     def __init__(self, settings, printer):
+        self._settings = settings
+
         self.IMG_SCALE = 3
         self.IMG_SIZE = (200, 200)
         self.IMG_PADDING = 10
@@ -15,7 +18,7 @@ class SnapshotInfoRenderer:
         self.COLOR_FADE_MIN = 180
         self.DOT_BORDER_RATIO = 0.25
         self.DOT_CURRENT_R = 25
-        
+
         self.DOT_CURRENT_COLOR = (0, 223, 162)
         self.DOT_QUEUED_R = 25
         self.DOT_QUEUED_COLOR = (255, 0, 96)
@@ -46,10 +49,6 @@ class SnapshotInfoRenderer:
             maxY = max(maxY, posFrom[1], posTo[1])
             minZ = min(minZ, posFrom[2], posTo[2])
             maxZ = max(maxZ, posFrom[2], posTo[2])
-
-        if self.PRINTER_PROFILE_AVAILABLE:
-            additionalPoints.append((0, 0, 0))
-            additionalPoints.append((self.PRINTER_PROFILE_WIDTH, self.PRINTER_PROFILE_HEIGHT, 0))
 
         for ap in additionalPoints:
             if ap is None:
@@ -104,12 +103,20 @@ class SnapshotInfoRenderer:
         draw.ellipse(dotRectInner, fill=colorInner)
 
     def render(self, recording, currentPos, queuedPos, parkingPos):
+        frame = SnapshotInfoFrame[self._settings.get(["snapshotInfoFrame"])]
         imgSize = (self.IMG_SIZE[0] * self.IMG_SCALE, self.IMG_SIZE[1] * self.IMG_SCALE)
 
         img = Image.new('RGBA', imgSize, (0, 0, 0, 0))
         draw = ImageDraw.Draw(img)
 
-        minmax = self.getMinMaxPos(recording, [currentPos, queuedPos, parkingPos])
+        additionalMinMaxPoints = []
+        if frame != SnapshotInfoFrame.ZOOM_MODEL:
+            additionalMinMaxPoints += [currentPos, queuedPos, parkingPos]
+        if frame == SnapshotInfoFrame.PRINTER_VOLUME and self.PRINTER_PROFILE_AVAILABLE:
+            additionalMinMaxPoints.append((0, 0, 0))
+            additionalMinMaxPoints.append((self.PRINTER_PROFILE_WIDTH, self.PRINTER_PROFILE_HEIGHT, 0))
+
+        minmax = self.getMinMaxPos(recording, additionalMinMaxPoints)
 
         lineWidth = 1
         maxSpan = max(minmax[6], minmax[7])
