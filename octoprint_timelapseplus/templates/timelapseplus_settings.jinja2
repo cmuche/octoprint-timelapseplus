@@ -199,6 +199,14 @@
             <hr>
 
             <div class="control-group">
+                <label class="control-label">Render Multithreading</label>
+                <div class="controls">
+                    <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.renderMultithreading">
+                    <span class="help-block">Frame operations in Render Jobs will be executed in parallel.</span>
+                </div>
+            </div>
+
+            <div class="control-group">
                 <label class="control-label">Render Video after Print</label>
                 <div class="controls">
                     <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.renderAfterPrint">
@@ -825,6 +833,18 @@
                 <div>
                     <label class="sub">Name</label>
                     <input type="text" data-bind="value: parent.editPreEnhancement().name">
+                </div>
+
+                <div>
+                    <label class="sub checkbox">
+                        <input type="checkbox" data-bind="checked: parent.editPreEnhancement().normalize">
+                        Normalize Lighting
+                    </label>
+                    <span class="help-block" data-bind="visible: parent.editPreEnhancement().normalize">
+                        Analyzes all frames and calculates the average brightness and contrast.
+                        Then, the images will be corrected to normalize those values across all frames.
+                        This is helpful when your snapshots have changing lighting conditions.
+                    </span>
                 </div>
 
                 <div>

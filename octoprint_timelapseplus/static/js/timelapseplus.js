@@ -374,7 +374,9 @@ $(function() {
                 "GENERATING_PPROLL": {title: "Generating Pre/Post Roll", showProgress: true, icon: "fas fa-tv"},
                 "APPLYING_FADE": {title: "Applying Fade Effect", showProgress: true, icon: "fas fa-fill"},
                 "MOVING_FRAMES": {title: "Moving Frames", showProgress: false, icon: "fas fa-copy"},
-                "INTERPOLATING": {title: "Interpolating Frames", showProgress: true, icon: "fas fa-object-group"}
+                "INTERPOLATING": {title: "Interpolating Frames", showProgress: true, icon: "fas fa-object-group"},
+                "ANALYZING": {title: "Analyzing Lighting", showProgress: true, icon: "fas fa-search"},
+                "NORMALIZING": {title: "Normalizing Lighting", showProgress: true, icon: "fas fa-wave-square"}
             };
 
             if (job.state in stateVms)

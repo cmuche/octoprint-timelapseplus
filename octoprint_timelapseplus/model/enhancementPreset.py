@@ -13,6 +13,7 @@ class EnhancementPreset:
         self.EQUALIZE = False
         self.BRIGHTNESS = 1
         self.CONTRAST = 1
+        self.NORMALIZE = False
 
         self.BLUR = False
         self.BLUR_RADIUS = 30
@@ -52,15 +53,23 @@ class EnhancementPreset:
         if not self.ENHANCE:
             return img
 
-        img = ImageEnhance.Brightness(img).enhance(self.BRIGHTNESS)
-        img = ImageEnhance.Contrast(img).enhance(self.CONTRAST)
+        if self.BRIGHTNESS != 1:
+            img = ImageEnhance.Brightness(img).enhance(self.BRIGHTNESS)
+
+        if self.CONTRAST != 1:
+            img = ImageEnhance.Contrast(img).enhance(self.CONTRAST)
+
         if self.EQUALIZE:
-            img = ImageOps.equalize(img)
-        # img = ImageOps.autocontrast(img)
+            with img.convert('LAB') as imgLab:
+                l_channel, a_channel, b_channel = imgLab.split()
+            clahe = ImageOps.equalize(l_channel)
+            img = Image.merge('LAB', (clahe, a_channel, b_channel)).convert('RGB')
+
         return img
 
     def setJSON(self, parent, d):
         if 'name' in d: self.NAME = d['name']
+        if 'normalize' in d: self.NORMALIZE = d['normalize']
         if 'enhance' in d: self.ENHANCE = d['enhance']
         if 'equalize' in d: self.EQUALIZE = d['equalize']
         if 'brightness' in d: self.BRIGHTNESS = float(d['brightness'])
@@ -85,6 +94,7 @@ class EnhancementPreset:
     def getJSON(self):
         d = dict(
             name=self.NAME,
+            normalize=self.NORMALIZE,
             enhance=self.ENHANCE,
             equalize=self.EQUALIZE,
             brightness=self.BRIGHTNESS,
