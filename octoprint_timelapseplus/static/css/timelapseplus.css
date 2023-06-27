@@ -100,7 +100,7 @@
 #timelapseplus .current .snapshot-info {
     height: 9em;
     background: rgb(100, 100, 100);
-    background: linear-gradient(0deg, rgba(100, 100, 100, 1) 0%, rgba(150, 150, 150, 1) 100%);
+    background: linear-gradient(0deg, rgba(70, 70, 70, 1) 0%, rgba(100, 100, 100, 1) 100%);
     box-shadow: 0.2em 0.2em 0.35em rgba(0, 0, 0, 0.5);
 }
 

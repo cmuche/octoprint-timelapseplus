@@ -206,6 +206,7 @@ class PrintJob:
 
             if canQueue:
                 self.PRINTER_POS_AT_QUEUING = self.getCurrentPrinterPosition()
+                self.PARENT.POSITION_TRACKER.setRecordingIsQueued()
                 self.SNAPSHOT_QUEUED_POSITION = self.INFILL_FINDER.getNextInfillPosition(filepos)
             else:
                 currentSnapshotProgress = 0

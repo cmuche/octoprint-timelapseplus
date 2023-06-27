@@ -16,19 +16,24 @@ class PositionTracker:
 
         self.RECORDING = []
         self.RECORDING_ENABLED = False
+        self.RECORDING_IS_QUEUED = False
 
     def resetRecording(self):
         self.RECORDING = []
+        self.RECORDING_IS_QUEUED = False
 
     def setRecordingEnabled(self, val):
         self.RECORDING_ENABLED = val
         self.resetRecording()
 
+    def setRecordingIsQueued(self):
+        self.RECORDING_IS_QUEUED = True
+
     def addRecordingPosition(self, oldX, oldY, oldZ, f):
         if not self.RECORDING_ENABLED:
             return
 
-        self.RECORDING.append(((oldX, oldY, oldZ), (self.POS_X, self.POS_Y, self.POS_X), f))
+        self.RECORDING.append(((oldX, oldY, oldZ), (self.POS_X, self.POS_Y, self.POS_X), f, self.RECORDING_IS_QUEUED))
 
     def getMatchForProp(self, gcode, command, prop):
         if gcode is None or command is None:

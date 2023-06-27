@@ -13,9 +13,11 @@ class SnapshotInfoRenderer:
         self.IMG_PADDING = 10
         self.LINE_WIDTH_FACTOR = 70
         self.LINE_WIDTH_MAX = 10
-        self.LINE_PARKING_WIDTH = 5
-        self.LINE_PARKING_COLOR = (253, 247, 195)
-        self.COLOR_FADE_MIN = 180
+        self.LINE_PARKING_WIDTH = 6
+        self.LINE_PARKING_COLOR = (255, 246, 201)
+        self.LINE_COLOR_NORMAL = (255, 255, 255)
+        self.LINE_COLOR_QUEUED = (222, 235, 255)
+        self.COLOR_FADE_MIN = 255
         self.DOT_BORDER_RATIO = 0.25
         self.DOT_CURRENT_R = 25
 
@@ -131,9 +133,13 @@ class SnapshotInfoRenderer:
             lFrom = self.mapImgPosition(posFrom[0], posFrom[1], 0, minmax)
             lTo = self.mapImgPosition(posTo[0], posTo[1], 0, minmax)
 
+            lCol = self.LINE_COLOR_NORMAL
+            if rec[3]:
+                lCol = self.LINE_COLOR_QUEUED
+
             r = i / len(recording)
             opacity = int(self.COLOR_FADE_MIN + (255 - self.COLOR_FADE_MIN) * r)
-            draw.line((lFrom[0], lFrom[1], lTo[0], lTo[1]), fill=(255, 255, 255, opacity), width=int(lineWidth), joint='curve')
+            draw.line((lFrom[0], lFrom[1], lTo[0], lTo[1]), fill=(lCol[0], lCol[1], lCol[2], opacity), width=int(lineWidth), joint='curve')
 
         curDotPos = self.mapImgPosition(currentPos[0], currentPos[1], currentPos[2], minmax)
 
