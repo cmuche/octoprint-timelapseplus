@@ -165,16 +165,20 @@ class StabilizationHelper:
 
         cmd.append('G0 F' + self.floatVal(positionTracker.FEEDRATE))
 
-        return cmd
+        return dict(cmd=cmd, parkPos=((newXPos, newYPos, newZPos)))
 
     def stabilizeAndQueueSnapshotRaw(self, printer, positionTracker, currentSnapshotProgress):
         if printer.set_job_on_hold(True):
             try:
                 Log.debug('Generating Stabilization Commands', {'snapshotProgress': currentSnapshotProgress})
-                cmd = self.stabilizeAndQueueSnapshotRawCommands(positionTracker, currentSnapshotProgress)
+
+                cmdAndPos = self.stabilizeAndQueueSnapshotRawCommands(positionTracker, currentSnapshotProgress)
+                cmd = cmdAndPos['cmd']
 
                 Log.debug('Executing Stabilization Commands', cmd)
                 printer.commands(cmd, force=True, tags={Constants.GCODE_TAG_STABILIZATION})
                 # TODO Update PositionTracker with the created Commands
+
+                return cmdAndPos['parkPos']
             finally:
                 printer.set_job_on_hold(False)

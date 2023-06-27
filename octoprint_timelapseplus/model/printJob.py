@@ -12,6 +12,7 @@ from PIL import Image
 from octoprint.util import ResettableTimer
 from .captureMode import CaptureMode
 from .stabilizatonSettings import StabilizationSettings
+from ..helpers.snapshotInfoRenderer import SnapshotInfoRenderer
 from ..log import Log
 from ..constants import Constants
 from ..helpers.fileHelper import FileHelper
@@ -32,6 +33,7 @@ class PrintJob:
 
         self.STABILIZE = self._settings.get(["stabilization"])
         self.POSITION_TRACKER = positionTracker
+        self.SNAPSHOT_INFO_RENDERER = SnapshotInfoRenderer(settings, printer)
 
         stabilizationSettings = StabilizationSettings(self._settings.get(["stabilizationSettings"]))
         self.STABILIZATION_HELPER = StabilizationHelper(settings, stabilizationSettings)
@@ -51,6 +53,7 @@ class PrintJob:
         self.CAPTURE_TIMER = ResettableTimer(self.CAPTURE_TIMER_INTERVAL, self.captureTimerTriggered)
 
         self.PREVIEW_IMAGE = None
+        self.SNAPSHOT_INFO_IMAGE = None
 
         self.createFolder(dataFolder)
 
@@ -59,7 +62,12 @@ class PrintJob:
         self.INFILL_FINDER = InfillFinder(parent, gcodeFile, settings)
         self.INFILL_FINDER.startScanFile(infillNotify)
         self.SNAPSHOT_QUEUED_POSITION = None
-        self.LAST_QUEUED_POSITION = 0
+        self.LAST_QUEUED_FILEPOS = 0
+        self.PRINTER_POS_AT_QUEUING = None
+        self.PRINTER_POS_PARKING = None
+
+    def getCurrentPrinterPosition(self):
+        return (self.PARENT.POSITION_TRACKER.POS_X, self.PARENT.POSITION_TRACKER.POS_Y, self.PARENT.POSITION_TRACKER.POS_Z)
 
     def gcodeQueuing(self, gcode, command, tags, snapshotCommand):
         if self.SNAPSHOT_QUEUED_POSITION is None:
@@ -69,7 +77,7 @@ class PrintJob:
         if filepos is None:
             return None
 
-        self.LAST_QUEUED_POSITION = filepos
+        self.LAST_QUEUED_FILEPOS = filepos
 
         if filepos < self.SNAPSHOT_QUEUED_POSITION:
             return None
@@ -137,6 +145,8 @@ class PrintJob:
             x.join()
 
         self.PREVIEW_IMAGE = None
+        self.SNAPSHOT_INFO_IMAGE = None
+
         finishedFiles = self.FRAMES.copy()
         self.FRAMES = []
         self.CAPTURE_THREADS = []
@@ -186,7 +196,7 @@ class PrintJob:
         Log.info('Triggering Snapshot', {'queued': isQueued, 'filePos': filepos})
 
         if self.STABILIZE:
-            fileposAlreadyQueuedToPrinter = filepos is not None and filepos <= self.LAST_QUEUED_POSITION
+            fileposAlreadyQueuedToPrinter = filepos is not None and filepos <= self.LAST_QUEUED_FILEPOS
             canQueue = self.STABILIZATION_HELPER.STAB.INFILL_LOOKAHEAD and \
                        (not fileposAlreadyQueuedToPrinter) and \
                        (not isQueued) and \
@@ -195,14 +205,15 @@ class PrintJob:
             Log.debug('Snapshot should be stabilized', {'canQueue': canQueue})
 
             if canQueue:
+                self.PRINTER_POS_AT_QUEUING = self.getCurrentPrinterPosition()
+                self.PARENT.POSITION_TRACKER.setRecordingIsQueued()
                 self.SNAPSHOT_QUEUED_POSITION = self.INFILL_FINDER.getNextInfillPosition(filepos)
             else:
                 currentSnapshotProgress = 0
                 if len(self.INFILL_FINDER.SNAPSHOTS) > 0:
                     currentSnapshotProgress = len(self.FRAMES) / len(self.INFILL_FINDER.SNAPSHOTS)
-
                 try:
-                    self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER, currentSnapshotProgress)
+                    self.PRINTER_POS_PARKING = self.STABILIZATION_HELPER.stabilizeAndQueueSnapshotRaw(self._printer, self.POSITION_TRACKER, currentSnapshotProgress)
                 except Exception as err:
                     Log.warning('Stabilization failed', err)
                     self.PARENT.sendClientPopup('error', 'Stabilization failed', str(err) + '\n\nAn unstable Snapshot will be taken instead.')
@@ -216,11 +227,19 @@ class PrintJob:
 
         Log.info('Performing unstable Snapshot')
 
-        thread = Thread(target=self.doSnapshotInner, daemon=True)
+        currentPos = self.getCurrentPrinterPosition()
+        queuedPos = self.PRINTER_POS_AT_QUEUING
+        parkingPos = self.PRINTER_POS_PARKING
+        positionRecording = self.PARENT.POSITION_TRACKER.RECORDING
+        self.PARENT.POSITION_TRACKER.resetRecording()
+        self.PRINTER_POS_AT_QUEUING = None
+        self.PRINTER_POS_PARKING = None
+
+        thread = Thread(target=self.doSnapshotInner, args=(positionRecording, currentPos, queuedPos, parkingPos,), daemon=True)
         self.CAPTURE_THREADS.append(thread)
         thread.start()
 
-    def doSnapshotInner(self):
+    def doSnapshotInner(self, positionRecording, currentPos, queuedPos, parkingPos):
         ssTime = TimeHelper.getUnixTimestamp()
         snapshotFile = self.WEBCAM_CONTROLLER.getSnapshot()
 
@@ -233,8 +252,21 @@ class PrintJob:
         self.METADATA['timestamps'][fileBaseName] = ssTime
         self.FRAMES.append(fileName)
 
+        if self._settings.get(["snapshotInfo"]):
+            snapshotInfoImg = self.SNAPSHOT_INFO_RENDERER.render(positionRecording, currentPos, queuedPos, parkingPos)
+            self.generateSnapshotInfoImage(snapshotInfoImg)
+        else:
+            self.SNAPSHOT_INFO_IMAGE = None
+
         self.generatePreviewImage()
         self.PARENT.doneSnapshot()
+
+    def generateSnapshotInfoImage(self, img):
+        buf = io.BytesIO()
+        img.save(buf, format='PNG')
+        img.close()
+        byteArr = buf.getvalue()
+        self.SNAPSHOT_INFO_IMAGE = base64.b64encode(byteArr)
 
     def generatePreviewImage(self):
         with open(self.FRAMES[-1], 'rb') as image_file:

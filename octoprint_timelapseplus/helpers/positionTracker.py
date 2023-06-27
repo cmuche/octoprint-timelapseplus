@@ -14,6 +14,27 @@ class PositionTracker:
         self.RELATIVE_MODE = False
         self.RELATIVE_MODE_EXTRUDER = False
 
+        self.RECORDING = []
+        self.RECORDING_ENABLED = False
+        self.RECORDING_IS_QUEUED = False
+
+    def resetRecording(self):
+        self.RECORDING = []
+        self.RECORDING_IS_QUEUED = False
+
+    def setRecordingEnabled(self, val):
+        self.RECORDING_ENABLED = val
+        self.resetRecording()
+
+    def setRecordingIsQueued(self):
+        self.RECORDING_IS_QUEUED = True
+
+    def addRecordingPosition(self, oldX, oldY, oldZ, f):
+        if not self.RECORDING_ENABLED:
+            return
+
+        self.RECORDING.append(((oldX, oldY, oldZ), (self.POS_X, self.POS_Y, self.POS_X), f, self.RECORDING_IS_QUEUED))
+
     def getMatchForProp(self, gcode, command, prop):
         if gcode is None or command is None:
             return None
@@ -47,6 +68,11 @@ class PositionTracker:
             return None
 
     def setPosition(self, x, y, z, e, f, override=False):
+        oldX = self.POS_X
+        oldY = self.POS_Y
+        oldZ = self.POS_Z
+        oldE = self.POS_E
+
         if x is not None:
             if self.RELATIVE_MODE and not override:
                 self.POS_X += x
@@ -72,6 +98,8 @@ class PositionTracker:
         if f is not None:
             self.FEEDRATE = f
 
+        if self.POS_E > oldE:
+            self.addRecordingPosition(oldX, oldY, oldZ, f)
 
     def consumeGcode(self, gcode, command, tags):
         if Constants.GCODE_TAG_STABILIZATION in tags:
