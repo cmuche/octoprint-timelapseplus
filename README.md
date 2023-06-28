@@ -5,9 +5,9 @@
 
 __Timelapse+__ is a powerful yet lightweight plugin to __stabilize__, __capture__, __enhance__ and __render__ your print timelapses.
 
-[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/thumbnail-1.png)](https://www.youtube.com/watch?v=S7q_VtEwRbI)
-[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/thumbnail-2.png)](https://www.youtube.com/watch?v=EFuskHhOgys)
-[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/thumbnail-3.png)](https://www.youtube.com/watch?v=18v_aZLmyUw)
+[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/thumbnails/thumbnail-1.png)](https://www.youtube.com/watch?v=S7q_VtEwRbI)
+[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/thumbnails/thumbnail-2.png)](https://www.youtube.com/watch?v=EFuskHhOgys)
+[![](https://github.com/cmuche/octoprint-timelapseplus/raw/master/assets/thumbnails/thumbnail-3.png)](https://www.youtube.com/watch?v=18v_aZLmyUw)
 
 ▶️ _Click the thumbnails to see the videos on YouTube_
 
