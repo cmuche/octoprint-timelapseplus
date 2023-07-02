@@ -87,18 +87,40 @@
 
 #timelapseplus .current {
     display: flex;
+    gap: 1.5em;
 }
 
-#timelapseplus .current .preview {
-    width: 15em;
+#timelapseplus .current h4 {
+    margin: 0;
+    margin-bottom: 0.75em;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
+#timelapseplus .current .snapshot-info {
+    height: 9em;
+    background: rgb(100, 100, 100);
+    background: linear-gradient(0deg, rgba(70, 70, 70, 1) 0%, rgba(100, 100, 100, 1) 100%);
     box-shadow: 0.2em 0.2em 0.35em rgba(0, 0, 0, 0.5);
 }
 
-#timelapseplus .current .preview img {
+#timelapseplus .current .snapshot-info img {
     width: 100%;
+    height: 100%;
+}
+
+#timelapseplus .current .preview .canvas {
+    height: 9em;
+    width: auto;
+    box-shadow: 0.2em 0.2em 0.35em rgba(0, 0, 0, 0.5);
+}
+
+#timelapseplus .current .preview .canvas img {
+    height: 100%;
 }
 
 #timelapseplus .current .preview .no-img {
+    width: 16em;
     background: rgba(127, 127, 127, 0.1);
     display: flex;
     height: 100%;

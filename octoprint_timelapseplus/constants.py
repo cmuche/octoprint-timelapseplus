@@ -4,4 +4,8 @@ class Constants:
     SUFFIX_PRINT_UNSTABLE = 'UNSTABLE'
     SUFFIX_PRINT_QUEUED = 'QUEUED'
     GCODE_TAG_STABILIZATION = 'timelapseplus-stabilization'
+
     GCODE_G90_G91_EXTRUDER_OVERWRITE = True
+    PRINTER_HOME_X = 0
+    PRINTER_HOME_Y = 0
+    PRINTER_HOME_Z = 0

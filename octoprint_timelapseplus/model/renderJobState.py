@@ -17,3 +17,5 @@ class RenderJobState(Enum):
     APPLYING_FADE = 14
     MOVING_FRAMES = 15
     INTERPOLATING = 16
+    ANALYZING = 17
+    NORMALIZING = 18

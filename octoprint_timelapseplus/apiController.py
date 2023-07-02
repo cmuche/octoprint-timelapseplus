@@ -10,6 +10,8 @@ from zipfile import ZipFile
 from PIL import Image, ImageDraw
 from flask import make_response, send_file
 
+from .constants import Constants
+from .log import Log
 from .helpers.listHelper import ListHelper
 from .helpers.stabilizationEaseCalculator import StabilizationEaseCalculator
 from .model.captureMode import CaptureMode
@@ -332,3 +334,50 @@ class ApiController:
     def downloadLog(self):
         logFile = self._settings.get_plugin_logfile_path()
         return send_file(logFile, as_attachment=False, mimetype='text/plain')
+
+    def findHomePosition(self):
+        if self.PARENT.GCODE_RECEIVED_LISTENER is not None:
+            Log.error('Finding Home Position failed: Already in progress')
+            return dict(error=True, msg='Finding the Home Position is already in progress')
+
+        class GcodeCallback:
+            def __init__(self):
+                self.X = 0
+                self.Y = 0
+                self.Z = 0
+                self.HAS_POS = False
+
+            def process(self, line):
+                reStr = '.?X:([0-9.]+).?Y:([0-9.]+).?Z:([0-9.]+).*'
+                match = re.search(reStr, line)
+                if not match:
+                    return
+                self.X = float(match.group(1))
+                self.Y = float(match.group(2))
+                self.Z = float(match.group(3))
+                self.HAS_POS = True
+
+        try:
+            callback = GcodeCallback()
+            printer = self.PARENT.getPrinter()
+
+            if not printer.is_ready():
+                Log.error('Finding Home Position failed: Printer is not ready')
+                return dict(error=True, msg='Printer is not ready')
+
+            self.PARENT.GCODE_RECEIVED_LISTENER = callback
+            printer.commands(['G28', 'M114 D E R'], force=True, tags={Constants.GCODE_TAG_STABILIZATION})
+
+            timeTimeout = time.time() + 30
+            while not callback.HAS_POS and time.time() < timeTimeout:
+                time.sleep(0.1)
+
+            if not callback.HAS_POS:
+                Log.error('Finding Home Position timed out')
+                return dict(error=True, msg='Did\'t receive the position. The process timed out.')
+
+            posDict = dict(x=callback.X, y=callback.Y, z=callback.Z)
+            Log.info('Home Position found', posDict)
+            return dict(error=False, msg=None, pos=posDict)
+        finally:
+            self.PARENT.GCODE_RECEIVED_LISTENER = None

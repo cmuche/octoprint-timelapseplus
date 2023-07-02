@@ -56,6 +56,7 @@ $(function() {
         self.currentFileSize = ko.observable(0);
         self.snapshotCount = ko.observable(0);
         self.previewImage = ko.observable(null);
+        self.snapshotInfoImage = ko.observable(null);
         self.renderJobs = ko.observable([]);
         self.sizeFrameCollections = ko.observable(0);
         self.sizeVideos = ko.observable(0);
@@ -74,6 +75,11 @@ $(function() {
 
         self.editPreEnhancement = ko.observable(null);
         self.editPreRender = ko.observable(null);
+
+        self.autoDetectHomeStarted = ko.observable(false);
+        self.autoDetectHomeError = ko.observable(null);
+        self.autoDetectHomeRunning = ko.observable(false);
+        self.autoDetectHomeSuccess = ko.observable(false);
 
         self.videoFormats.subscribe(function(data) {
             const groups = {};
@@ -368,7 +374,9 @@ $(function() {
                 "GENERATING_PPROLL": {title: "Generating Pre/Post Roll", showProgress: true, icon: "fas fa-tv"},
                 "APPLYING_FADE": {title: "Applying Fade Effect", showProgress: true, icon: "fas fa-fill"},
                 "MOVING_FRAMES": {title: "Moving Frames", showProgress: false, icon: "fas fa-copy"},
-                "INTERPOLATING": {title: "Interpolating Frames", showProgress: true, icon: "fas fa-object-group"}
+                "INTERPOLATING": {title: "Interpolating Frames", showProgress: true, icon: "fas fa-object-group"},
+                "ANALYZING": {title: "Analyzing Lighting", showProgress: true, icon: "fas fa-search"},
+                "NORMALIZING": {title: "Normalizing Lighting", showProgress: true, icon: "fas fa-wave-square"}
             };
 
             if (job.state in stateVms)
@@ -525,6 +533,38 @@ $(function() {
             });
         };
 
+        self.openHomeAutoDetect = function() {
+            self.autoDetectHomeStarted(false);
+            self.autoDetectHomeError(null);
+            self.autoDetectHomeRunning(false);
+            self.autoDetectHomeSuccess(false);
+
+            $("div#tlp-modal-auto-detect-home").modal({
+                width: "auto"
+            });
+        };
+
+        self.executeHomeAutoDetect = function() {
+            self.autoDetectHomeStarted(true);
+            self.autoDetectHomeRunning(true);
+            self.api("findHomePosition", {}, function(data) {
+                console.log(data);
+
+                if (data.error) {
+                    self.autoDetectHomeSuccess(false);
+                    self.autoDetectHomeError(data.msg);
+                } else {
+                    self.autoDetectHomeSuccess(true);
+                    self.settings.settings.plugins.timelapseplus.stabilizationSettings.printerHomeX(data.pos.x);
+                    self.settings.settings.plugins.timelapseplus.stabilizationSettings.printerHomeY(data.pos.y);
+                    self.settings.settings.plugins.timelapseplus.stabilizationSettings.printerHomeZ(data.pos.z);
+                }
+
+            }, null, function() {
+                self.autoDetectHomeRunning(false);
+            });
+        };
+
         self.onDataUpdaterPluginMessage = function(plugin, data) {
             if (plugin != "timelapseplus")
                 return;
@@ -585,6 +625,9 @@ $(function() {
 
             if ("previewImage" in data)
                 self.previewImage(data.previewImage == null ? null : "data:image/jpeg;base64," + data.previewImage);
+
+            if ("snapshotInfoImage" in data)
+                self.snapshotInfoImage(data.snapshotInfoImage == null ? null : "data:image/png;base64," + data.snapshotInfoImage);
 
             if ("renderJobs" in data)
                 self.renderJobs(data.renderJobs);

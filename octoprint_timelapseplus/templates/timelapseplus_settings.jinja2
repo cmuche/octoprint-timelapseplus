@@ -175,6 +175,37 @@
                 </div>
             </div>
 
+            <hr>
+
+            <div class="control-group">
+                <label class="control-label">Show Snapshot Details</label>
+                <div class="controls">
+                    <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.snapshotInfo">
+                    <span class="help-block">Display a small image next to the current snapshot showing what was printed since the last snapshot along snapshot-, queuing- and parking positions.</span>
+                </div>
+            </div>
+
+            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.snapshotInfo">
+                <label class="control-label">Snapshot Details Frame</label>
+                <div class="controls">
+                    <select data-bind="value: settings.plugins.timelapseplus.snapshotInfoFrame">
+                        <option value="ZOOM_ALL">Zoom to Everything</option>
+                        <option value="ZOOM_MODEL">Zoom to Model</option>
+                        <option value="PRINTER_VOLUME">Use Printer Profile Volume</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="control-group">
+                <label class="control-label">Render Multithreading</label>
+                <div class="controls">
+                    <input type="checkbox" class="input-block-level" data-bind="checked: settings.plugins.timelapseplus.renderMultithreading">
+                    <span class="help-block">Frame operations in Render Jobs will be executed in parallel.</span>
+                </div>
+            </div>
+
             <div class="control-group">
                 <label class="control-label">Render Video after Print</label>
                 <div class="controls">
@@ -343,6 +374,49 @@
                         <span class="input-append">
                             <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerZMax">
                         <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <h5>Home Position</h5>
+                    <span class="help-block" style="margin-bottom: 2em">
+                        This is the position to which the printer returns after a <code>G28</code> (home axes) command.
+                    </span>
+                    <div class="control-group">
+                        <label class="control-label">Home X</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerHomeX">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Home Y</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerHomeY">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Home Z</label>
+                        <div class="controls">
+                        <span class="input-append">
+                            <input type="number" step='0.1' min="0" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.printerHomeZ">
+                        <span class="add-on">mm</span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Auto-Detection</label>
+                        <div class="controls">
+                            <button class="btn" data-bind="click: parent.openHomeAutoDetect">
+                                <i class="fa fa-external-link-square-alt"></i>
+                                Open Auto-Detection Wizard
+                            </button>
+                            <span class="help-block">
+                            An Auto-Detection of the Home Position can be done. Click the button to get more information.
                         </span>
                         </div>
                     </div>
@@ -550,7 +624,7 @@
                             <input type="number" step='1' min="1" max="1000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.moveSpeed">
                             <span class="add-on">mm/s</span>
                         </span>
-                        <span class="help-block">
+                            <span class="help-block">
                             The print head will be moved to its parking position with this speed.
                         </span>
                         </div>
@@ -571,7 +645,7 @@
                             <input type="number" step='1' min="0" max="5000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.waitBefore">
                             <span class="add-on">ms</span>
                         </span>
-                        <span class="help-block">
+                            <span class="help-block">
                             Wait this long when the print head is parked and before taking a snapshot.
                             Increase this value if your snapshot is taken too early.
                         </span>
@@ -584,7 +658,7 @@
                             <input type="number" step='1' min="0" max="5000" width="5" data-bind="value: settings.plugins.timelapseplus.stabilizationSettings.waitAfter">
                             <span class="add-on">ms</span>
                         </span>
-                        <span class="help-block">
+                            <span class="help-block">
                             Wait this long when the snapshot is taken and before returning to the print.
                             Increase this value if your camera needs more time to take a snapshot.
                         </span>
@@ -759,6 +833,18 @@
                 <div>
                     <label class="sub">Name</label>
                     <input type="text" data-bind="value: parent.editPreEnhancement().name">
+                </div>
+
+                <div>
+                    <label class="sub checkbox">
+                        <input type="checkbox" data-bind="checked: parent.editPreEnhancement().normalize">
+                        Normalize Lighting
+                    </label>
+                    <span class="help-block" data-bind="visible: parent.editPreEnhancement().normalize">
+                        Analyzes all frames and calculates the average brightness and contrast.
+                        Then, the images will be corrected to normalize those values across all frames.
+                        This is helpful when your snapshots have changing lighting conditions.
+                    </span>
                 </div>
 
                 <div>
@@ -1210,5 +1296,46 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary pull-right" data-dismiss="modal">Close</button>
+    </div>
+</div>
+
+<div id="tlp-modal-auto-detect-home" class="modal hide fade">
+    <div class="modal-header">
+        <a href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+        <h3>Auto-Detect Home Position</h3>
+    </div>
+    <div class="modal-body" style="width: 35em">
+        <div class="row-fluid">
+            <div data-bind="if: !parent.autoDetectHomeStarted()">
+                An Auto-Detection of the Home Position can be performed.
+                Your printer will be homed via <code>G28</code>. Afer homing, the current position will be queried via <code>M114 D E R</code>.
+                Please make sure your printer is connected and your print head is not blocked.
+            </div>
+            <div data-bind="if: parent.autoDetectHomeRunning()">
+                <h4 style="margin-top: 0">Please wait</h4>
+                <i style="font-size: 2em" class="fa-solid fa-spinner fa-spin"></i>
+            </div>
+            <div data-bind="if: parent.autoDetectHomeError() != null && !parent.autoDetectHomeRunning()">
+                <h4 style="margin-top: 0">An Error occured</h4>
+                <div data-bind="text: parent.autoDetectHomeError"></div>
+            </div>
+            <div data-bind="if: parent.autoDetectHomeSuccess() && !parent.autoDetectHomeRunning()">
+                <h4 style="margin-top: 0">Success</h4>
+                The Home Position is:<br><br>
+                X: <span data-bind="text: settings.plugins.timelapseplus.stabilizationSettings.printerHomeX"></span><br>
+                Y: <span data-bind="text: settings.plugins.timelapseplus.stabilizationSettings.printerHomeY"></span><br>
+                Z: <span data-bind="text: settings.plugins.timelapseplus.stabilizationSettings.printerHomeZ"></span><br>
+                <br>
+                These values have been set as the new Home Position. You can close this window now. But don't forget to save your settings.
+            </div>
+            <button style="margin-top: 2em" class="btn" data-bind="click: parent.executeHomeAutoDetect, visible: !parent.autoDetectHomeRunning()">
+                <i class="fa fa-bullseye"></i>
+                Execute Auto-Detection
+            </button>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button data-bind="disable: parent.autoDetectHomeRunning()" class="btn btn-primary pull-right" data-dismiss="modal">Close</button>
     </div>
 </div>
