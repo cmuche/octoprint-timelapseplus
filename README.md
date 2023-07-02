@@ -41,6 +41,7 @@ Check out the [_Examples Page_](https://github.com/cmuche/octoprint-timelapseplu
   - Animated movements
 - Customizable __image enhancements for post-processing__
   - __Brightness__ and __contrast__
+  - __Analyze__ and __Normalize__ lighting changes 
   - __Auto-Optimization__ by histogram equalization
   - __Blur__ parts of the video for privacy when sharing
   - Resizing
