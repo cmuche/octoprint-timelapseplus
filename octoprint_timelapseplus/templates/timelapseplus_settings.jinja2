@@ -92,6 +92,20 @@
                 <div class="controls">
                     <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamUrl">
                     <span class="help-block">The URL must be reachable for OctoPrint and return a still image or the stream in the format specified above.</span>
+					<BR>
+					<span class="help-block">To pass <a href="https://en.wikipedia.org/wiki/Basic_access_authentication">Basic HTTP Auth</a> credentials, use the following URL format:<BR>http://&lt;username&gt;:&lt;password&gt;@&lt;ipAddressOrHostName&gt;:&lt;portNumber&gt;
+                </div>
+            </div>
+            <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.webcamType() != 'SCRIPT' && settings.plugins.timelapseplus.webcamType() != 'PLUGIN'">
+                <label class="control-label"><a href="https://en.wikipedia.org/wiki/Self-signed_certificate">Self-signed SSL Cert</a><BR>or <a href="https://en.wikipedia.org/wiki/Root_certificate">Root CA</a> for validation</label>
+                <div class="controls">
+                    <input type="text" data-bind="value: settings.plugins.timelapseplus.webcamPathToCertVerifyFile">
+                    <span class="help-block">If your webcam uses HTTPS and has a custom SSL certificate/bundle for SSL validation, upload it to your Octoprint server and paste the full path to the file or folder here. The certificate must be:
+						<ol>
+							<li>Encoded in <a href="https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail">PEM format</a>.</li>
+							<li>Have proper file permissions so that Octoprint userID can access it.</li>
+						</ol>
+					</span>
                 </div>
             </div>
             <div class="control-group" data-bind="visible: settings.plugins.timelapseplus.webcamType() == 'SCRIPT'">
@@ -116,7 +130,7 @@
                 <label class="control-label">Test Settings</label>
                 <div class="controls">
                     <span class="help-block">You can test the FFmpeg and FFprobe paths as well as the snapshot capture here:</span>
-                    <button id="tlp-button-webcam-preview" style="margin-top: 1em" class="btn btn-mini" data-bind="click: function(){parent.openWebcamCapturePreview(settings.plugins.timelapseplus.ffmpegPath, settings.plugins.timelapseplus.ffprobePath, settings.plugins.timelapseplus.webcamType, settings.plugins.timelapseplus.webcamUrl, settings.plugins.timelapseplus.webcamPluginId)}">
+                    <button id="tlp-button-webcam-preview" style="margin-top: 1em" class="btn btn-mini" data-bind="click: function(){parent.openWebcamCapturePreview(settings.plugins.timelapseplus.ffmpegPath, settings.plugins.timelapseplus.ffprobePath, settings.plugins.timelapseplus.webcamType, settings.plugins.timelapseplus.webcamUrl,settings.plugins.timelapseplus.webcamPathToCertVerifyFile, settings.plugins.timelapseplus.webcamPluginId)}">
                         <i class="fa fa-check"></i>
                         Test Paths and Webcam Settings
                     </button>

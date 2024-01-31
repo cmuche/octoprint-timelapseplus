@@ -12,7 +12,7 @@ class PrerequisitesController:
     ENCODERS_TEST_REGEX = '^[ ]*V[VASFXBD\\.]{5} ([a-zA-Z0-9-_]+) [ ]+.*'
 
     @staticmethod
-    def check(settings, webcamController, ffmpegPath=None, ffprobePath=None, webcamType=None, webcamUrl=None, pluginId=None):
+    def check(settings, webcamController, ffmpegPath=None, ffprobePath=None, webcamType=None, webcamUrl=None, webcamPathToCertVerifyFile=None, pluginId=None):
         if ffmpegPath is None:
             ffmpegPath = settings.get(["ffmpegPath"])
         if ffprobePath is None:
@@ -21,6 +21,8 @@ class PrerequisitesController:
             webcamType = WebcamType[settings.get(["webcamType"])]
         if webcamUrl is None:
             webcamUrl = settings.get(["webcamUrl"])
+        if webcamPathToCertVerifyFile is None:
+            webcamPathToCertVerifyFile = settings.get(["webcamPathToCertVerifyFile"])
         if pluginId is None:
             pluginId = settings.get(["webcamPluginId"])
 

@@ -245,14 +245,14 @@ $(function() {
             }).click();
         };
 
-        self.openWebcamCapturePreview = function(ffmpegPath, ffprobePath, webcamType, webcamUrl, webcamPluginId) {
+        self.openWebcamCapturePreview = function(ffmpegPath, ffprobePath, webcamType, webcamUrl, webcamPathToCertVerifyFile, webcamPluginId) {
             $("#tlp-button-webcam-preview").prop("disabled", true);
 
             webcamPluginId = webcamPluginId();
             if (!webcamPluginId)
                 webcamPluginId = null;
 
-            self.api("webcamCapturePreview", {ffmpegPath: ffmpegPath(), ffprobePath: ffprobePath(), webcamType: webcamType(), webcamUrl: webcamUrl(), pluginId: webcamPluginId}, function(data) {
+            self.api("webcamCapturePreview", {ffmpegPath: ffmpegPath(), ffprobePath: ffprobePath(), webcamType: webcamType(), webcamUrl: webcamUrl(), webcamPathToCertVerifyFile: webcamPathToCertVerifyFile() , pluginId: webcamPluginId}, function(data) {
                 if ("error" in data) {
                     $("div#tlp-modal-webcam-preview .error").show();
                     $("div#tlp-modal-webcam-preview img.preview").hide();
