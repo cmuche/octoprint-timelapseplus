@@ -4,6 +4,7 @@ import os
 import subprocess
 import time
 from io import BytesIO
+import certifi
 
 import requests
 from PIL import Image
@@ -39,8 +40,8 @@ class WebcamController:
 
         return ret
 
-    def getSnapshotStreamMp4OrHls(self, path, ffmpegPath, webcamUrl):
-        Log.debug('Getting Snapshot from MP4/HLS Stream', {'stream': webcamUrl})
+    def getSnapshotStreamMp4OrHls(self, path, ffmpegPath, webcamUrl, webcamPathToCertVerifyFile):
+        Log.debug('Getting Snapshot from MP4/HLS Stream', {'stream': webcamUrl, 'SSL CA File': webcamPathToCertVerifyFile})
 
         cmd = [ffmpegPath, '-r', '1', '-i', webcamUrl, '-frames:v', '1', '-q:v', '1', '-f', 'image2', '-']
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
@@ -52,10 +53,10 @@ class WebcamController:
         image = Image.open(BytesIO(output))
         image.save(path, format='JPEG', quality=100, subsampling=0)
 
-    def getSnapshotStreamMjpeg(self, path, webcamUrl):
-        Log.debug('Getting Snapshot from MJPEG Stream', {'stream': webcamUrl})
+    def getSnapshotStreamMjpeg(self, path, webcamUrl, webcamPathToCertVerifyFile):
+        Log.debug('Getting Snapshot from MJPEG Stream', {'stream': webcamUrl, 'SSL CA File': webcamPathToCertVerifyFile})
 
-        response = requests.get(webcamUrl, stream=True, timeout=self.TIMEOUT)
+        response = requests.get(webcamUrl, stream=True, timeout=self.TIMEOUT, verify=webcamPathToCertVerifyFile)
         if response.status_code != 200:
             raise Exception('Webcam Snapshot URL returned HTTP status code ' + str(response.status_code))
 
@@ -87,10 +88,10 @@ class WebcamController:
         image = Image.open(imageBytes)
         image.save(path, 'JPEG', quality=100, subsampling=0)
 
-    def getSnapshotJpeg(self, path, webcamUrl):
-        Log.debug('Getting Snapshot from JPEG', {'endpoint': webcamUrl})
+    def getSnapshotJpeg(self, path, webcamUrl, webcamPathToCertVerifyFile):
+        Log.debug('Getting Snapshot from JPEG', {'endpoint': webcamUrl, 'SSL CA File': webcamPathToCertVerifyFile})
 
-        res = requests.get(webcamUrl, stream=True, timeout=self.TIMEOUT)
+        res = requests.get(webcamUrl, stream=True, timeout=self.TIMEOUT, verify=webcamPathToCertVerifyFile)
 
         if res.status_code != 200:
             Log.error('Could not load image')
@@ -104,8 +105,8 @@ class WebcamController:
                     os.remove(path)
                 raise Exception('Webcam Snapshot Endpoint took too long sending Data')
 
-    def getSnapshotFromScript(self, scriptPath, fileName):
-        Log.debug('Getting Snapshot from Script', {'script': scriptPath})
+    def getSnapshotFromScript(self, scriptPath, fileName, webcamPathToCertVerifyFile):
+        Log.debug('Getting Snapshot from Script', {'script': scriptPath, 'SSL CA File': webcamPathToCertVerifyFile})
 
         if not os.path.isfile(scriptPath):
             raise Exception('The Script File does not exist')
@@ -126,7 +127,7 @@ class WebcamController:
             scriptOutput = proc.stdout.decode(errors='ignore')
             raise Exception('Webcam Script did not create the requested Output File.\n\nReturn Code: ' + str(proc.returncode) + '\n\nOutput: ' + str(scriptOutput))
 
-    def getSnapshotFromPlugin(self, pluginId, fileName):
+    def getSnapshotFromPlugin(self, pluginId, fileName, webcamPathToCertVerifyFile):
         Log.debug('Getting Snapshot from Plugin', {'plugin': pluginId})
 
         if pluginId is None:
@@ -156,13 +157,15 @@ class WebcamController:
         except Exception as ex:
             raise Exception('The Webcam Plugin \'' + webcamName + '\' didn\'t return a valid Snapshot: ' + str(ex))
 
-    def getSnapshot(self, ffmpegPath=None, webcamType=None, webcamUrl=None, pluginId=None):
+    def getSnapshot(self, ffmpegPath=None, webcamType=None, webcamUrl=None, webcamPathToCertVerifyFile=None, pluginId=None):
         if ffmpegPath is None:
             ffmpegPath = self._settings.get(["ffmpegPath"])
         if webcamType is None:
             webcamType = WebcamType[self._settings.get(["webcamType"])]
         if webcamUrl is None:
             webcamUrl = self._settings.get(["webcamUrl"])
+        if webcamPathToCertVerifyFile is None:
+            webcamPathToCertVerifyFile = self._settings.get(["webcamPathToCertVerifyFile"])
         if pluginId is None:
             pluginId = self._settings.get(["webcamPluginId"])
 
@@ -170,15 +173,15 @@ class WebcamController:
 
         try:
             if webcamType == WebcamType.IMAGE_JPEG:
-                self.getSnapshotJpeg(fileName, webcamUrl)
+                self.getSnapshotJpeg(fileName, webcamUrl, webcamPathToCertVerifyFile)
             if webcamType == WebcamType.STREAM_MJPEG:
-                self.getSnapshotStreamMjpeg(fileName, webcamUrl)
+                self.getSnapshotStreamMjpeg(fileName, webcamUrl, webcamPathToCertVerifyFile)
             if webcamType == WebcamType.STREAM_MP4 or webcamType == WebcamType.STREAM_HLS:
-                self.getSnapshotStreamMp4OrHls(fileName, ffmpegPath, webcamUrl)
+                self.getSnapshotStreamMp4OrHls(fileName, ffmpegPath, webcamUrl, webcamPathToCertVerifyFile)
             if webcamType == WebcamType.SCRIPT:
-                self.getSnapshotFromScript(webcamUrl, fileName)
+                self.getSnapshotFromScript(webcamUrl, fileName, webcamPathToCertVerifyFile)
             if webcamType == WebcamType.PLUGIN:
-                self.getSnapshotFromPlugin(pluginId, fileName)
+                self.getSnapshotFromPlugin(pluginId, fileName, webcamPathToCertVerifyFile)
 
             if not os.path.isfile(fileName):
                 raise Exception('An Error occured during Snapshot Capturing')
